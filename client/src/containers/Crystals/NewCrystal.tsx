@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   Grid,
+  Modal,
 } from "@mui/material";
 
 import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal";
@@ -19,11 +20,14 @@ import type { ColorT } from "../../types/Color";
 import { createCrystal } from "../../graphql/crystals";
 import { getAllColors } from "../../graphql/colors";
 
+import NewColorModal from "./NewColorModal";
+
 type NewCrystalT = {
   addCrystal: (arg: CrystalT) => void;
 };
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const [colors, setColors] = useState<ColorT[]>([]);
+  const [colorModalOpen, setColorModalOpen] = useState<boolean>(false);
 
   const enums = {
     rarity: ["LOW", "MEDIUM", "HIGH"],
@@ -83,11 +87,12 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     onSubmit: handleSubmit,
   });
 
+  const fetchColors = async () => {
+    const colorResponse = await getAllColors();
+    setColors(colorResponse);
+  };
+
   useEffect(() => {
-    const fetchColors = async () => {
-      const colorResponse = await getAllColors();
-      setColors(colorResponse);
-    };
     fetchColors();
   }, []);
 
@@ -113,129 +118,216 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <Box
-        sx={{
-          // background: "#1c1c1c",
-          background: "rgba(70, 90, 126, 0.4)",
-          // background: "white",
-          padding: "24px",
-          paddingTop: "48px",
-          margin: "0 auto",
-          marginBottom: "48px",
-          borderRadius: "4px",
-          width: "80%",
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <TextField
-              id="name"
-              label="Name"
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("name")}
-            />
+    <>
+      <form onSubmit={formik.handleSubmit}>
+        <Box
+          sx={{
+            background: "rgba(70, 90, 126, 0.4)",
+            border: "1px solid #fff",
+            padding: "24px",
+            paddingTop: "48px",
+            margin: "0 auto",
+            marginBottom: "48px",
+            borderRadius: "4px",
+            maxWidth: "1200px",
+            width: "90%",
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <TextField
+                id="name"
+                label="Name"
+                variant="outlined"
+                fullWidth
+                {...formik.getFieldProps("name")}
+                sx={{
+                  input: {
+                    border: "1px solid #fff",
+                    borderRadius: "4px",
+                    color: "white",
+                  },
+                  "& .MuiFormLabel-root": {
+                    color: "#fff",
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel htmlFor="color" sx={{ color: "white" }}>
+                  Color
+                </InputLabel>
+                <Select
+                  label="Color"
+                  id="color"
+                  {...formik.getFieldProps("color")}
+                  sx={{
+                    "& .MuiSelect-select": {
+                      border: "1px solid #fff",
+                      borderRadius: "4px",
+                      color: "white",
+                    },
+                  }}
+                >
+                  <MenuItem>
+                    <Button
+                      onClick={() => setColorModalOpen(true)}
+                      sx={{ width: "100%" }}
+                    >
+                      Add New...
+                    </Button>
+                  </MenuItem>
+                  {colors.map((color) => {
+                    return (
+                      <MenuItem key={color.id} value={color.id}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Box
+                            sx={{
+                              width: "12px",
+                              height: "12px",
+                              borderRadius: "50%",
+                              backgroundColor: color.hex,
+                              marginRight: "8px",
+                            }}
+                          />
+                          {color.name}
+                        </Box>
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                id="category"
+                label="Category"
+                variant="outlined"
+                fullWidth
+                {...formik.getFieldProps("category")}
+                sx={{
+                  input: {
+                    border: "1px solid #fff",
+                    borderRadius: "4px",
+                    color: "white",
+                  },
+                  "& .MuiFormLabel-root": {
+                    color: "#fff",
+                  },
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel htmlFor="color">Color</InputLabel>
-              <Select
-                label="Color"
-                id="color"
-                {...formik.getFieldProps("color")}
+          <Grid container spacing={2} sx={{ marginTop: "0px" }}>
+            <Grid item xs={4}>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                sx={{ marginBottom: "12px" }}
               >
-                {colors.map((color) => {
-                  return (
-                    <MenuItem key={color.id} value={color.id}>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Box
-                          sx={{
-                            width: "12px",
-                            height: "12px",
-                            borderRadius: "50%",
-                            backgroundColor: color.hex,
-                            marginRight: "8px",
-                          }}
-                        />
-                        {color.name}
-                      </Box>
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              id="category"
-              label="Category"
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("category")}
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} sx={{ marginTop: "0px" }}>
-          <Grid item xs={4}>
-            <FormControl
-              fullWidth
-              variant="outlined"
-              sx={{ marginBottom: "12px" }}
-            >
-              <InputLabel htmlFor="rarity">Rarity</InputLabel>
-              <Select
-                label="Rarity"
-                id="rarity"
-                {...formik.getFieldProps("rarity")}
+                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
+                  Rarity
+                </InputLabel>
+                <Select
+                  label="Rarity"
+                  id="rarity"
+                  {...formik.getFieldProps("rarity")}
+                  sx={{
+                    "& .MuiSelect-select": {
+                      border: "1px solid #fff",
+                      borderRadius: "4px",
+                      color: "white",
+                    },
+                  }}
+                >
+                  {indicatorOptions("rarity")}
+                </Select>
+              </FormControl>
+              <FormControl
+                fullWidth
+                variant="outlined"
+                sx={{ marginBottom: "12px" }}
               >
-                {indicatorOptions("rarity")}
-              </Select>
-            </FormControl>
-            <FormControl
-              fullWidth
-              variant="outlined"
-              sx={{ marginBottom: "12px" }}
-            >
-              <InputLabel htmlFor="rarity">Find Age</InputLabel>
-              <Select
-                label="Find Age"
-                id="findAge"
-                {...formik.getFieldProps("findAge")}
-              >
-                {indicatorOptions("findAge")}
-              </Select>
-            </FormControl>
+                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
+                  Find Age
+                </InputLabel>
+                <Select
+                  label="Find Age"
+                  id="findAge"
+                  {...formik.getFieldProps("findAge")}
+                  sx={{
+                    "& .MuiSelect-select": {
+                      border: "1px solid #fff",
+                      borderRadius: "4px",
+                      color: "white",
+                    },
+                  }}
+                >
+                  {indicatorOptions("findAge")}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={8}>
+              <TextField
+                id="description"
+                label="Description"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={4}
+                {...formik.getFieldProps("description")}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    border: "1px solid #fff",
+                    borderRadius: "4px",
+                    color: "white",
+                  },
+                  "& .MuiFormLabel-root": {
+                    color: "#fff",
+                  },
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={8}>
-            <TextField
-              id="description"
-              label="Description"
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={4}
-              {...formik.getFieldProps("description")}
-            />
-          </Grid>
-        </Grid>
 
-        <Box mt={2}>
-          <TextField
-            id="image"
-            label="Image URL"
-            variant="outlined"
-            fullWidth
-            {...formik.getFieldProps("image")}
-          />
+          <Box mt={2}>
+            <TextField
+              id="image"
+              label="Image URL"
+              variant="outlined"
+              fullWidth
+              {...formik.getFieldProps("image")}
+              sx={{
+                input: {
+                  border: "1px solid #fff",
+                  borderRadius: "4px",
+                  color: "white",
+                },
+                "& .MuiFormLabel-root": {
+                  color: "#fff",
+                },
+              }}
+            />
+          </Box>
+          <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button type="submit" variant="contained" color="primary">
+              Create Crystal
+            </Button>
+          </Box>
         </Box>
-        <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button type="submit" variant="contained" color="primary">
-            Create Crystal
-          </Button>
-        </Box>
-      </Box>
-    </form>
+      </form>
+      {colorModalOpen && (
+        <NewColorModal
+          onClose={() => {
+            setColorModalOpen(false);
+            setTimeout(() => {
+              fetchColors();
+            }, 1000);
+          }}
+        />
+      )}
+    </>
   );
 };
 

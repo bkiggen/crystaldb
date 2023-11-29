@@ -106,10 +106,17 @@ const Crystals = () => {
   ];
 
   return (
-    <Box sx={{ paddingTop: "80px" }}>
+    <Box sx={{ paddingTop: "80px", paddingBottom: "120px" }}>
       <NewCrystal addCrystal={addCrystal} />
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
+          sx={{
+            background: "rgba(70, 90, 126, 0.4)",
+            color: "white",
+            maxWidth: "1200px",
+            width: "90%",
+            margin: "0 auto",
+          }}
           rows={crystals || []}
           columns={columns}
           disableColumnMenu

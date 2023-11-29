@@ -1,5 +1,5 @@
 export type ColorT = {
-  id: number;
+  id?: number;
   name: string;
   hex?: string;
 };
