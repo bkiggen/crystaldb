@@ -9,4 +9,7 @@ export class Color extends BaseEntity {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  hex: string;
 }

@@ -16,6 +16,7 @@ export const schema = buildSchema(`
   type Color {
     id: Int!
     name: String!
+    hex: String
   }
 
   type Crystal {
@@ -49,6 +50,7 @@ export const schema = buildSchema(`
 
   input CreateColorInput {
     name: String!
+    hex: String
   }
 
   type Mutation {

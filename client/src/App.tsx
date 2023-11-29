@@ -1,22 +1,28 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import { Box } from "@mui/material";
-import Crystals from "./src/containers/Crystals";
+
+import Header from "./components/Header";
+
+import Home from "./containers/Home";
+import Crystals from "./containers/Crystals/index";
+import Orders from "./containers/Orders";
 import "./App.css";
 
 const App = () => {
   return (
     <Router>
       <Box>
-        <Box
-          sx={{ display: "flex", justifyContent: "center", margin: "60px 0" }}
-        >
-          <img src="/src/assets/logo.png" alt="logo" />
+        <Header />
+        <Box sx={{ padding: "12px", paddingTop: "60px" }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/crystals" element={<Crystals />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="*" element={<h1>Not Found</h1>} />
+          </Routes>
         </Box>
-        <Routes>
-          <Route path="/" element={<Crystals />} />
-          <Route path="*" element={<h1>Not Found</h1>} />
-        </Routes>
       </Box>
     </Router>
   );
