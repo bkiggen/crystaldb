@@ -5,7 +5,7 @@ export type RarityT = "LOW" | "MEDIUM" | "HIGH";
 export type FindAgeT = "NEW" | "OLD" | "DEAD";
 
 export type CrystalT = {
-  id?: number;
+  id: number;
   name: string;
   color?: ColorT;
   colorId?: number;

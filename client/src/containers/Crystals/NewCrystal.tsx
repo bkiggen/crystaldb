@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
+import React, { useEffect, useState } from "react"
+import { useFormik } from "formik"
 
-import * as Yup from "yup";
+import * as Yup from "yup"
 import {
   Box,
   TextField,
@@ -11,37 +11,38 @@ import {
   FormControl,
   InputLabel,
   Grid,
-  Modal,
-} from "@mui/material";
+} from "@mui/material"
 
-import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal";
-import type { ColorT } from "../../types/Color";
+import { textFieldStyles } from "../../styles/vars"
 
-import { createCrystal } from "../../graphql/crystals";
-import { getAllColors } from "../../graphql/colors";
+import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal"
+import type { ColorT } from "../../types/Color"
 
-import NewColorModal from "./NewColorModal";
+import { createCrystal } from "../../graphql/crystals"
+import { getAllColors } from "../../graphql/colors"
+
+import NewColorModal from "./NewColorModal"
 
 type NewCrystalT = {
-  addCrystal: (arg: CrystalT) => void;
-};
+  addCrystal: (arg: CrystalT) => void
+}
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
-  const [colors, setColors] = useState<ColorT[]>([]);
-  const [colorModalOpen, setColorModalOpen] = useState<boolean>(false);
+  const [colors, setColors] = useState<ColorT[]>([])
+  const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
 
   const enums = {
     rarity: ["LOW", "MEDIUM", "HIGH"],
     findAge: ["NEW", "OLD", "DEAD"],
-  };
+  }
 
   const initialValues: {
-    name: string;
-    colorId?: number;
-    category?: string;
-    rarity?: RarityT;
-    description?: string;
-    image?: string;
-    findAge?: FindAgeT;
+    name: string
+    colorId?: number
+    category?: string
+    rarity?: RarityT
+    description?: string
+    image?: string
+    findAge?: FindAgeT
   } = {
     name: "",
     colorId: undefined,
@@ -50,23 +51,17 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     description: "",
     image: "",
     findAge: undefined,
-  };
+  }
 
   const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer(),
     category: Yup.string(),
-    rarity: Yup.string().oneOf(
-      enums.rarity as RarityT[],
-      "Invalid rarity value"
-    ),
+    rarity: Yup.string().oneOf(enums.rarity as RarityT[], "Invalid rarity value"),
     description: Yup.string(),
     image: Yup.string(),
-    findAge: Yup.string().oneOf(
-      enums.findAge as FindAgeT[],
-      "Invalid Find Age value"
-    ),
-  });
+    findAge: Yup.string().oneOf(enums.findAge as FindAgeT[], "Invalid Find Age value"),
+  })
 
   const handleSubmit = async (formData: typeof initialValues) => {
     const newCrystal = await createCrystal({
@@ -77,27 +72,28 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       description: formData.description,
       image: formData.image,
       findAge: formData.findAge,
-    });
-    addCrystal(newCrystal);
-  };
+    })
+    addCrystal(newCrystal)
+    formik.resetForm()
+  }
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: handleSubmit,
-  });
+  })
 
   const fetchColors = async () => {
-    const colorResponse = await getAllColors();
-    setColors(colorResponse);
-  };
+    const colorResponse = await getAllColors()
+    setColors(colorResponse)
+  }
 
   useEffect(() => {
-    fetchColors();
-  }, []);
+    fetchColors()
+  }, [])
 
   const indicatorOptions = (enumCategory: keyof typeof enums) => {
-    const colors = ["green", "yellow", "red"];
+    const colors = ["green", "yellow", "red"]
 
     return enums[enumCategory].map((value, index) => (
       <MenuItem key={value} value={value}>
@@ -114,8 +110,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
           {value}
         </Box>
       </MenuItem>
-    ));
-  };
+    ))
+  }
 
   return (
     <>
@@ -141,16 +137,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 variant="outlined"
                 fullWidth
                 {...formik.getFieldProps("name")}
-                sx={{
-                  input: {
-                    border: "1px solid #fff",
-                    borderRadius: "4px",
-                    color: "white",
-                  },
-                  "& .MuiFormLabel-root": {
-                    color: "#fff",
-                  },
-                }}
+                sx={textFieldStyles}
               />
             </Grid>
             <Grid item xs={4}>
@@ -171,10 +158,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   }}
                 >
                   <MenuItem>
-                    <Button
-                      onClick={() => setColorModalOpen(true)}
-                      sx={{ width: "100%" }}
-                    >
+                    <Button onClick={() => setColorModalOpen(true)} sx={{ width: "100%" }}>
                       Add New...
                     </Button>
                   </MenuItem>
@@ -194,7 +178,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                           {color.name}
                         </Box>
                       </MenuItem>
-                    );
+                    )
                   })}
                 </Select>
               </FormControl>
@@ -206,26 +190,13 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 variant="outlined"
                 fullWidth
                 {...formik.getFieldProps("category")}
-                sx={{
-                  input: {
-                    border: "1px solid #fff",
-                    borderRadius: "4px",
-                    color: "white",
-                  },
-                  "& .MuiFormLabel-root": {
-                    color: "#fff",
-                  },
-                }}
+                sx={textFieldStyles}
               />
             </Grid>
           </Grid>
           <Grid container spacing={2} sx={{ marginTop: "0px" }}>
             <Grid item xs={4}>
-              <FormControl
-                fullWidth
-                variant="outlined"
-                sx={{ marginBottom: "12px" }}
-              >
+              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
                   Rarity
                 </InputLabel>
@@ -244,11 +215,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {indicatorOptions("rarity")}
                 </Select>
               </FormControl>
-              <FormControl
-                fullWidth
-                variant="outlined"
-                sx={{ marginBottom: "12px" }}
-              >
+              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
                   Find Age
                 </InputLabel>
@@ -277,16 +244,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 multiline
                 rows={4}
                 {...formik.getFieldProps("description")}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    border: "1px solid #fff",
-                    borderRadius: "4px",
-                    color: "white",
-                  },
-                  "& .MuiFormLabel-root": {
-                    color: "#fff",
-                  },
-                }}
+                sx={textFieldStyles}
               />
             </Grid>
           </Grid>
@@ -298,16 +256,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
               variant="outlined"
               fullWidth
               {...formik.getFieldProps("image")}
-              sx={{
-                input: {
-                  border: "1px solid #fff",
-                  borderRadius: "4px",
-                  color: "white",
-                },
-                "& .MuiFormLabel-root": {
-                  color: "#fff",
-                },
-              }}
+              sx={textFieldStyles}
             />
           </Box>
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -320,15 +269,15 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       {colorModalOpen && (
         <NewColorModal
           onClose={() => {
-            setColorModalOpen(false);
+            setColorModalOpen(false)
             setTimeout(() => {
-              fetchColors();
-            }, 1000);
+              fetchColors()
+            }, 1000)
           }}
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default NewCrystal;
+export default NewCrystal

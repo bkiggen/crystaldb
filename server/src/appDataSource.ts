@@ -13,5 +13,5 @@ export const appDataSource = new DataSource({
   logging: false,
   migrations: ["src/migration/**/*.ts"],
   subscribers: ["src/subscriber/**/*.ts"],
-  entities: [Crystal, Color],
+  entities: ["src/entity/**/*.ts"],
 });

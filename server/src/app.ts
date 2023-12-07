@@ -5,6 +5,8 @@ import { graphqlHTTP } from "express-graphql";
 import { appDataSource } from "./appDataSource";
 import { crystalResolvers } from "./resolvers/crystalResolvers";
 import { colorResolvers } from "./resolvers/colorResolvers";
+import { cycleResolvers } from "./resolvers/cycleResolvers";
+
 import { schema } from "./schema";
 
 // GraphQL Resolvers
@@ -13,6 +15,8 @@ const root = {
   ...crystalResolvers.Mutation,
   ...colorResolvers.Query,
   ...colorResolvers.Mutation,
+  ...cycleResolvers.Query,
+  ...cycleResolvers.Mutation,
 };
 
 // Initialize Express

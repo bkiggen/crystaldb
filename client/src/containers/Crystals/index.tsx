@@ -1,33 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 
-import { Box } from "@mui/material";
-import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid";
-import dayjs from "dayjs";
+import { Box } from "@mui/material"
+import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
+import dayjs from "dayjs"
 
-import { getAllCrystals } from "../../graphql/crystals";
-import type { CrystalT } from "../../types/Crystal";
+import { getAllCrystals } from "../../graphql/crystals"
+import type { CrystalT } from "../../types/Crystal"
 
-import NewCrystal from "./NewCrystal";
+import NewCrystal from "./NewCrystal"
 
 const Crystals = () => {
-  const [crystals, setCrystals] = useState<CrystalT[] | null>(null);
+  const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals();
-      setCrystals(response);
-    };
-    fetchCrystals();
-  }, []);
+    ;(async () => {
+      const response = await getAllCrystals()
+      setCrystals(response || [])
+    })()
+  }, [])
 
   const addCrystal = (newCrystal: CrystalT) => {
     setCrystals((prevCrystals) => {
       if (prevCrystals) {
-        return [...prevCrystals, newCrystal];
+        return [...prevCrystals, newCrystal]
       }
-      return null;
-    });
-  };
+      return null
+    })
+  }
 
   const columns: GridColDef[] = [
     {
@@ -35,7 +34,7 @@ const Crystals = () => {
       headerName: "ID",
       width: 100,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.id}</div>;
+        return <div>{params.row.id}</div>
       },
     },
     {
@@ -44,37 +43,13 @@ const Crystals = () => {
       width: 300,
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.name}</div>;
-      },
-    },
-    {
-      field: "category",
-      headerName: "Category",
-      width: 200,
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.category}</div>;
-      },
-    },
-    {
-      field: "rarity",
-      headerName: "Rarity",
-      width: 100,
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.rarity}</div>;
-      },
-    },
-    {
-      field: "findAge",
-      headerName: "Find Age",
-      width: 100,
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.findAge}</div>;
+        return <div>{params.row.name}</div>
       },
     },
     {
       field: "color",
       headerName: "Color",
-      width: 200,
+      width: 150,
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -89,24 +64,46 @@ const Crystals = () => {
             />
             {params.row.color?.name}
           </Box>
-        );
+        )
+      },
+    },
+    {
+      field: "category",
+      headerName: "Category",
+      width: 200,
+      renderCell: (params: GridCellParams) => {
+        return <div>{params.row.category}</div>
+      },
+    },
+    {
+      field: "rarity",
+      headerName: "Rarity",
+      width: 100,
+      renderCell: (params: GridCellParams) => {
+        return <div>{params.row.rarity}</div>
+      },
+    },
+    {
+      field: "findAge",
+      headerName: "Find Age",
+      width: 100,
+      renderCell: (params: GridCellParams) => {
+        return <div>{params.row.findAge}</div>
       },
     },
     {
       field: "createdAt",
       headerName: "Created At",
-      width: 300,
+      width: 200,
       flex: 1,
       renderCell: (params: GridCellParams) => {
-        return (
-          <div>{dayjs(params.row.createdAt).format("dddd, MMMM D YYYY")}</div>
-        );
+        return <div>{dayjs(params.row.createdAt).format("MMM D YYYY")}</div>
       },
     },
-  ];
+  ]
 
   return (
-    <Box sx={{ paddingTop: "80px", paddingBottom: "120px" }}>
+    <Box sx={{ paddingBottom: "240px" }}>
       <NewCrystal addCrystal={addCrystal} />
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
@@ -129,7 +126,7 @@ const Crystals = () => {
         />
       </div>
     </Box>
-  );
-};
+  )
+}
 
-export default Crystals;
+export default Crystals

@@ -7,7 +7,7 @@ const Home = () => {
     <Box
       sx={{
         background: "#1c1c1c",
-        height: "60px",
+        height: "40px",
         width: "100vw",
         display: "flex",
         alignItems: "center",
@@ -42,13 +42,8 @@ const Home = () => {
           </Link>
         </Box>
         <Box sx={{ marginRight: "36px" }}>
-          <Link to="/orders">
-            <Typography variant="h6">Orders</Typography>
-          </Link>
-        </Box>
-        <Box sx={{ marginRight: "36px" }}>
-          <Link to="/customers">
-            <Typography variant="h6">Customers</Typography>
+          <Link to="/cycles">
+            <Typography variant="h6">Cycles</Typography>
           </Link>
         </Box>
       </Box>

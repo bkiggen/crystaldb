@@ -7,7 +7,7 @@ import Header from "./components/Header";
 
 import Home from "./containers/Home";
 import Crystals from "./containers/Crystals/index";
-import Orders from "./containers/Orders";
+import Cycles from "./containers/Cycles/index";
 import "./App.css";
 
 const App = () => {
@@ -15,11 +15,11 @@ const App = () => {
     <Router>
       <Box>
         <Header />
-        <Box sx={{ padding: "12px", paddingTop: "60px" }}>
+        <Box sx={{ padding: "12px", paddingTop: "120px" }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/crystals" element={<Crystals />} />
-            <Route path="/orders" element={<Orders />} />
+            <Route path="/cycles" element={<Cycles />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </Box>

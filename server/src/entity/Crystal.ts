@@ -1,9 +1,9 @@
 import {
   Entity,
+  BaseEntity,
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  BaseEntity,
   CreateDateColumn,
 } from "typeorm";
 import { Color } from "./Color";

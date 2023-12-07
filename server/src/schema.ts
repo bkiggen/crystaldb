@@ -13,12 +13,6 @@ export const schema = buildSchema(`
     DEAD
   }
 
-  type Color {
-    id: Int!
-    name: String!
-    hex: String
-  }
-
   type Crystal {
     id: Int!
     name: String!
@@ -31,11 +25,30 @@ export const schema = buildSchema(`
     createdAt: String!
   }
 
+  type Color {
+    id: Int!
+    name: String!
+    hex: String
+  }
+
+  type Cycle {
+    id: Int!
+    month: String!
+    week: Int!
+    users: [Int!]!
+    crystals: [Crystal]! 
+    shippedOn: String
+    updatedAt: String
+    createdAt: String!  
+  }
+
   type Query {
     getAllCrystals: [Crystal!]!
     getCrystal(id: Int!): Crystal
     getAllColors: [Color!]!
     getColor(id: Int!): Color
+    getAllCycles: [Cycle!]!
+    getCycle(id: Int!): Cycle
   }
 
   input CreateCrystalInput {
@@ -53,6 +66,13 @@ export const schema = buildSchema(`
     hex: String
   }
 
+  input CreateCycleInput {
+    shippedOn: String
+    month: Int!
+    week: Int!
+    crystalIds: [Int!]!
+  }
+
   type Mutation {
     createCrystal(input: CreateCrystalInput!): Crystal!
     updateCrystal(id: Int!, input: CreateCrystalInput!): Crystal
@@ -60,5 +80,8 @@ export const schema = buildSchema(`
     createColor(input: CreateColorInput!): Color!
     updateColor(id: Int!, input: CreateColorInput!): Color
     deleteColor(id: Int!): Boolean
+    createCycle(input: CreateCycleInput!): Cycle!
+    updateCycle(id: Int!, input: CreateCycleInput!): Cycle
+    deleteCycle(id: Int!): Boolean
   }
 `);

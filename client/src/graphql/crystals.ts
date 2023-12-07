@@ -1,7 +1,7 @@
 import type { CrystalT } from "../types/Crystal";
 import makeRequest from "./makeRequest";
 
-export const createCrystal = async (newCrystal: CrystalT) => {
+export const createCrystal = async (newCrystal: Omit<CrystalT, "id">) => {
   const { name, colorId, category, rarity, description, image, findAge } =
     newCrystal;
 
