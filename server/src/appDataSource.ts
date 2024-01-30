@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
-import { Crystal } from "./entity/Crystal";
-import { Color } from "./entity/Color";
+// import { Crystal } from "./entity/Crystal";
+// import { Color } from "./entity/Color";
 
 export const appDataSource = new DataSource({
   type: "postgres",

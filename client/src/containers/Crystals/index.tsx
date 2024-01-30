@@ -6,6 +6,7 @@ import dayjs from "dayjs"
 
 import { getAllCrystals } from "../../graphql/crystals"
 import type { CrystalT } from "../../types/Crystal"
+import ColorIndicator from "../../components/ColorIndicator"
 
 import NewCrystal from "./NewCrystal"
 
@@ -13,10 +14,11 @@ const Crystals = () => {
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
 
   useEffect(() => {
-    ;(async () => {
+    const getCrystals = async () => {
       const response = await getAllCrystals()
       setCrystals(response || [])
-    })()
+    }
+    getCrystals()
   }, [])
 
   const addCrystal = (newCrystal: CrystalT) => {
@@ -78,17 +80,27 @@ const Crystals = () => {
     {
       field: "rarity",
       headerName: "Rarity",
-      width: 100,
+      width: 150,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.rarity}</div>
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
+            {params.row.rarity}
+          </Box>
+        )
       },
     },
     {
       field: "findAge",
       headerName: "Find Age",
-      width: 100,
+      width: 150,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.findAge}</div>
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
+            {params.row.findAge}
+          </Box>
+        )
       },
     },
     {

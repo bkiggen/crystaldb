@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useFormik } from "formik"
+import colors from "../../styles/colors"
 
 import * as Yup from "yup"
 import {
@@ -13,7 +14,7 @@ import {
   Grid,
 } from "@mui/material"
 
-import { textFieldStyles } from "../../styles/vars"
+import { selectStyles, textFieldStyles } from "../../styles/vars"
 
 import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
@@ -22,12 +23,13 @@ import { createCrystal } from "../../graphql/crystals"
 import { getAllColors } from "../../graphql/colors"
 
 import NewColorModal from "./NewColorModal"
+import ColorIndicator from "../../components/ColorIndicator"
 
 type NewCrystalT = {
   addCrystal: (arg: CrystalT) => void
 }
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
-  const [colors, setColors] = useState<ColorT[]>([])
+  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
 
   const enums = {
@@ -85,28 +87,18 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
 
   const fetchColors = async () => {
     const colorResponse = await getAllColors()
-    setColors(colorResponse)
+    setColorOptions(colorResponse)
   }
 
   useEffect(() => {
     fetchColors()
   }, [])
 
-  const indicatorOptions = (enumCategory: keyof typeof enums) => {
-    const colors = ["green", "yellow", "red"]
-
-    return enums[enumCategory].map((value, index) => (
+  const indicatorOptions = (indicatorType: keyof typeof enums) => {
+    return enums[indicatorType].map((value) => (
       <MenuItem key={value} value={value}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            sx={{
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              backgroundColor: colors[index],
-              marginRight: "8px",
-            }}
-          />
+          <ColorIndicator indicatorType={indicatorType} indicatorValue={value} />
           {value}
         </Box>
       </MenuItem>
@@ -118,7 +110,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: "rgba(70, 90, 126, 0.4)",
+            background: colors.slate,
             border: "1px solid #fff",
             padding: "24px",
             paddingTop: "48px",
@@ -149,20 +141,14 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   label="Color"
                   id="color"
                   {...formik.getFieldProps("color")}
-                  sx={{
-                    "& .MuiSelect-select": {
-                      border: "1px solid #fff",
-                      borderRadius: "4px",
-                      color: "white",
-                    },
-                  }}
+                  sx={selectStyles}
                 >
                   <MenuItem>
                     <Button onClick={() => setColorModalOpen(true)} sx={{ width: "100%" }}>
                       Add New...
                     </Button>
                   </MenuItem>
-                  {colors.map((color) => {
+                  {colorOptions.map((color) => {
                     return (
                       <MenuItem key={color.id} value={color.id}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -204,13 +190,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   label="Rarity"
                   id="rarity"
                   {...formik.getFieldProps("rarity")}
-                  sx={{
-                    "& .MuiSelect-select": {
-                      border: "1px solid #fff",
-                      borderRadius: "4px",
-                      color: "white",
-                    },
-                  }}
+                  sx={selectStyles}
                 >
                   {indicatorOptions("rarity")}
                 </Select>
@@ -223,13 +203,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   label="Find Age"
                   id="findAge"
                   {...formik.getFieldProps("findAge")}
-                  sx={{
-                    "& .MuiSelect-select": {
-                      border: "1px solid #fff",
-                      borderRadius: "4px",
-                      color: "white",
-                    },
-                  }}
+                  sx={selectStyles}
                 >
                   {indicatorOptions("findAge")}
                 </Select>

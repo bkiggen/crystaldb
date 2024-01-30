@@ -1,14 +1,14 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-import { Box } from "@mui/material";
+import { Box } from "@mui/material"
 
-import Header from "./components/Header";
+import Header from "./components/Header"
 
-import Home from "./containers/Home";
-import Crystals from "./containers/Crystals/index";
-import Cycles from "./containers/Cycles/index";
-import "./App.css";
+import Home from "./containers/Home"
+import Crystals from "./containers/Crystals/index"
+import Cycles from "./containers/Cycles/index"
+import "./App.css"
 
 const App = () => {
   return (
@@ -25,7 +25,7 @@ const App = () => {
         </Box>
       </Box>
     </Router>
-  );
-};
+  )
+}
 
-export default App;
+export default App

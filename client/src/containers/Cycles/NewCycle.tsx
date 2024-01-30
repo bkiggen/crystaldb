@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useFormik } from "formik"
+import colors from "../../styles/colors"
 
 import * as Yup from "yup"
 import {
@@ -69,7 +70,7 @@ const NewCycle = ({ addCycle }: NewCycleT) => {
     <form onSubmit={formik.handleSubmit}>
       <Box
         sx={{
-          background: "rgba(70, 90, 126, 0.4)",
+          background: colors.slate,
           border: "1px solid #fff",
           padding: "24px",
           paddingTop: "48px",

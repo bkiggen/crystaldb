@@ -1,8 +1,12 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import React from "react"
+import { useLocation } from "react-router-dom"
+import { Box } from "@mui/material"
+import { Link } from "react-router-dom"
+import NavItem from "./NavItem"
 
 const Home = () => {
+  const { pathname } = useLocation()
+
   return (
     <Box
       sx={{
@@ -21,7 +25,7 @@ const Home = () => {
         sx={{
           display: "flex",
           alignItems: "center",
-          marginRight: "36px",
+          marginRight: "48px",
           paddingTop: "4px",
         }}
       >
@@ -36,19 +40,12 @@ const Home = () => {
           flexGrow: 1,
         }}
       >
-        <Box sx={{ marginRight: "36px" }}>
-          <Link to="/crystals">
-            <Typography variant="h6">Crystals</Typography>
-          </Link>
-        </Box>
-        <Box sx={{ marginRight: "36px" }}>
-          <Link to="/cycles">
-            <Typography variant="h6">Cycles</Typography>
-          </Link>
-        </Box>
+        <NavItem linkTo="/crystals" title="Crystals" pathname={pathname} />
+        <NavItem linkTo="/cycles" title="Cycles" pathname={pathname} />
+        <NavItem linkTo="/build" title="Build" pathname={pathname} />
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
