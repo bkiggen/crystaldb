@@ -1,6 +1,7 @@
 export const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     background: "slategrey",
+    color: "white",
 
     "& input": {
       color: "white",

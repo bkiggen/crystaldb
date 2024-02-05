@@ -1,22 +1,27 @@
-import type { CycleT } from '../types/Cycle'
-import makeRequest from './makeRequest'
+import type { CycleT } from "../types/Cycle"
+import makeRequest from "./makeRequest"
 
-export const createCycle = async (newCycle: Omit<CycleT, 'id'>) => {
-  const { shippedOn, month, week, crystalIds } = newCycle
+export const createCycle = async (newCycle: Omit<CycleT, "id">) => {
+  const { month, year, cycle, cycleRangeStart, cycleRangeEnd, crystalIds } = newCycle
 
   const mutation = `
     mutation {
       createCycle(input: {
-        shippedOn: "${shippedOn}",
         month: ${month},
-        week: ${week},
+        year: ${year},
+        cycle: ${cycle},
+        cycleRangeStart: ${cycleRangeStart},
+        cycleRangeEnd: ${cycleRangeEnd},
         crystalIds: [${crystalIds}]
       }) {
         id
         shippedOn
         month
-        week
-        createdAt
+        year
+        cycle
+        cycleRangeStart
+        cycleRangeEnd
+        crystalIds
       }
     }
   `
@@ -32,7 +37,10 @@ export const getAllCycles = async () => {
         id
         shippedOn
         month
-        week
+        year
+        cycle
+        cycleRangeStart
+        cycleRangeEnd
         updatedAt
         crystals {
           id

@@ -137,11 +137,12 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 <InputLabel htmlFor="color" sx={{ color: "white" }}>
                   Color
                 </InputLabel>
-                <Select
+                <TextField
+                  select
                   label="Color"
-                  id="color"
-                  {...formik.getFieldProps("color")}
-                  sx={selectStyles}
+                  id="colorId"
+                  {...formik.getFieldProps("colorId")}
+                  sx={textFieldStyles}
                 >
                   <MenuItem>
                     <Button onClick={() => setColorModalOpen(true)} sx={{ width: "100%" }}>
@@ -151,7 +152,13 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {colorOptions.map((color) => {
                     return (
                       <MenuItem key={color.id} value={color.id}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            textTransform: "capitalize",
+                          }}
+                        >
                           <Box
                             sx={{
                               width: "12px",
@@ -166,7 +173,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                       </MenuItem>
                     )
                   })}
-                </Select>
+                </TextField>
               </FormControl>
             </Grid>
             <Grid item xs={4}>
@@ -186,27 +193,29 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
                   Rarity
                 </InputLabel>
-                <Select
+                <TextField
+                  select
                   label="Rarity"
                   id="rarity"
                   {...formik.getFieldProps("rarity")}
-                  sx={selectStyles}
+                  sx={textFieldStyles}
                 >
                   {indicatorOptions("rarity")}
-                </Select>
+                </TextField>
               </FormControl>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
                   Find Age
                 </InputLabel>
-                <Select
+                <TextField
+                  select
                   label="Find Age"
                   id="findAge"
                   {...formik.getFieldProps("findAge")}
-                  sx={selectStyles}
+                  sx={textFieldStyles}
                 >
                   {indicatorOptions("findAge")}
-                </Select>
+                </TextField>
               </FormControl>
             </Grid>
             <Grid item xs={8}>
@@ -223,7 +232,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             </Grid>
           </Grid>
 
-          <Box mt={2}>
+          {/* <Box mt={2}>
             <TextField
               id="image"
               label="Image URL"
@@ -232,7 +241,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
               {...formik.getFieldProps("image")}
               sx={textFieldStyles}
             />
-          </Box>
+          </Box> */}
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button type="submit" variant="contained" color="primary">
               Create Crystal

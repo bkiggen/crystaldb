@@ -33,8 +33,11 @@ export const schema = buildSchema(`
 
   type Cycle {
     id: Int!
-    month: String!
-    week: Int!
+    month: Int!
+    year: Int!
+    cycle: Int!
+    cycleRangeStart: Int!
+    cycleRangeEnd: Int!
     users: [Int!]!
     crystals: [Crystal]! 
     shippedOn: String
@@ -67,10 +70,12 @@ export const schema = buildSchema(`
   }
 
   input CreateCycleInput {
-    shippedOn: String
+    crystals: [Int!]!
     month: Int!
-    week: Int!
-    crystalIds: [Int!]!
+    year: Int!
+    cycle: Int
+    cycleRangeStart: Int
+    cycleRangeEnd: Int
   }
 
   type Mutation {

@@ -1,9 +1,10 @@
 import { Crystal } from "../entity/Crystal";
+import { Color } from "../entity/Color";
 
 export const crystalResolvers = {
   Query: {
     getAllCrystals: async () => {
-      return await Crystal.find();
+      return await Crystal.find({ relations: ["color"] });
     },
     getCrystal: async ({ id }) => {
       return await Crystal.findOne(id);
@@ -11,7 +12,17 @@ export const crystalResolvers = {
   },
   Mutation: {
     createCrystal: async ({ input }) => {
-      const crystal = Crystal.create(input);
+      const color = await Color.findOne({ where: { id: input.colorId } });
+      if (!color) {
+        throw new Error("Color not found with id: " + input.colorId);
+      }
+
+      const { colorId, ...crystalInput } = input;
+
+      const crystal = Crystal.create(crystalInput);
+
+      crystal.color = color;
+
       return await Crystal.save(crystal);
     },
     updateCrystal: async ({ id, input }) => {

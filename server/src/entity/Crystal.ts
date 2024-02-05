@@ -8,13 +8,13 @@ import {
 } from "typeorm";
 import { Color } from "./Color";
 
-enum Rarity {
+export enum Rarity {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
   HIGH = "HIGH",
 }
 
-enum FindAge {
+export enum FindAge {
   NEW = "NEW",
   OLD = "OLD",
   DEAD = "DEAD",

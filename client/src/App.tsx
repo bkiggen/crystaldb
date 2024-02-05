@@ -7,7 +7,8 @@ import Header from "./components/Header"
 
 import Home from "./containers/Home"
 import Crystals from "./containers/Crystals/index"
-import Cycles from "./containers/Cycles/index"
+import Cycles from "./containers/ShipmentGroups/index"
+import Build from "./containers/Build/index"
 import "./App.css"
 
 const App = () => {
@@ -19,7 +20,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/crystals" element={<Crystals />} />
-            <Route path="/cycles" element={<Cycles />} />
+            <Route path="/shipmentGroups" element={<Cycles />} />
+            <Route path="/build" element={<Build />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </Box>

@@ -41,7 +41,7 @@ const Home = () => {
         }}
       >
         <NavItem linkTo="/crystals" title="Crystals" pathname={pathname} />
-        <NavItem linkTo="/cycles" title="Cycles" pathname={pathname} />
+        <NavItem linkTo="/shipmentGroups" title="Shipment Groups" pathname={pathname} />
         <NavItem linkTo="/build" title="Build" pathname={pathname} />
       </Box>
     </Box>

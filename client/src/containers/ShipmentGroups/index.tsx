@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { Box } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
-import dayjs from "dayjs"
 
-import { months } from "../../lib/constants"
+import { monthOptions } from "../../lib/constants"
 import { getAllCycles } from "../../graphql/cycles"
 
 import type { CycleT } from "../../types/Cycle"
@@ -33,16 +32,24 @@ const Cycles = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "month",
-      headerName: "Shipment Month",
+      field: "year",
+      headerName: "Year",
       width: 150,
       renderCell: (params: GridCellParams) => {
-        return <div>{months[params.row.month]}</div>
+        return <div>{params.row.year}</div>
       },
     },
     {
-      field: "week",
-      headerName: "Subscriber Cycle",
+      field: "month",
+      headerName: "Month",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return <div>{monthOptions[params.row.month]?.short}</div>
+      },
+    },
+    {
+      field: "cycle",
+      headerName: "Cycle",
       width: 150,
       renderCell: (params: GridCellParams) => {
         return <div>{params.row.week}</div>

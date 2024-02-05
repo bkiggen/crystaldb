@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
+
 import { useFormik } from "formik"
-import colors from "../../styles/colors"
+import dayjs from "dayjs"
 
 import * as Yup from "yup"
 import {
@@ -13,9 +14,14 @@ import {
   ListItemText,
   Autocomplete,
   Typography,
+  Switch,
+  MenuItem,
 } from "@mui/material"
 // import CloseIcon from "@mui/icons-material/Close";
 
+import { monthOptions } from "../../lib/constants"
+
+import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { getAllCrystals } from "../../graphql/crystals"
 
@@ -30,31 +36,66 @@ type NewCycleT = {
 
 const NewCycle = ({ addCycle }: NewCycleT) => {
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
+  const [cycleRangeMode, setCycleRangeMode] = useState(false)
+
+  const currentYear = dayjs().year()
+  const currentMonth = dayjs().month()
 
   const initialValues: {
-    calendarMonth: number
-    cycleMonth: number
+    month: number
+    year: number
+    cycle: number
+    cycleRangeStart: number
+    cycleRangeEnd: number
     crystalIds: number[]
   } = {
-    calendarMonth: 1,
-    cycleMonth: 1,
+    month: currentMonth,
+    year: currentYear,
+    cycle: 1,
+    cycleRangeStart: 1,
+    cycleRangeEnd: 5,
     crystalIds: [],
   }
 
   useEffect(() => {
-    ;(async () => {
+    const fetchCrystals = async () => {
       const response = await getAllCrystals()
       setAllCrystals(response || [])
-    })()
+    }
+    fetchCrystals()
   }, [])
 
-  const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
-    calendarMonth: Yup.number().required("Calendar Month is required").integer().min(1).max(12),
-    cycleMonth: Yup.number().required("Cycle Month is required").integer().min(1).max(52),
+  const validationSchema = Yup.object({
+    month: Yup.number().required("Month is required").integer().min(1).max(12),
+    year: Yup.number()
+      .required("Year is required")
+      .integer()
+      .min(2016)
+      .max(currentYear + 1),
+    cycle: Yup.number().nullable().integer().min(1),
+    cycleRangeStart: Yup.number().nullable().integer().min(1),
+    cycleRangeEnd: Yup.number().nullable().integer().min(1),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
-  })
+  }).test(
+    "cycle-or-cycleRange",
+    "Either cycle or cycle range (start and end) must be provided",
+    (values) => {
+      const { cycle, cycleRangeStart, cycleRangeEnd } = values
+      const isCycleValid = cycle !== null
+      const isCycleRangeValid = cycleRangeStart !== null && cycleRangeEnd !== null
+
+      return isCycleValid || isCycleRangeValid
+    },
+  )
 
   const handleSubmit = async (formData: typeof initialValues) => {
+    if (cycleRangeMode) {
+      formData.cycle = null
+    }
+    if (!cycleRangeMode) {
+      formData.cycleRangeStart = null
+      formData.cycleRangeEnd = null
+    }
     const newCycle = await createCycle(formData)
     addCycle(newCycle)
     formik.resetForm()
@@ -84,51 +125,110 @@ const NewCycle = ({ addCycle }: NewCycleT) => {
         <Grid container spacing={2}>
           <Grid item xs={4} sx={{ position: "relative" }}>
             <Typography
-              sx={{ color: "white", fontSize: "12px", position: "absolute", top: "-4px" }}
+              sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
             >
-              Shipment Month
+              Month
             </Typography>
             <TextField
               id="month"
               variant="outlined"
               fullWidth
+              select
+              {...formik.getFieldProps("month")}
+              inputProps={{ style: { color: "white" } }}
+              sx={textFieldStyles}
+            >
+              {Object.keys(monthOptions).map((monthNumber) => (
+                <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
+                  {monthOptions[monthNumber]?.long}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={4} sx={{ position: "relative" }}>
+            <Typography
+              sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
+            >
+              Year
+            </Typography>
+            <TextField
+              id="year"
+              variant="outlined"
+              fullWidth
               type="number"
-              {...formik.getFieldProps("calendarMonth")}
+              {...formik.getFieldProps("year")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
             />
           </Grid>
           <Grid item xs={4} sx={{ position: "relative" }}>
-            <Typography
-              sx={{ color: "white", fontSize: "12px", position: "absolute", top: "-4px" }}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "-8px",
+                display: "flex",
+                alignItems: "center",
+              }}
             >
-              Shipment Year
-            </Typography>
-            <TextField
-              id="month"
-              variant="outlined"
-              fullWidth
-              type="number"
-              {...formik.getFieldProps("calendarMonth")}
-              inputProps={{ style: { color: "white" } }}
-              sx={textFieldStyles}
-            />
-          </Grid>
-          <Grid item xs={4} sx={{ position: "relative" }}>
-            <Typography
-              sx={{ color: "white", fontSize: "12px", position: "absolute", top: "-4px" }}
-            >
-              Subscriber Cycle Month
-            </Typography>
-            <TextField
-              id="month"
-              variant="outlined"
-              fullWidth
-              type="number"
-              {...formik.getFieldProps("cycleMonth")}
-              inputProps={{ style: { color: "white" } }}
-              sx={textFieldStyles}
-            />
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                }}
+              >
+                {cycleRangeMode ? "Cycle Range" : "Cycle"}
+              </Typography>
+              <Button
+                onClick={() => setCycleRangeMode((prev) => !prev)}
+                sx={{
+                  margin: 0,
+                  height: "14px",
+                  marginLeft: "6px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  color: "grey",
+                  border: "none !important",
+                  outline: "none !important",
+                }}
+              >
+                (Change Type)
+              </Button>
+            </Box>
+            {cycleRangeMode ? (
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    id="cycleRangeStart"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
+                    {...formik.getFieldProps("cycleRangeStart")}
+                    inputProps={{ style: { color: "white" } }}
+                    sx={textFieldStyles}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    id="cycleRangeEnd"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
+                    {...formik.getFieldProps("cycleRangeEnd")}
+                    inputProps={{ style: { color: "white" } }}
+                    sx={textFieldStyles}
+                  />
+                </Grid>
+              </Grid>
+            ) : (
+              <TextField
+                id="month"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("cycle")}
+                inputProps={{ style: { color: "white" } }}
+                sx={textFieldStyles}
+              />
+            )}
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ marginTop: "24px" }}>
@@ -182,37 +282,6 @@ const NewCycle = ({ addCycle }: NewCycleT) => {
                 }}
               />
             </FormControl>
-          </Grid>
-          <Grid item xs={4} sx={{ position: "relative" }}>
-            <Typography
-              sx={{ color: "white", fontSize: "12px", position: "absolute", top: "-4px" }}
-            >
-              Subscriber Cycle Month Range
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField
-                  id="month"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  {...formik.getFieldProps("calendarMonthStart")}
-                  inputProps={{ style: { color: "white" } }}
-                  sx={textFieldStyles}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  id="month"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  {...formik.getFieldProps("calendarMonthEnd")}
-                  inputProps={{ style: { color: "white" } }}
-                  sx={textFieldStyles}
-                />
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
 

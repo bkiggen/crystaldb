@@ -1,9 +1,8 @@
-import type { CrystalT } from "../types/Crystal";
-import makeRequest from "./makeRequest";
+import type { CrystalT } from "../types/Crystal"
+import makeRequest from "./makeRequest"
 
 export const createCrystal = async (newCrystal: Omit<CrystalT, "id">) => {
-  const { name, colorId, category, rarity, description, image, findAge } =
-    newCrystal;
+  const { name, colorId, category, rarity, description, image, findAge } = newCrystal
 
   const mutation = `
     mutation {
@@ -30,11 +29,11 @@ export const createCrystal = async (newCrystal: Omit<CrystalT, "id">) => {
         findAge
       }
     }
-  `;
+  `
 
-  const response = await makeRequest<{ createCrystal: CrystalT }>(mutation);
-  return response.createCrystal;
-};
+  const response = await makeRequest<{ createCrystal: CrystalT }>(mutation)
+  return response.createCrystal
+}
 
 export const getAllCrystals = async () => {
   const query = `
@@ -46,14 +45,15 @@ export const getAllCrystals = async () => {
           image
           rarity
           findAge
+          category
           color {
             name
             hex
           }
         }
       }
-    `;
+    `
 
-  const data = await makeRequest<{ getAllCrystals: CrystalT[] }>(query);
-  return data.getAllCrystals;
-};
+  const data = await makeRequest<{ getAllCrystals: CrystalT[] }>(query)
+  return data.getAllCrystals
+}
