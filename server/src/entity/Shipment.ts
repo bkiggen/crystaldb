@@ -12,7 +12,7 @@ import {
 import { Crystal } from "./Crystal";
 
 @Entity()
-export class Cycle extends BaseEntity {
+export class Shipment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,13 +25,13 @@ export class Cycle extends BaseEntity {
   @Column({ type: "int" })
   year: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: true })
   cycle: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: true })
   cycleRangeStart: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "int", nullable: true })
   cycleRangeEnd: number;
 
   // @ManyToMany(() => User)

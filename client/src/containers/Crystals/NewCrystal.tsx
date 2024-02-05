@@ -3,24 +3,15 @@ import { useFormik } from "formik"
 import colors from "../../styles/colors"
 
 import * as Yup from "yup"
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Grid,
-} from "@mui/material"
+import { Box, TextField, Button, MenuItem, FormControl, InputLabel, Grid } from "@mui/material"
 
-import { selectStyles, textFieldStyles } from "../../styles/vars"
+import { textFieldStyles } from "../../styles/vars"
 
 import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 
-import { createCrystal } from "../../graphql/crystals"
-import { getAllColors } from "../../graphql/colors"
+import { createCrystal } from "../../api/crystals"
+import { getAllColors } from "../../api/colors"
 
 import NewColorModal from "./NewColorModal"
 import ColorIndicator from "../../components/ColorIndicator"
@@ -149,9 +140,10 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                       Add New...
                     </Button>
                   </MenuItem>
-                  {colorOptions.map((color) => {
+                  {colorOptions.map((colorOption) => {
+                    console.log(colorOption)
                     return (
-                      <MenuItem key={color.id} value={color.id}>
+                      <MenuItem key={colorOption.id} value={colorOption.id}>
                         <Box
                           sx={{
                             display: "flex",
@@ -164,11 +156,11 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                               width: "12px",
                               height: "12px",
                               borderRadius: "50%",
-                              backgroundColor: color.hex,
+                              backgroundColor: colorOption.hex,
                               marginRight: "8px",
                             }}
                           />
-                          {color.name}
+                          {colorOption.name}
                         </Box>
                       </MenuItem>
                     )

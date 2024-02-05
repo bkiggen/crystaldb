@@ -7,7 +7,7 @@ import Header from "./components/Header"
 
 import Home from "./containers/Home"
 import Crystals from "./containers/Crystals/index"
-import Cycles from "./containers/ShipmentGroups/index"
+import Shipments from "./containers/Shipments/index"
 import Build from "./containers/Build/index"
 import "./App.css"
 
@@ -20,7 +20,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/crystals" element={<Crystals />} />
-            <Route path="/shipmentGroups" element={<Cycles />} />
+            <Route path="/shipments" element={<Shipments />} />
             <Route path="/build" element={<Build />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>

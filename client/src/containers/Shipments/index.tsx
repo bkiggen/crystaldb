@@ -3,28 +3,28 @@ import { Box } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
 import { monthOptions } from "../../lib/constants"
-import { getAllCycles } from "../../graphql/cycles"
+import { getAllShipments } from "../../api/shipments"
 
-import type { CycleT } from "../../types/Cycle"
+import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
 
-import NewCycle from "./NewCycle"
+import NewShipment from "./NewShipment"
 
-const Cycles = () => {
-  const [cycles, setCycles] = useState<CycleT[] | null>(null)
+const Shipments = () => {
+  const [shipments, setShipments] = useState<ShipmentT[] | null>(null)
 
   useEffect(() => {
-    const fetchCycles = async () => {
-      const response = await getAllCycles()
-      setCycles(response)
+    const fetchShipments = async () => {
+      const response = await getAllShipments()
+      setShipments(response)
     }
-    fetchCycles()
+    fetchShipments()
   }, [])
 
-  const addCycle = (newCycle: CycleT) => {
-    setCycles((prevCycles) => {
-      if (prevCycles) {
-        return [...prevCycles, newCycle]
+  const addShipment = (newShipment: ShipmentT) => {
+    setShipments((prevShipments) => {
+      if (prevShipments) {
+        return [...prevShipments, newShipment]
       }
       return null
     })
@@ -52,7 +52,11 @@ const Cycles = () => {
       headerName: "Cycle",
       width: 150,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.week}</div>
+        return (
+          <div>
+            {params.row.cycle || `${params.row.cycleRangeStart} - ${params.row.cycleRangeEnd}`}
+          </div>
+        )
       },
     },
     {
@@ -98,7 +102,7 @@ const Cycles = () => {
 
   return (
     <Box sx={{ paddingBottom: "240px" }}>
-      <NewCycle addCycle={addCycle} />
+      <NewShipment addShipment={addShipment} />
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
           sx={{
@@ -108,7 +112,7 @@ const Cycles = () => {
             width: "90%",
             margin: "0 auto",
           }}
-          rows={cycles || []}
+          rows={shipments || []}
           columns={columns}
           disableColumnMenu
           disableColumnFilter
@@ -123,4 +127,4 @@ const Cycles = () => {
   )
 }
 
-export default Cycles
+export default Shipments

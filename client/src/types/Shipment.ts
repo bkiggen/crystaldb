@@ -1,6 +1,6 @@
 import { CrystalT } from "./Crystal"
 
-export type CycleT = {
+export type ShipmentT = {
   id: number
   month: number
   year: number

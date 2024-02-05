@@ -23,18 +23,18 @@ import { monthOptions } from "../../lib/constants"
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-import { getAllCrystals } from "../../graphql/crystals"
+import { getAllCrystals } from "../../api/crystals"
 
-import type { CycleT } from "../../types/Cycle"
+import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
 
-import { createCycle } from "../../graphql/cycles"
+import { createShipment } from "../../api/shipments"
 
-type NewCycleT = {
-  addCycle: (arg: CycleT) => void
+type NewShipmentT = {
+  addShipment: (arg: ShipmentT) => void
 }
 
-const NewCycle = ({ addCycle }: NewCycleT) => {
+const NewShipment = ({ addShipment }: NewShipmentT) => {
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
@@ -96,8 +96,8 @@ const NewCycle = ({ addCycle }: NewCycleT) => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newCycle = await createCycle(formData)
-    addCycle(newCycle)
+    const newCycle = await createShipment(formData)
+    addShipment(newCycle)
     formik.resetForm()
   }
 
@@ -295,4 +295,4 @@ const NewCycle = ({ addCycle }: NewCycleT) => {
   )
 }
 
-export default NewCycle
+export default NewShipment

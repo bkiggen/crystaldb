@@ -4,7 +4,7 @@ import { Box } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 import dayjs from "dayjs"
 
-import { getAllCrystals } from "../../graphql/crystals"
+import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
 import ColorIndicator from "../../components/ColorIndicator"
 
