@@ -141,7 +141,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                     </Button>
                   </MenuItem>
                   {colorOptions.map((colorOption) => {
-                    console.log(colorOption)
                     return (
                       <MenuItem key={colorOption.id} value={colorOption.id}>
                         <Box

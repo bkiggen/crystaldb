@@ -14,7 +14,6 @@ import {
   ListItemText,
   Autocomplete,
   Typography,
-  Switch,
   MenuItem,
 } from "@mui/material"
 // import CloseIcon from "@mui/icons-material/Close";
@@ -190,7 +189,7 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
                   outline: "none !important",
                 }}
               >
-                (Change Type)
+                ({cycleRangeMode ? "Change to Single" : "Change to Range"})
               </Button>
             </Box>
             {cycleRangeMode ? (
@@ -237,8 +236,10 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
               <Autocomplete
                 disablePortal
                 id="crystal-select"
+                disableCloseOnSelect
                 multiple
                 defaultValue={formik.values.crystalIds}
+                value={formik.values.crystalIds}
                 options={allCrystals?.map((c) => {
                   return c.id
                 })}
@@ -287,7 +288,7 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
 
         <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button type="submit" variant="contained" color="primary">
-            Create Cycle
+            Create Shipment
           </Button>
         </Box>
       </Box>

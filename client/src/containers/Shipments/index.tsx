@@ -62,7 +62,6 @@ const Shipments = () => {
     {
       field: "crystals",
       headerName: "Crystals",
-      width: 300,
       flex: 3,
       renderCell: (params: GridCellParams) => {
         return (
@@ -71,27 +70,32 @@ const Shipments = () => {
               display: "flex",
               alignItems: "center",
               marginBottom: "4px",
+              minWidth: "300px",
+              flexWrap: "wrap",
             }}
           >
-            {params.row.crystals?.map((crystal: CrystalT) => (
+            {params.row.crystals?.map((crystal: CrystalT, idx) => (
               <Box
                 key={crystal.id}
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  marginRight: "24px",
                 }}
               >
-                <Box
-                  sx={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    backgroundColor: crystal.color?.hex,
-                    marginRight: "8px",
-                  }}
-                />
-                <div>{crystal.name}</div>
+                {crystal.color?.hex ? (
+                  <Box
+                    sx={{
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "50%",
+                      backgroundColor: crystal.color?.hex,
+                    }}
+                  />
+                ) : null}
+                <Box sx={{ marginRight: "6px" }}>
+                  {crystal.name}
+                  {idx !== params.row.crystals.length - 1 ? "," : ""}
+                </Box>
               </Box>
             ))}
           </Box>
@@ -112,6 +116,7 @@ const Shipments = () => {
             width: "90%",
             margin: "0 auto",
           }}
+          rowHeight={120}
           rows={shipments || []}
           columns={columns}
           disableColumnMenu

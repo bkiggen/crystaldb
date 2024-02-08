@@ -1,12 +1,41 @@
 import { Router, Request, Response } from "express";
+import { Like } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
 
 const router = Router();
 
-router.get("/", async (_req: Request, res: Response) => {
-  const crystals = await Crystal.find({ relations: ["color"] });
-  res.json(crystals);
+router.get("/", async (req: Request, res: Response) => {
+  const { page = 1, pageSize = 10, searchTerm } = req.query;
+
+  const pageNumber = parseInt(page as string);
+  const pageSizeNumber = parseInt(pageSize as string);
+
+  let whereCondition = {};
+  if (searchTerm) {
+    whereCondition = {
+      name: Like(`%${searchTerm}%`),
+    };
+  }
+
+  const [result, total] = await Crystal.findAndCount({
+    where: whereCondition,
+    skip: (pageNumber - 1) * pageSizeNumber,
+    take: pageSizeNumber,
+    order: {
+      name: "ASC",
+    },
+    relations: ["color"],
+  });
+
+  const paging = {
+    totalCount: total,
+    totalPages: Math.ceil(total / pageSizeNumber),
+    currentPage: pageNumber,
+    pageSize: pageSizeNumber,
+  };
+
+  res.json({ data: result, paging });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
@@ -23,6 +52,7 @@ router.post("/", async (req: Request, res: Response) => {
     if (!color) {
       return res.status(404).send("Color not found");
     }
+
     const crystal = Crystal.create({ ...req.body, color });
     await Crystal.save(crystal);
     res.status(201).json(crystal);

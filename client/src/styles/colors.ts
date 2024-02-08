@@ -5,6 +5,7 @@ const colors = {
   eggplant: "#2F1C59",
   darkBlue: "#212940",
   slate: "rgba(70, 90, 126, 0.4)",
+  slateGrey: "slateGrey",
 } as const
 
 export default colors
