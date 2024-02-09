@@ -6,6 +6,7 @@ import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
 import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
+import type { PagingT } from "../../types/Paging"
 import ColorIndicator from "../../components/ColorIndicator"
 import Pagination from "../../components/Pagination"
 
@@ -14,12 +15,8 @@ import { defaultPaging } from "../../types/Paging"
 
 const Crystals = () => {
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
-  const [paging, setPaging] = useState(defaultPaging)
-  // export const getAllCrystals = async (
-  //   searchTerm: string = "",
-  //   page: number = 1,
-  //   pageSize: number = 10,
-  // ): Promise<{ data: CrystalT[]; paging: PagingT }> => {
+  const [paging, setPaging] = useState<PagingT>(defaultPaging)
+
   const getCrystals = async ({ searchTerm = "", page = 1 }) => {
     const response = await getAllCrystals({ searchTerm, page })
     setCrystals(response.data || [])

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
 
@@ -14,7 +14,7 @@ router.get("/", async (req: Request, res: Response) => {
   let whereCondition = {};
   if (searchTerm) {
     whereCondition = {
-      name: Like(`%${searchTerm}%`),
+      name: ILike(`%${searchTerm}%`),
     };
   }
 

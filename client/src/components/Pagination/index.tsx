@@ -23,10 +23,10 @@ const Pagination = ({ paging = defaultPaging, fetchData }: PaginationT) => {
   const isTablet = width < 768
 
   const [rawSearch, setRawSearch] = useState(null)
-  const debouncedSearch = useDebounce(rawSearch, 1000)
+  const debouncedSearch = useDebounce(rawSearch, 300)
 
   useEffect(() => {
-    // search something
+    fetchData({ page: 1, searchTerm: debouncedSearch })
   }, [debouncedSearch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderDigit = (num) => {
@@ -124,7 +124,7 @@ const Pagination = ({ paging = defaultPaging, fetchData }: PaginationT) => {
         {paging.totalPages > 1 && (
           <>
             {!isTablet && (
-              <Typography sx={{ marginRight: "12px", color: "rgb(157, 157, 157)" }}>
+              <Typography sx={{ marginRight: "12px", color: colors.slateGrey }}>
                 Showing {startItem.toLocaleString()} - {endItem.toLocaleString()} of{" "}
                 {paging.totalCount.toLocaleString()}
               </Typography>
@@ -160,10 +160,7 @@ const Pagination = ({ paging = defaultPaging, fetchData }: PaginationT) => {
                       justifyContent: "center",
                       alignItems: "center",
                       background: page === paging.currentPage ? theme.palette.primary.main : "none",
-                      border:
-                        page === paging.currentPage
-                          ? "none"
-                          : `1px solid ${theme.palette.primary.main}`,
+                      border: `1px solid ${theme.palette.primary.main}`,
                       color: page === paging.currentPage ? "white" : theme.palette.primary.main,
                       borderRadius: "8px",
                       height: "32px",
