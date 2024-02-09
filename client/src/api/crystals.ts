@@ -11,16 +11,18 @@ export const getAllCrystals = async ({
   searchTerm = "",
   page = 1,
   pageSize = 100,
+  noPaging = false,
 }: {
   searchTerm?: string
   page?: number
   pageSize?: number
+  noPaging?: boolean
 }): Promise<{ data: CrystalT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
   }).toString()
-  const endpoint = `/crystals?${query}`
+  const endpoint = noPaging ? "/crystals" : `/crystals?${query}`
   return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")
 }

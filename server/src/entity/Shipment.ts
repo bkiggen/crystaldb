@@ -4,20 +4,19 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
+  ManyToOne,
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-// import { User } from "./User";
+
+import { Subscription } from "./Subscription";
 import { Crystal } from "./Crystal";
 
 @Entity()
 export class Shipment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  // @Column({ type: "date", nullable: true })
-  // shippedOn: Date;
 
   @Column({ type: "int" })
   month: number;
@@ -34,13 +33,12 @@ export class Shipment extends BaseEntity {
   @Column({ type: "int", nullable: true })
   cycleRangeEnd: number;
 
-  // @ManyToMany(() => User)
-  // @JoinTable()
-  // users: User[];
-
   @ManyToMany(() => Crystal)
   @JoinTable()
   crystals: Crystal[];
+
+  @ManyToOne(() => Subscription, (subscription) => subscription.shipments)
+  subscription: Subscription;
 
   @CreateDateColumn()
   createdAt: Date;

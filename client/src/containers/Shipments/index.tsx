@@ -48,6 +48,14 @@ const Shipments = () => {
       },
     },
     {
+      field: "subscriptionType",
+      headerName: "Subscription Type",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return <div>{params.row.subscription?.shortName}</div>
+      },
+    },
+    {
       field: "cycle",
       headerName: "Cycle",
       width: 150,

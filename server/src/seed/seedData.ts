@@ -202,3 +202,9 @@ export const colorData = [
   { name: "Black", hex: "#000000" },
   { name: "White", hex: "#FFFFFF" },
 ];
+
+export const subscriptions = [
+  { name: "Crystal of the Month", shortName: "COM", cost: 64 },
+  { name: "Crystal Variety Box", shortName: "CVB", cost: 128 },
+  { name: "Kids' Box", shortName: "CB", cost: 44 },
+];

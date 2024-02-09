@@ -23,9 +23,11 @@ import { monthOptions } from "../../lib/constants"
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { getAllCrystals } from "../../api/crystals"
+import { getAllSubscriptions } from "../../api/subscriptions"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
+import type { SubscriptionT } from "../../types/Subscription"
 
 import { createShipment } from "../../api/shipments"
 
@@ -35,6 +37,7 @@ type NewShipmentT = {
 
 const NewShipment = ({ addShipment }: NewShipmentT) => {
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
+  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const currentYear = dayjs().year()
@@ -47,6 +50,7 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
     cycleRangeStart: number
     cycleRangeEnd: number
     crystalIds: number[]
+    subscriptionId: number
   } = {
     month: currentMonth,
     year: currentYear,
@@ -54,15 +58,25 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
     cycleRangeStart: 1,
     cycleRangeEnd: 5,
     crystalIds: [],
+    subscriptionId: allSubscriptions[0]?.id || 0,
   }
 
   useEffect(() => {
     const fetchCrystals = async () => {
-      const response = await getAllCrystals()
-      setAllCrystals(response || [])
+      const response = await getAllCrystals({ noPaging: true })
+      setAllCrystals(response.data || [])
     }
     fetchCrystals()
+    const fetchSubscriptionTypes = async () => {
+      const response = await getAllSubscriptions()
+      setAllSubscriptions(response || [])
+    }
+    fetchSubscriptionTypes()
   }, [])
+
+  useEffect(() => {
+    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
+  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
     month: Yup.number().required("Month is required").integer().min(1).max(12),
@@ -74,6 +88,7 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
     cycle: Yup.number().nullable().integer().min(1),
     cycleRangeStart: Yup.number().nullable().integer().min(1),
     cycleRangeEnd: Yup.number().nullable().integer().min(1),
+    subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   }).test(
     "cycle-or-cycleRange",
@@ -230,8 +245,12 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
             )}
           </Grid>
         </Grid>
-        <Grid container spacing={2} sx={{ marginTop: "24px" }}>
-          <Grid item xs={8}>
+        <Grid
+          container
+          spacing={2}
+          sx={{ marginTop: "24px", display: "flex", alignItems: "center" }}
+        >
+          <Grid item xs={8} sx={{ marginTop: "28px" }}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
                 disablePortal
@@ -243,6 +262,10 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
                 options={allCrystals?.map((c) => {
                   return c.id
                 })}
+                getOptionLabel={(option) => {
+                  const crystal = allCrystals.find((c) => c.id === option)
+                  return crystal ? crystal.name : ""
+                }}
                 onChange={(_, value) => {
                   formik.setFieldValue("crystalIds", value)
                 }}
@@ -282,6 +305,30 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
                   return filtered
                 }}
               />
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl fullWidth variant="outlined">
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  marginBottom: "4px",
+                }}
+              >
+                Subscription Type
+              </Typography>
+              <TextField
+                select
+                id="subscriptionId"
+                {...formik.getFieldProps("subscriptionId")}
+                sx={textFieldStyles}
+              >
+                {allSubscriptions.map((subscription) => (
+                  <MenuItem key={subscription.id} value={subscription.id}>
+                    {subscription.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
           </Grid>
         </Grid>

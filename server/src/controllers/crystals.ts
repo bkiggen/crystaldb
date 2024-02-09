@@ -6,7 +6,7 @@ import { Color } from "../entity/Color";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const { page = 1, pageSize = 10, searchTerm } = req.query;
+  const { page = 1, pageSize = 1000, searchTerm } = req.query;
 
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);

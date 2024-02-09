@@ -1,12 +1,15 @@
 import { Router, Request, Response } from "express";
 import { Shipment } from "../entity/Shipment";
+import { Subscription } from "../entity/Subscription";
 import { In } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 
 const router = Router();
 
 router.get("/", async (_req: Request, res: Response) => {
-  const shipments = await Shipment.find({ relations: ["crystals"] });
+  const shipments = await Shipment.find({
+    relations: ["crystals", "subscription"],
+  });
   res.json(shipments);
 });
 
@@ -23,9 +26,14 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { crystalIds, ...shipmentData } = req.body;
+    const { crystalIds, subscriptionId, ...shipmentData } = req.body;
+    const subscription = await Subscription.findOneBy({ id: subscriptionId });
     const crystals = await Crystal.findBy({ id: In(crystalIds) });
-    const shipment = Shipment.create({ ...shipmentData, crystals });
+    const shipment = Shipment.create({
+      ...shipmentData,
+      crystals,
+      subscription,
+    });
     await Shipment.save(shipment);
     res.status(201).json(shipment);
   } catch (error) {
