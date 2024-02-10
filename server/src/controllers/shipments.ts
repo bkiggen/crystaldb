@@ -1,16 +1,42 @@
 import { Router, Request, Response } from "express";
 import { Shipment } from "../entity/Shipment";
 import { Subscription } from "../entity/Subscription";
-import { In } from "typeorm";
+import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 
 const router = Router();
 
-router.get("/", async (_req: Request, res: Response) => {
-  const shipments = await Shipment.find({
+router.get("/", async (req: Request, res: Response) => {
+  const { page = 1, pageSize = 1000, searchTerm, subscriptionId } = req.query;
+
+  const pageNumber = parseInt(page as string);
+  const pageSizeNumber = parseInt(pageSize as string);
+
+  let whereCondition = {};
+
+  whereCondition = {
+    ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
+    ...(searchTerm ? { name: ILike(`%${searchTerm}%`) } : {}),
+  };
+
+  const [result, total] = await Shipment.findAndCount({
+    where: whereCondition,
+    skip: (pageNumber - 1) * pageSizeNumber,
+    take: pageSizeNumber,
+    order: {
+      createdAt: "ASC",
+    },
     relations: ["crystals", "subscription"],
   });
-  res.json(shipments);
+
+  const paging = {
+    totalCount: total,
+    totalPages: Math.ceil(total / pageSizeNumber),
+    currentPage: pageNumber,
+    pageSize: pageSizeNumber,
+  };
+
+  res.json({ data: result, paging });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {

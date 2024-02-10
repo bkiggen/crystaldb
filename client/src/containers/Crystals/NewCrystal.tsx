@@ -108,8 +108,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             margin: "0 auto",
             marginBottom: "48px",
             borderRadius: "4px",
-            maxWidth: "1200px",
-            width: "90%",
           }}
         >
           <Grid container spacing={2}>

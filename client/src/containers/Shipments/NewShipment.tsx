@@ -23,7 +23,6 @@ import { monthOptions } from "../../lib/constants"
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { getAllCrystals } from "../../api/crystals"
-import { getAllSubscriptions } from "../../api/subscriptions"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
@@ -33,11 +32,12 @@ import { createShipment } from "../../api/shipments"
 
 type NewShipmentT = {
   addShipment: (arg: ShipmentT) => void
+  allSubscriptions: SubscriptionT[]
 }
 
-const NewShipment = ({ addShipment }: NewShipmentT) => {
+const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
+
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const currentYear = dayjs().year()
@@ -67,11 +67,6 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
       setAllCrystals(response.data || [])
     }
     fetchCrystals()
-    const fetchSubscriptionTypes = async () => {
-      const response = await getAllSubscriptions()
-      setAllSubscriptions(response || [])
-    }
-    fetchSubscriptionTypes()
   }, [])
 
   useEffect(() => {
@@ -132,8 +127,6 @@ const NewShipment = ({ addShipment }: NewShipmentT) => {
           margin: "0 auto",
           marginBottom: "48px",
           borderRadius: "4px",
-          maxWidth: "1200px",
-          width: "90%",
         }}
       >
         <Grid container spacing={2}>

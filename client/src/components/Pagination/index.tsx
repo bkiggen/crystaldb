@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react"
 
-import { Box, Typography, TextField, InputAdornment, IconButton } from "@mui/material"
+import { Box, Typography, MenuItem, TextField, InputAdornment, IconButton } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
 import { useTheme } from "@mui/material/styles"
 
 import colors from "../../styles/colors"
+import { textFieldStyles } from "../../styles/vars"
 
 import useWindowSize from "../../hooks/useWindowSize"
 import useDebounce from "../../hooks/useDebounce"
@@ -15,9 +16,16 @@ import { defaultPaging } from "../../types/Paging"
 type PaginationT = {
   paging: PagingT
   fetchData: (arg?: Record<string, unknown>) => void
+  withoutSearch?: boolean
+  filterOptions?: { label: string; value: string | number }[]
 }
 
-const Pagination = ({ paging = defaultPaging, fetchData }: PaginationT) => {
+const Pagination = ({
+  paging = defaultPaging,
+  fetchData,
+  withoutSearch = false,
+  filterOptions = null,
+}: PaginationT) => {
   const theme = useTheme()
   const { width } = useWindowSize()
   const isTablet = width < 768
@@ -87,33 +95,62 @@ const Pagination = ({ paging = defaultPaging, fetchData }: PaginationT) => {
         border: "1px solid #fff",
       }}
     >
-      <TextField
-        placeholder="Filter"
-        value={rawSearch}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setRawSearch(event.target.value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconButton>
-                <SearchIcon sx={{ color: "white", marginLeft: "-8px" }} />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          "& .MuiInputBase-root": {
-            height: "42px",
-            background: colors.slateGrey,
-            color: "white",
-            border: "1px solid white",
-          },
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        {!withoutSearch ? (
+          <TextField
+            placeholder="Search"
+            value={rawSearch}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setRawSearch(event.target.value)
+            }
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton>
+                    <SearchIcon sx={{ color: "white", marginLeft: "-8px" }} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& .MuiInputBase-root": {
+                height: "42px",
+                background: colors.slateGrey,
+                color: "white",
+                border: "1px solid white",
+              },
 
-          borderRadius: "4px",
-          marginLeft: isTablet ? "0" : "12px",
-          marginTop: isTablet ? "12px" : "0",
-          width: isTablet ? "100%" : "240px",
-        }}
-      />
+              borderRadius: "4px",
+              marginLeft: isTablet ? "0" : "12px",
+              marginTop: isTablet ? "12px" : "0",
+              width: isTablet ? "100%" : "240px",
+            }}
+          />
+        ) : null}
+        {filterOptions ? (
+          <TextField
+            select
+            id="filter"
+            placeholder="Filter"
+            defaultValue="All"
+            onChange={(event) =>
+              fetchData({
+                subscriptionId: event.target.value === "All" ? null : event.target.value,
+              })
+            }
+            sx={{ ...textFieldStyles, minWidth: "200px" }}
+          >
+            <MenuItem key="All" value="All">
+              All
+            </MenuItem>
+            {filterOptions.map((option) => (
+              <MenuItem key={option.label} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        ) : null}
+      </Box>
       <Box
         sx={{
           display: "flex",
