@@ -28,3 +28,8 @@ export const getAllShipments = async ({
 
   return makeRestRequest<{ data: ShipmentT[]; paging: PagingT }>(`/shipments?${query}`, "GET")
 }
+
+export const updateShipment = async (updatedShipment: ShipmentT): Promise<ShipmentT> => {
+  const endpoint = `/shipments/${updatedShipment.id}`
+  return makeRestRequest<ShipmentT>(endpoint, "PUT", JSON.stringify(updatedShipment))
+}

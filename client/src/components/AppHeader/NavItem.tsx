@@ -10,13 +10,15 @@ type NavItemT = {
 }
 
 const NavItem = ({ linkTo, title, pathname }: NavItemT) => {
+  const color = pathname === linkTo ? colors.pink : "white"
+
   return (
     <Box sx={{ marginRight: "48px" }}>
       <Link to={linkTo}>
         <Typography
           variant="h6"
           sx={{
-            color: pathname === linkTo ? colors.pink : "white",
+            color,
             fontWeight: "500",
             "&:hover": {
               color: colors.pink,

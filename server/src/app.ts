@@ -5,6 +5,7 @@ import { appDataSource } from "./appDataSource";
 import crystalRoutes from "./controllers/crystals";
 import colorRoutes from "./controllers/colors";
 import shipmentRoutes from "./controllers/shipments";
+import preBuildRoutes from "./controllers/preBuilds";
 import subscriptionRoutes from "./controllers/subscriptions";
 
 const app = express();
@@ -20,6 +21,7 @@ const main = async () => {
     app.use("/colors", colorRoutes);
     app.use("/shipments", shipmentRoutes);
     app.use("/subscriptions", subscriptionRoutes);
+    app.use("/preBuilds", preBuildRoutes);
 
     app.listen(4000, () => {
       console.log("REST API server running at http://localhost:4000/");

@@ -4,7 +4,7 @@ import { Box } from "@mui/material"
 import { Link } from "react-router-dom"
 import NavItem from "./NavItem"
 
-const Home = () => {
+const AppHeader = () => {
   const { pathname } = useLocation()
 
   return (
@@ -40,12 +40,12 @@ const Home = () => {
           flexGrow: 1,
         }}
       >
+        <NavItem linkTo="/" title="Shipments" pathname={pathname} />
         <NavItem linkTo="/crystals" title="Crystals" pathname={pathname} />
-        <NavItem linkTo="/shipments" title="Shipments" pathname={pathname} />
-        <NavItem linkTo="/build" title="Build" pathname={pathname} />
+        <NavItem linkTo="/pre-builds" title="Pre-Builds " pathname={pathname} />
       </Box>
     </Box>
   )
 }
 
-export default Home
+export default AppHeader

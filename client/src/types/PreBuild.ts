@@ -1,10 +1,8 @@
-import { CrystalT } from "./Crystal"
+import type { CrystalT } from "./Crystal"
 import type { SubscriptionT } from "./Subscription"
 
-export type ShipmentT = {
+export type PreBuildT = {
   id: number
-  month: number
-  year: number
   cycle: number
   cycleRangeStart: number
   cycleRangeEnd: number
@@ -13,5 +11,5 @@ export type ShipmentT = {
   createdAt?: string
   updatedAt?: string
   subscriptionId: number
-  subscription?: SubscriptionT
+  subscription: SubscriptionT
 }

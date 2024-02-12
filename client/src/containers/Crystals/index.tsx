@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 
-import { Box } from "@mui/material"
+import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 // import dayjs from "dayjs"
 
@@ -104,7 +104,7 @@ const Crystals = () => {
   ]
 
   return (
-    <Box sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
+    <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewCrystal addCrystal={addCrystal} />
       <Pagination fetchData={getCrystals} paging={paging} />
 
@@ -123,7 +123,7 @@ const Crystals = () => {
         className="bg-white p-0"
         autoHeight
       />
-    </Box>
+    </Container>
   )
 }
 

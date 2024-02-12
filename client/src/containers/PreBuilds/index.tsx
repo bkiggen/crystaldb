@@ -2,31 +2,28 @@ import React, { useState, useEffect } from "react"
 import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
-import { monthOptions } from "../../lib/constants"
-
-import { getAllShipments } from "../../api/shipments"
+import { getAllPreBuilds } from "../../api/preBuilds"
 import { getAllSubscriptions } from "../../api/subscriptions"
 
-import type { ShipmentT } from "../../types/Shipment"
+import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
-
 import type { PagingT } from "../../types/Paging"
 import { defaultPaging } from "../../types/Paging"
-import Pagination from "../../components/Pagination"
-import NewShipment from "./NewShipment"
-import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
-const Shipments = () => {
-  const [shipments, setShipments] = useState<ShipmentT[] | null>(null)
+import UpdatePreBuildModal from "./UpdatePreBuildModal"
+import Pagination from "../../components/Pagination"
+import NewPreBuild from "./NewPreBuild"
+
+const PreBuilds = () => {
+  const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
   const [paging, setPaging] = useState<PagingT>(defaultPaging)
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
-  const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
-  console.log("🚀 ~ Shipments ~ selectedShipment:", selectedShipment)
+  const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
 
-  const fetchShipments = async (args) => {
-    const response = await getAllShipments(args)
-    setShipments(response.data)
+  const fetchPreBuilds = async (args) => {
+    const response = await getAllPreBuilds(args)
+    setPreBuilds(response.data)
     setPaging(response.paging)
   }
 
@@ -36,14 +33,14 @@ const Shipments = () => {
   }
 
   useEffect(() => {
-    fetchShipments({})
+    fetchPreBuilds({})
     fetchSubscriptionTypes()
   }, [])
 
-  const addShipment = (newShipment: ShipmentT) => {
-    setShipments((prevShipments) => {
-      if (prevShipments) {
-        return [...prevShipments, newShipment]
+  const addPreBuild = (newPreBuild: PreBuildT) => {
+    setPreBuilds((prevPreBuilds) => {
+      if (prevPreBuilds) {
+        return [...prevPreBuilds, newPreBuild]
       }
       return null
     })
@@ -51,23 +48,17 @@ const Shipments = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "month",
-      headerName: "Month",
-      width: 120,
+      field: "cycle",
+      headerName: "Cycle",
+      width: 100,
       align: "center",
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <div>{monthOptions[params.row.month]?.short}</div>
-      },
-    },
-    {
-      field: "year",
-      headerName: "Year",
-      width: 120,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.year}</div>
+        return (
+          <div>
+            {params.row.cycle || `${params.row.cycleRangeStart} - ${params.row.cycleRangeEnd}`}
+          </div>
+        )
       },
     },
     {
@@ -78,20 +69,6 @@ const Shipments = () => {
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return <div>{params.row.subscription?.shortName}</div>
-      },
-    },
-    {
-      field: "cycle",
-      headerName: "Cycle",
-      width: 120,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params: GridCellParams) => {
-        return (
-          <div>
-            {params.row.cycle || `${params.row.cycleRangeStart} - ${params.row.cycleRangeEnd}`}
-          </div>
-        )
       },
     },
     {
@@ -141,16 +118,16 @@ const Shipments = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewShipment addShipment={addShipment} allSubscriptions={allSubscriptions} />
-      {selectedShipment ? (
-        <UpdateShipmentModal
-          shipment={selectedShipment}
-          setSelectedShipment={setSelectedShipment}
-          fetchShipments={fetchShipments}
+      <NewPreBuild addPreBuild={addPreBuild} allSubscriptions={allSubscriptions} />
+      {selectedPrebuild ? (
+        <UpdatePreBuildModal
+          preBuild={selectedPrebuild}
+          setSelectedPreBuild={setSelectedPreBuild}
+          fetchPreBuilds={fetchPreBuilds}
         />
       ) : null}
       <Pagination
-        fetchData={fetchShipments}
+        fetchData={fetchPreBuilds}
         paging={paging}
         filterOptions={allSubscriptions.map((s) => {
           return {
@@ -166,9 +143,9 @@ const Shipments = () => {
           color: "white",
         }}
         rowHeight={120}
-        rows={shipments || []}
-        onRowClick={(params) => {
-          setSelectedShipment(params.row as ShipmentT)
+        rows={preBuilds || []}
+        onRowClick={(item) => {
+          setSelectedPreBuild(item.row)
         }}
         columns={columns}
         disableColumnMenu
@@ -183,4 +160,4 @@ const Shipments = () => {
   )
 }
 
-export default Shipments
+export default PreBuilds
