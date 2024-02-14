@@ -40,8 +40,8 @@ const Crystals = () => {
     {
       field: "name",
       headerName: "Name",
-      width: 300,
-      flex: 2,
+      minWidth: 300,
+      flex: 3,
       renderCell: (params: GridCellParams) => {
         return <Box sx={{ textTransform: "capitalize" }}>{params.row.name}</Box>
       },
@@ -49,20 +49,40 @@ const Crystals = () => {
     {
       field: "color",
       headerName: "Color",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ColorIndicator indicatorValue={params.row.color?.hex} />
+          </Box>
+        )
+      },
+    },
+    {
+      field: "size",
+      headerName: "Size",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
+          </Box>
+        )
+      },
+    },
+    {
+      field: "inventory",
+      headerName: "Inventory",
       width: 150,
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box
-              sx={{
-                width: "12px",
-                height: "12px",
-                borderRadius: "50%",
-                backgroundColor: params.row.color?.hex,
-                marginRight: "8px",
-              }}
-            />
-            <Box sx={{ textTransform: "capitalize" }}>{params.row.color?.name}</Box>
+            <ColorIndicator indicatorType="inventory" indicatorValue={params.row.inventory} />
+            {params.row.inventory}
           </Box>
         )
       },
@@ -70,7 +90,7 @@ const Crystals = () => {
     {
       field: "rarity",
       headerName: "Rarity",
-      width: 150,
+      width: 130,
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -83,7 +103,7 @@ const Crystals = () => {
     {
       field: "findAge",
       headerName: "Find Age",
-      width: 150,
+      width: 130,
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -96,7 +116,7 @@ const Crystals = () => {
     {
       field: "category",
       headerName: "Category",
-      width: 200,
+      width: 150,
       renderCell: (params: GridCellParams) => {
         return <Box sx={{ textTransform: "capitalize" }}>{params.row.category}</Box>
       },
@@ -107,11 +127,13 @@ const Crystals = () => {
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewCrystal addCrystal={addCrystal} />
       <Pagination fetchData={getCrystals} paging={paging} />
-
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
           color: "white",
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: 800,
+          },
         }}
         rows={crystals || []}
         columns={columns}

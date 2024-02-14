@@ -26,7 +26,7 @@ const ModalContainer = ({
       sx={{
         maxHeight: "50hv",
         overflowY: "auto",
-        backgroundColor: colors.slate,
+        backgroundColor: colors.slateA4,
         "& .MuiPaper-root": {
           margin: "15% auto",
           width: "50vw",
@@ -38,7 +38,7 @@ const ModalContainer = ({
         ...modalStyles,
       }}
     >
-      <Paper sx={{ outline: "none", background: colors.slateGrey }}>
+      <Paper sx={{ outline: "none", background: colors.slate }}>
         {title && (
           <Typography
             sx={{

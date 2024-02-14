@@ -101,7 +101,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slate,
+            background: colors.slateA4,
             border: "1px solid #fff",
             padding: "24px",
             paddingTop: "48px",
@@ -220,17 +220,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
               />
             </Grid>
           </Grid>
-
-          {/* <Box mt={2}>
-            <TextField
-              id="image"
-              label="Image URL"
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("image")}
-              sx={textFieldStyles}
-            />
-          </Box> */}
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button type="submit" variant="contained" color="primary">
               Create Crystal

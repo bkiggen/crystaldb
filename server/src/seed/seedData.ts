@@ -33,6 +33,7 @@ export const crystalNames = [
   "Brazilian Kunzite",
   "Brazilian Kunzite Set",
   "Brazilian Quartz",
+  "Brazilian Quartz Clusters",
   "Brazilian Quartz Set",
   "Brazilian Smokey Quartz",
   "Calumet Epidote & Bassalt",
@@ -76,6 +77,7 @@ export const crystalNames = [
   "Green Lepidolite",
   "Green Star Mica",
   "Green Tourmaline & Quartz",
+  "Green Opal Palm Stone",
   "Gypsum",
   "Hematite",
   "Hematite Picture Quartz",
@@ -203,7 +205,7 @@ export const colorData = [
   { name: "White", hex: "#FFFFFF" },
 ];
 
-export const subscriptions = [
+export const subscriptionData = [
   { name: "Crystal of the Month", shortName: "COM", cost: 64 },
   { name: "Crystal Variety Box", shortName: "CVB", cost: 128 },
   { name: "Kids' Box", shortName: "KB", cost: 44 },

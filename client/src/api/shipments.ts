@@ -33,3 +33,9 @@ export const updateShipment = async (updatedShipment: ShipmentT): Promise<Shipme
   const endpoint = `/shipments/${updatedShipment.id}`
   return makeRestRequest<ShipmentT>(endpoint, "PUT", JSON.stringify(updatedShipment))
 }
+
+export const deleteShipment = async (shipmentId: number): Promise<ShipmentT> => {
+  const endpoint = `/shipments/${shipmentId}`
+  console.log("🚀 ~ deleteShipment ~ endpoint:", endpoint)
+  return makeRestRequest<ShipmentT>(endpoint, "DELETE")
+}

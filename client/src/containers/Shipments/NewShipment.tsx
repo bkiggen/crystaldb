@@ -29,6 +29,7 @@ import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
 
 import { createShipment } from "../../api/shipments"
+import ColorIndicator from "../../components/ColorIndicator"
 
 type NewShipmentT = {
   addShipment: (arg: ShipmentT) => void
@@ -69,12 +70,16 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
     fetchCrystals()
   }, [])
 
-  useEffect(() => {
+  const resetSubType = () => {
     formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
+  }
+
+  useEffect(() => {
+    resetSubType()
   }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
-    month: Yup.number().required("Month is required").integer().min(1).max(12),
+    month: Yup.number().required("Month is required").integer().min(0).max(11),
     year: Yup.number()
       .required("Year is required")
       .integer()
@@ -107,7 +112,8 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
     }
     const newCycle = await createShipment(formData)
     addShipment(newCycle)
-    formik.resetForm()
+    await formik.resetForm()
+    resetSubType()
   }
 
   const formik = useFormik({
@@ -120,7 +126,7 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
     <form onSubmit={formik.handleSubmit}>
       <Box
         sx={{
-          background: colors.slate,
+          background: colors.slateA4,
           border: "1px solid #fff",
           padding: "24px",
           paddingTop: "48px",
@@ -263,14 +269,23 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
                   formik.setFieldValue("crystalIds", value)
                 }}
                 renderTags={(value: number[], getTagProps) => {
-                  return value.map((option: number, index: number) => (
-                    <Chip
-                      variant="outlined"
-                      label={allCrystals.find((c) => c.id === option)?.name}
-                      {...getTagProps({ index })}
-                      sx={{ color: "white" }}
-                    />
-                  ))
+                  return value.map((option: number, index: number) => {
+                    const crystal = allCrystals.find((c) => c.id === option)
+
+                    return (
+                      <Chip
+                        variant="outlined"
+                        label={
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <ColorIndicator indicatorValue={crystal?.color?.hex} />
+                            {crystal?.name}
+                          </Box>
+                        }
+                        {...getTagProps({ index })}
+                        sx={{ color: "white" }}
+                      />
+                    )
+                  })
                 }}
                 renderInput={(params) => {
                   return (
@@ -283,11 +298,15 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
                     />
                   )
                 }}
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  const crystal: CrystalT = allCrystals.find((c) => c.id === option)
+                  return (
+                    <li {...props}>
+                      <ColorIndicator indicatorValue={crystal?.color?.hex} />
+                      <ListItemText primary={crystal?.name} />
+                    </li>
+                  )
+                }}
                 filterOptions={(options, params) => {
                   const filtered = options.filter((option) => {
                     const crystal = allCrystals.find((c) => c.id === option)

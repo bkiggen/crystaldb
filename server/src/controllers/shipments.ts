@@ -88,7 +88,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     return res.status(404).send("Shipment not found");
   }
   await Shipment.remove(shipment);
-  res.status(204).send();
+  res.json(shipment);
 });
 
 export default router;

@@ -83,7 +83,7 @@ const Pagination = ({
   return (
     <Box
       sx={{
-        background: colors.slate,
+        background: colors.slateA4,
         marginBottom: "12px",
         minHeight: "56px",
         display: "flex",
@@ -115,7 +115,7 @@ const Pagination = ({
             sx={{
               "& .MuiInputBase-root": {
                 height: "42px",
-                background: colors.slateGrey,
+                background: colors.slateA4Grey,
                 color: "white",
                 border: "1px solid white",
               },
@@ -161,7 +161,7 @@ const Pagination = ({
         {paging.totalPages > 1 && (
           <>
             {!isTablet && (
-              <Typography sx={{ marginRight: "12px", color: colors.slateGrey }}>
+              <Typography sx={{ marginRight: "12px", color: colors.slateA4Grey }}>
                 Showing {startItem.toLocaleString()} - {endItem.toLocaleString()} of{" "}
                 {paging.totalCount.toLocaleString()}
               </Typography>

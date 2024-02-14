@@ -14,6 +14,7 @@ import { defaultPaging } from "../../types/Paging"
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
 import NewPreBuild from "./NewPreBuild"
+import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
   const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
@@ -94,16 +95,7 @@ const PreBuilds = () => {
                   alignItems: "center",
                 }}
               >
-                {crystal.color?.hex ? (
-                  <Box
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor: crystal.color?.hex,
-                    }}
-                  />
-                ) : null}
+                <ColorIndicator indicatorValue={crystal.color?.hex} />
                 <Box sx={{ marginRight: "6px" }}>
                   {crystal.name}
                   {idx !== params.row.crystals.length - 1 ? "," : ""}

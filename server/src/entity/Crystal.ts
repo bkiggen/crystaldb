@@ -20,6 +20,21 @@ export enum FindAge {
   DEAD = "DEAD",
 }
 
+export enum Size {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+}
+
+export enum Inventory {
+  HIGH = "HIGH",
+  MEDIUM = "MEDIUM",
+  LOW = "LOW",
+  OUT = "OUT",
+}
+
 @Entity()
 export class Crystal extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -37,7 +52,6 @@ export class Crystal extends BaseEntity {
   @Column({
     type: "enum",
     enum: Rarity,
-    default: Rarity.LOW,
     nullable: true,
   })
   rarity: Rarity;
@@ -51,10 +65,24 @@ export class Crystal extends BaseEntity {
   @Column({
     type: "enum",
     enum: FindAge,
-    default: FindAge.NEW,
     nullable: true,
   })
   findAge: FindAge;
+
+  @Column({
+    type: "enum",
+    enum: Size,
+    nullable: true,
+  })
+  size: Size;
+
+  @Column({
+    type: "enum",
+    enum: Inventory,
+    default: Inventory.HIGH,
+    nullable: true,
+  })
+  inventory: Inventory;
 
   @CreateDateColumn()
   createdAt: Date;

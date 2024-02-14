@@ -2,40 +2,38 @@ import { appDataSource } from "../appDataSource";
 import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
 import { Subscription } from "../entity/Subscription";
-import { colorData, crystalNames, subscriptions } from "./seedData";
+import { Shipment } from "../entity/Shipment";
+import { In } from "typeorm";
+import { colorData, crystalNames, subscriptionData } from "./seedData";
+import { shipmentData } from "./shipmentSeedData";
 
-async function seedDatabase() {
-  await appDataSource.initialize();
-
-  const crystalRepository = appDataSource.getRepository(Crystal);
-  const colorRepository = appDataSource.getRepository(Color);
+const seedSubscriptions = async () => {
   const subscriptionRepository = appDataSource.getRepository(Subscription);
-
-  // Seed subscriptions
-  for (const { name, shortName, cost } of subscriptions) {
+  for (const { name, shortName, cost } of subscriptionData) {
     let subscription = await subscriptionRepository.findOneBy({ name });
     if (!subscription) {
       subscription = subscriptionRepository.create({ name, shortName, cost });
-    } else {
-      subscription.shortName = shortName;
-      subscription.cost = cost;
     }
     await subscriptionRepository.save(subscription);
   }
   console.log("Subscription types seeded!");
+};
 
+const seedColors = async () => {
+  const colorRepository = appDataSource.getRepository(Color);
   // Seed colors
   for (const { name, hex } of colorData) {
     let color = await colorRepository.findOneBy({ name });
     if (!color) {
       color = colorRepository.create({ name, hex });
-    } else {
-      color.hex = hex;
     }
     await colorRepository.save(color);
   }
   console.log("Colors seeded!");
+};
 
+const seedCrystals = async () => {
+  const crystalRepository = appDataSource.getRepository(Crystal);
   // Seed crystals
   for (const crystalName of crystalNames) {
     let crystal = await crystalRepository.findOneBy({ name: crystalName });
@@ -49,16 +47,53 @@ async function seedDatabase() {
         image: null,
         findAge: "NEW",
       });
-    } else {
-      // Update properties if necessary
-      // crystal.someProperty = "New Value"; // Example for updating an existing crystal
     }
     await crystalRepository.save(crystal);
   }
   console.log("Crystals seeded!");
+};
+
+const seedShipments = async () => {
+  const shipmentRepository = appDataSource.getRepository(Shipment);
+  const subscriptionRepository = appDataSource.getRepository(Subscription);
+  const crystalRepository = appDataSource.getRepository(Crystal);
+  for (const shipmentDataItem of shipmentData) {
+    const { month, year, cycle, crystalNames, subscriptionShortName } =
+      shipmentDataItem;
+    const subscription = await subscriptionRepository.findOneBy({
+      shortName: subscriptionShortName,
+    });
+    if (!subscription) {
+      throw new Error(`Subscription not found: ${subscriptionShortName}`);
+    }
+    const crystals = await crystalRepository.find({
+      where: { name: In(crystalNames) },
+    });
+    if (crystals.length !== crystalNames.length) {
+      throw new Error(`Some crystals not found: ${crystalNames}`);
+    }
+    const shipment = shipmentRepository.create({
+      month,
+      year,
+      cycle,
+      subscription,
+      crystals,
+    });
+    await shipmentRepository.save(shipment);
+  }
+  console.log("Shipments seeded!");
+};
+
+const seedDatabase = async () => {
+  await appDataSource.initialize();
+
+  seedSubscriptions();
+  seedColors();
+  seedCrystals();
+  seedShipments();
 
   await appDataSource.destroy(); // Close the connection once done
-}
+};
 
 seedDatabase().catch((error) => {
   console.error("Error seeding the database:", error);

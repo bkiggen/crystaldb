@@ -23,7 +23,7 @@ import { monthOptions } from "../../lib/constants"
 
 import { getAllCrystals } from "../../api/crystals"
 import { getAllSubscriptions } from "../../api/subscriptions"
-import { updateShipment } from "../../api/shipments"
+import { updateShipment, deleteShipment } from "../../api/shipments"
 
 import { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
@@ -45,6 +45,7 @@ const UpdateShipmentModal = ({
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
@@ -57,6 +58,12 @@ const UpdateShipmentModal = ({
   useEffect(() => {
     fetchSubscriptionTypes()
   }, [])
+
+  const handleDelete = async () => {
+    await deleteShipment(shipment.id)
+    setSelectedShipment(null)
+    fetchShipments({})
+  }
 
   const initialValues: {
     month: number
@@ -137,16 +144,19 @@ const UpdateShipmentModal = ({
   })
 
   return (
-    <ModalContainer open onClose={() => setSelectedShipment(null)} title="Update shipment">
+    <ModalContainer
+      open
+      onClose={() => setSelectedShipment(null)}
+      title="Update shipment"
+      paperStyles={{ maxWidth: "600px", width: "100%" }}
+    >
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slate,
-            border: "1px solid #fff",
+            background: colors.slateA4,
             padding: "24px",
             paddingTop: "48px",
             margin: "0 auto",
-            marginBottom: "48px",
             borderRadius: "4px",
           }}
         >
@@ -351,7 +361,20 @@ const UpdateShipmentModal = ({
             </Grid>
           </Grid>
 
-          <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box mt={3} sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                if (deleteConfirm) {
+                  handleDelete()
+                } else {
+                  setDeleteConfirm(true)
+                }
+              }}
+            >
+              {deleteConfirm ? "Confirm Delete" : "Delete"}
+            </Button>
             <Button type="submit" variant="contained" color="primary">
               Update
             </Button>

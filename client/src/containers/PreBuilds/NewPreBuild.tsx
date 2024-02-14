@@ -23,6 +23,7 @@ import { getAllCrystals } from "../../api/crystals"
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
+import ColorIndicator from "../../components/ColorIndicator"
 
 import { createPreBuild } from "../../api/preBuilds"
 
@@ -103,7 +104,7 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
     <form onSubmit={formik.handleSubmit}>
       <Box
         sx={{
-          background: colors.slate,
+          background: colors.slateA4,
           border: "1px solid #fff",
           padding: "24px",
           paddingTop: "48px",
@@ -232,14 +233,23 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
                   formik.setFieldValue("crystalIds", value)
                 }}
                 renderTags={(value: number[], getTagProps) => {
-                  return value.map((option: number, index: number) => (
-                    <Chip
-                      variant="outlined"
-                      label={allCrystals.find((c) => c.id === option)?.name}
-                      {...getTagProps({ index })}
-                      sx={{ color: "white" }}
-                    />
-                  ))
+                  return value.map((option: number, index: number) => {
+                    const crystal = allCrystals.find((c) => c.id === option)
+
+                    return (
+                      <Chip
+                        variant="outlined"
+                        label={
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <ColorIndicator indicatorValue={crystal?.color?.hex} />
+                            {crystal?.name}
+                          </Box>
+                        }
+                        {...getTagProps({ index })}
+                        sx={{ color: "white" }}
+                      />
+                    )
+                  })
                 }}
                 renderInput={(params) => {
                   return (
@@ -252,11 +262,15 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
                     />
                   )
                 }}
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  const crystal: CrystalT = allCrystals.find((c) => c.id === option)
+                  return (
+                    <li {...props}>
+                      <ColorIndicator indicatorValue={crystal?.color?.hex} />
+                      <ListItemText primary={crystal?.name} />
+                    </li>
+                  )
+                }}
                 filterOptions={(options, params) => {
                   const filtered = options.filter((option) => {
                     const crystal = allCrystals.find((c) => c.id === option)

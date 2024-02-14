@@ -22,7 +22,6 @@ const Shipments = () => {
   const [paging, setPaging] = useState<PagingT>(defaultPaging)
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
-  console.log("🚀 ~ Shipments ~ selectedShipment:", selectedShipment)
 
   const fetchShipments = async (args) => {
     const response = await getAllShipments(args)
@@ -124,6 +123,7 @@ const Shipments = () => {
                       height: "12px",
                       borderRadius: "50%",
                       backgroundColor: crystal.color?.hex,
+                      marginRight: "6px",
                     }}
                   />
                 ) : null}
