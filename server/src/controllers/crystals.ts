@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
+import { suggestCrystals } from "../services/crystalService";
 
 const router = Router();
 
@@ -36,6 +37,51 @@ router.get("/", async (req: Request, res: Response) => {
   };
 
   res.json({ data: result, paging });
+});
+
+router.get("/suggested", async (req: Request, res: Response) => {
+  const {
+    page = 1,
+    pageSize = 1000,
+    searchTerm,
+    selectedCrystalIds,
+    excludedCrystalIds,
+    subscriptionType,
+    month,
+    year,
+    cycle,
+  } = req.query;
+
+  // TODO: handle cycle range
+
+  const selectedCrystalIdsArray = selectedCrystalIds.length
+    ? (selectedCrystalIds as string).split(",")
+    : [];
+  const excludedCrystalIdsArray = excludedCrystalIds.length
+    ? (excludedCrystalIds as string).split(",")
+    : [];
+
+  const suggestions = await suggestCrystals({
+    selectedCrystalIds: selectedCrystalIdsArray,
+    excludedCrystalIds: excludedCrystalIdsArray,
+    subscriptionType: subscriptionType as string,
+    month: parseInt(month as string),
+    year: parseInt(year as string),
+    cycle: parseInt(cycle as string),
+  });
+
+  const total = 100;
+  const pageNumber = parseInt(page as string);
+  const pageSizeNumber = parseInt(pageSize as string);
+
+  const paging = {
+    totalCount: total,
+    totalPages: Math.ceil(total / pageSizeNumber),
+    currentPage: pageNumber,
+    pageSize: pageSizeNumber,
+  };
+
+  res.json({ data: suggestions, paging });
 });
 
 router.get("/:id", async (req: Request, res: Response) => {

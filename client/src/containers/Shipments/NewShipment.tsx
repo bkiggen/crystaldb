@@ -4,32 +4,20 @@ import { useFormik } from "formik"
 import dayjs from "dayjs"
 
 import * as Yup from "yup"
-import {
-  Box,
-  TextField,
-  Button,
-  FormControl,
-  Chip,
-  Grid,
-  ListItemText,
-  Autocomplete,
-  Typography,
-  MenuItem,
-} from "@mui/material"
-// import CloseIcon from "@mui/icons-material/Close";
+import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from "@mui/material"
 
 import { monthOptions } from "../../lib/constants"
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-import { getAllCrystals } from "../../api/crystals"
 
 import type { ShipmentT } from "../../types/Shipment"
-import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
 
 import { createShipment } from "../../api/shipments"
-import ColorIndicator from "../../components/ColorIndicator"
+
+import CrystalSelect from "../../components/CrystalSelect"
+import SmartSelect from "../../components/SmartSelect"
 
 type NewShipmentT = {
   addShipment: (arg: ShipmentT) => void
@@ -37,8 +25,6 @@ type NewShipmentT = {
 }
 
 const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
-
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const currentYear = dayjs().year()
@@ -61,14 +47,6 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
     crystalIds: [],
     subscriptionId: allSubscriptions[0]?.id || 0,
   }
-
-  useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
-  }, [])
 
   const resetSubType = () => {
     formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
@@ -249,76 +227,6 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
           spacing={2}
           sx={{ marginTop: "24px", display: "flex", alignItems: "center" }}
         >
-          <Grid item xs={8} sx={{ marginTop: "28px" }}>
-            <FormControl fullWidth variant="outlined">
-              <Autocomplete
-                disablePortal
-                id="crystal-select"
-                disableCloseOnSelect
-                multiple
-                defaultValue={formik.values.crystalIds}
-                value={formik.values.crystalIds}
-                options={allCrystals?.map((c) => {
-                  return c.id
-                })}
-                getOptionLabel={(option) => {
-                  const crystal = allCrystals.find((c) => c.id === option)
-                  return crystal ? crystal.name : ""
-                }}
-                onChange={(_, value) => {
-                  formik.setFieldValue("crystalIds", value)
-                }}
-                renderTags={(value: number[], getTagProps) => {
-                  return value.map((option: number, index: number) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
-
-                    return (
-                      <Chip
-                        variant="outlined"
-                        label={
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <ColorIndicator indicatorValue={crystal?.color?.hex} />
-                            {crystal?.name}
-                          </Box>
-                        }
-                        {...getTagProps({ index })}
-                        sx={{ color: "white" }}
-                      />
-                    )
-                  })
-                }}
-                renderInput={(params) => {
-                  return (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      label="Crystals"
-                      placeholder="Search"
-                      sx={textFieldStyles}
-                    />
-                  )
-                }}
-                renderOption={(props, option) => {
-                  const crystal: CrystalT = allCrystals.find((c) => c.id === option)
-                  return (
-                    <li {...props}>
-                      <ColorIndicator indicatorValue={crystal?.color?.hex} />
-                      <ListItemText primary={crystal?.name} />
-                    </li>
-                  )
-                }}
-                filterOptions={(options, params) => {
-                  const filtered = options.filter((option) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
-                    if (!crystal) return
-                    return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
-                  })
-
-                  return filtered
-                }}
-              />
-            </FormControl>
-          </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth variant="outlined">
               <Typography
@@ -344,8 +252,18 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
             </FormControl>
           </Grid>
         </Grid>
-
-        <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box
+          sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0 24px 0" }}
+        />
+        <Grid container>
+          <FormControl fullWidth variant="outlined">
+            <SmartSelect formik={formik} />
+          </FormControl>
+          <FormControl fullWidth variant="outlined">
+            <CrystalSelect formik={formik} />
+          </FormControl>
+        </Grid>
+        <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
           <Button type="submit" variant="contained" color="primary">
             Create Shipment
           </Button>

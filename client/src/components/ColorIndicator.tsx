@@ -23,7 +23,8 @@ const ColorIndicator = ({ indicatorType, indicatorValue }: ColorIndicatorT) => {
         height: "10px",
         borderRadius: "50%",
         backgroundColor: bg || "transparent",
-        border: bg ? `1px solid ${bg}` : "1px solid black",
+        border: bg ? `1px solid ${bg}` : "none",
+        boxShadow: bg ? "none" : "0 0 0 1px #1c1c1c",
         marginRight: "6px",
       }}
     />

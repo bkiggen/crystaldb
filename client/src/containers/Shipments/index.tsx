@@ -16,6 +16,7 @@ import { defaultPaging } from "../../types/Paging"
 import Pagination from "../../components/Pagination"
 import NewShipment from "./NewShipment"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
+import ColorIndicator from "../../components/ColorIndicator"
 
 const Shipments = () => {
   const [shipments, setShipments] = useState<ShipmentT[] | null>(null)
@@ -116,17 +117,7 @@ const Shipments = () => {
                   alignItems: "center",
                 }}
               >
-                {crystal.color?.hex ? (
-                  <Box
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      backgroundColor: crystal.color?.hex,
-                      marginRight: "6px",
-                    }}
-                  />
-                ) : null}
+                <ColorIndicator indicatorValue={crystal.color?.hex} />
                 <Box sx={{ marginRight: "6px" }}>
                   {crystal.name}
                   {idx !== params.row.crystals.length - 1 ? "," : ""}
