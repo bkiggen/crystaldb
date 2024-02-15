@@ -7,7 +7,6 @@ import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from 
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-import { getAllCrystals } from "../../api/crystals"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { SubscriptionT } from "../../types/Subscription"
@@ -36,14 +35,6 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
     crystalIds: [],
     subscriptionId: allSubscriptions[0]?.id || 0,
   }
-
-  useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
-  }, [])
 
   useEffect(() => {
     formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)

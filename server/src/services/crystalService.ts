@@ -4,6 +4,7 @@ import { PreBuild } from "../entity/PreBuild";
 import { In, Not, MoreThan } from "typeorm";
 
 // TODO: handle cycle range
+// TODO: limit by sub type
 
 const getPreviousShipmentCrystalIds = async (
   month: number,

@@ -7,7 +7,7 @@ import { Box, TextField, Button, MenuItem, FormControl, InputLabel, Grid } from 
 
 import { textFieldStyles } from "../../styles/vars"
 
-import type { CrystalT, RarityT, FindAgeT } from "../../types/Crystal"
+import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 
 import { createCrystal } from "../../api/crystals"
@@ -26,6 +26,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const enums = {
     rarity: ["LOW", "MEDIUM", "HIGH"],
     findAge: ["NEW", "OLD", "DEAD"],
+    size: ["XS", "S", "M", "L", "XL"],
+    inventory: ["SMALL", "MEDIUM", "LARGE"],
   }
 
   const initialValues: {
@@ -54,6 +56,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     description: Yup.string(),
     image: Yup.string(),
     findAge: Yup.string().oneOf(enums.findAge as FindAgeT[], "Invalid Find Age value"),
+    size: Yup.string().oneOf(enums.size as SizeT[], "Invalid Size value"),
+    inventory: Yup.string().oneOf(enums.inventory as InventoryT[], "Invalid Inventory value"),
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
@@ -65,6 +69,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       description: formData.description,
       image: formData.image,
       findAge: formData.findAge,
+      size: formData.size,
+      inventory: formData.inventory,
     })
     addCrystal(newCrystal)
     formik.resetForm()
@@ -218,6 +224,44 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 {...formik.getFieldProps("description")}
                 sx={textFieldStyles}
               />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} sx={{ marginTop: "-12px" }}>
+            <Grid item xs={6}>
+              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
+                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
+                  Size
+                </InputLabel>
+                <TextField
+                  select
+                  label="Size"
+                  id="size"
+                  {...formik.getFieldProps("size")}
+                  sx={textFieldStyles}
+                >
+                  <MenuItem value="small">Small</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="large">Large</MenuItem>
+                </TextField>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
+                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
+                  Inventory
+                </InputLabel>
+                <TextField
+                  select
+                  label="Inventory"
+                  id="inventory"
+                  {...formik.getFieldProps("inventory")}
+                  sx={textFieldStyles}
+                >
+                  <MenuItem value="small">Small</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="large">Large</MenuItem>
+                </TextField>
+              </FormControl>
             </Grid>
           </Grid>
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
