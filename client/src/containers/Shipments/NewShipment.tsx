@@ -88,8 +88,8 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newCycle = await createShipment(formData)
-    addShipment(newCycle)
+    const newShipment = await createShipment(formData)
+    addShipment(newShipment)
     await formik.resetForm()
     resetSubType()
   }

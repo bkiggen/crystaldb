@@ -9,6 +9,7 @@ import AppHeader from "./components/AppHeader"
 import Crystals from "./containers/Crystals/index"
 import Shipments from "./containers/Shipments/index"
 import PreBuilds from "./containers/PreBuilds/index"
+import ShipDay from "./containers/ShipDay/index"
 import "./App.css"
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/" element={<Shipments />} />
             <Route path="/crystals" element={<Crystals />} />
             <Route path="/pre-builds" element={<PreBuilds />} />
+            <Route path="/ship-day" element={<ShipDay />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </Box>

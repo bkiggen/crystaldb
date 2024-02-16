@@ -7,7 +7,14 @@ import { Crystal } from "../entity/Crystal";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const { page = 1, pageSize = 1000, searchTerm, subscriptionId } = req.query;
+  const {
+    page = 1,
+    pageSize = 1000,
+    searchTerm,
+    subscriptionId,
+    month,
+    year,
+  } = req.query;
 
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);
@@ -16,6 +23,8 @@ router.get("/", async (req: Request, res: Response) => {
 
   whereCondition = {
     ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
+    ...(month ? { month: parseInt(month as string) } : {}),
+    ...(year ? { year: parseInt(year as string) } : {}),
     ...(searchTerm ? { name: ILike(`%${searchTerm}%`) } : {}),
   };
 

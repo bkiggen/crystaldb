@@ -12,16 +12,22 @@ export const getAllShipments = async ({
   page = 1,
   pageSize = 100,
   subscriptionId,
+  month,
+  year,
 }: {
   searchTerm?: string
   page?: number
   pageSize?: number
   noPaging?: boolean
   subscriptionId?: string
+  month?: number
+  year?: number
 }): Promise<{ data: ShipmentT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     ...(subscriptionId ? { subscriptionId } : {}),
+    ...(month ? { month: month.toString() } : {}),
+    ...(year ? { year: year.toString() } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
   }).toString()

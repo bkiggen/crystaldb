@@ -67,10 +67,12 @@ const Crystals = () => {
       align: "center",
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return (
+        return params.row.size ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
           </Box>
+        ) : (
+          <Box>-</Box>
         )
       },
     },
@@ -92,11 +94,13 @@ const Crystals = () => {
       headerName: "Rarity",
       width: 130,
       renderCell: (params: GridCellParams) => {
-        return (
+        return params.row.rarity ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
             {params.row.rarity}
           </Box>
+        ) : (
+          <Box>-</Box>
         )
       },
     },
@@ -105,11 +109,13 @@ const Crystals = () => {
       headerName: "Find Age",
       width: 130,
       renderCell: (params: GridCellParams) => {
-        return (
+        return params.row.findAge ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
             {params.row.findAge}
           </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>-</Box>
         )
       },
     },

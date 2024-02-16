@@ -3,11 +3,19 @@ import { useFormik } from "formik"
 import colors from "../../styles/colors"
 
 import * as Yup from "yup"
-import { Box, TextField, Button, MenuItem, FormControl, InputLabel, Grid } from "@mui/material"
+import { Box, TextField, Button, MenuItem, FormControl, Grid } from "@mui/material"
 
 import { textFieldStyles } from "../../styles/vars"
 
 import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+
+import {
+  rarityOptions,
+  findAgeOptions,
+  sizeOptions,
+  inventoryOptions,
+  categoryOptions,
+} from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 
 import { createCrystal } from "../../api/crystals"
@@ -22,13 +30,6 @@ type NewCrystalT = {
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
-
-  const enums = {
-    rarity: ["LOW", "MEDIUM", "HIGH"],
-    findAge: ["NEW", "OLD", "DEAD"],
-    size: ["XS", "S", "M", "L", "XL"],
-    inventory: ["HIGH", "MEDIUM", "LOW", "OUT"],
-  }
 
   const initialValues: {
     name: string
@@ -56,12 +57,12 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer(),
     category: Yup.string(),
-    rarity: Yup.string().oneOf(enums.rarity as RarityT[], "Invalid rarity value"),
+    rarity: Yup.string().oneOf(rarityOptions as RarityT[], "Invalid rarity value"),
     description: Yup.string(),
     image: Yup.string(),
-    findAge: Yup.string().oneOf(enums.findAge as FindAgeT[], "Invalid Find Age value"),
-    size: Yup.string().oneOf(enums.size as SizeT[], "Invalid Size value"),
-    inventory: Yup.string().oneOf(enums.inventory as InventoryT[], "Invalid Inventory value"),
+    findAge: Yup.string().oneOf(findAgeOptions as FindAgeT[], "Invalid Find Age value"),
+    size: Yup.string().oneOf(sizeOptions as SizeT[], "Invalid Size value"),
+    inventory: Yup.string().oneOf(inventoryOptions as InventoryT[], "Invalid Inventory value"),
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
@@ -96,11 +97,11 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     fetchColors()
   }, [])
 
-  const indicatorOptions = (indicatorType: keyof typeof enums) => {
-    return enums[indicatorType].map((value) => (
+  const indicatorOptions = (indicatorName, indicatorValues) => {
+    return indicatorValues.map((value) => (
       <MenuItem key={value} value={value}>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <ColorIndicator indicatorType={indicatorType} indicatorValue={value} />
+          <ColorIndicator indicatorType={indicatorName} indicatorValue={value} />
           {value}
         </Box>
       </MenuItem>
@@ -179,9 +180,16 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 label="Category"
                 variant="outlined"
                 fullWidth
+                select
                 {...formik.getFieldProps("category")}
                 sx={textFieldStyles}
-              />
+              >
+                {categoryOptions.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
           </Grid>
           <Grid container spacing={2} sx={{ marginTop: "0px" }}>
@@ -194,7 +202,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("rarity")}
                   sx={textFieldStyles}
                 >
-                  {indicatorOptions("rarity")}
+                  {indicatorOptions("rarity", rarityOptions)}
                 </TextField>
               </FormControl>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
@@ -205,7 +213,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("findAge")}
                   sx={textFieldStyles}
                 >
-                  {indicatorOptions("findAge")}
+                  {indicatorOptions("findAge", findAgeOptions)}
                 </TextField>
               </FormControl>
             </Grid>
@@ -232,7 +240,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("size")}
                   sx={textFieldStyles}
                 >
-                  {enums["size"].map((value) => (
+                  {sizeOptions.map((value) => (
                     <MenuItem key={value} value={value}>
                       {value}
                     </MenuItem>
@@ -249,7 +257,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("inventory")}
                   sx={textFieldStyles}
                 >
-                  {enums["inventory"].map((value) => (
+                  {inventoryOptions.map((value) => (
                     <MenuItem key={value} value={value}>
                       {value}
                     </MenuItem>
