@@ -16,7 +16,7 @@ import { monthOptions } from "../../lib/constants"
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
-const NewShipment = ({ setShipments }) => {
+const DateChanger = ({ setShipments }) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
@@ -143,4 +143,4 @@ const NewShipment = ({ setShipments }) => {
   )
 }
 
-export default NewShipment
+export default DateChanger
