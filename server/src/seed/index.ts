@@ -12,7 +12,11 @@ const seedSubscriptions = async () => {
   for (const { name, shortName, cost } of subscriptionData) {
     let subscription = await subscriptionRepository.findOneBy({ name });
     if (!subscription) {
-      subscription = subscriptionRepository.create({ name, shortName, cost });
+      subscription = await subscriptionRepository.create({
+        name,
+        shortName,
+        cost,
+      });
     }
     await subscriptionRepository.save(subscription);
   }
@@ -25,7 +29,7 @@ const seedColors = async () => {
   for (const { name, hex } of colorData) {
     let color = await colorRepository.findOneBy({ name });
     if (!color) {
-      color = colorRepository.create({ name, hex });
+      color = await colorRepository.create({ name, hex });
     }
     await colorRepository.save(color);
   }
@@ -34,11 +38,10 @@ const seedColors = async () => {
 
 const seedCrystals = async () => {
   const crystalRepository = appDataSource.getRepository(Crystal);
-  // Seed crystals
   for (const crystalName of crystalNames) {
     let crystal = await crystalRepository.findOneBy({ name: crystalName });
     if (!crystal) {
-      crystal = crystalRepository.create({
+      crystal = await crystalRepository.create({
         // @ts-ignore
         name: crystalName,
         category: null,
@@ -87,12 +90,12 @@ const seedShipments = async () => {
 const seedDatabase = async () => {
   await appDataSource.initialize();
 
-  seedSubscriptions();
-  seedColors();
-  seedCrystals();
-  seedShipments();
+  await seedSubscriptions();
+  await seedColors();
+  await seedCrystals();
+  // seedShipments();
 
-  await appDataSource.destroy(); // Close the connection once done
+  await appDataSource.destroy();
 };
 
 seedDatabase().catch((error) => {

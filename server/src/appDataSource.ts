@@ -11,6 +11,8 @@ export const appDataSource = new DataSource({
   database: "crystaldb",
   synchronize: true,
   logging: false,
+  // logging: true,
+  // logger: "advanced-console",
   migrations: ["src/migration/**/*.ts"],
   subscribers: ["src/subscriber/**/*.ts"],
   entities: ["src/entity/**/*.ts"],
