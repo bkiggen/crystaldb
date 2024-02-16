@@ -113,12 +113,6 @@ export const suggestCrystals = async ({
     ...selectedCrystalIds,
   ];
 
-  // const crystalsNotInIds = await Crystal.find({
-  //   where: {
-  //     id: Not(In(barredCrystalIds)),
-  //   },
-  // });
-
   const crystalsNotInIds = await Crystal.createQueryBuilder("crystal")
     .where({ id: Not(In(barredCrystalIds)) })
     // Use CASE WHEN THEN END for custom sorting

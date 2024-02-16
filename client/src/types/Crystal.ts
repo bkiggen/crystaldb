@@ -19,4 +19,7 @@ export type CrystalT = {
   image?: string
   findAge?: FindAgeT
   createdAt?: string
+  inventory?: InventoryT
+  updatedAt?: string
+  size?: SizeT
 }

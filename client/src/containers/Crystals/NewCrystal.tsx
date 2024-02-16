@@ -134,9 +134,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             </Grid>
             <Grid item xs={4}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel htmlFor="color" sx={{ color: "white" }}>
-                  Color
-                </InputLabel>
                 <TextField
                   select
                   label="Color"
@@ -190,9 +187,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
           <Grid container spacing={2} sx={{ marginTop: "0px" }}>
             <Grid item xs={4}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
-                  Rarity
-                </InputLabel>
                 <TextField
                   select
                   label="Rarity"
@@ -204,9 +198,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 </TextField>
               </FormControl>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
-                  Find Age
-                </InputLabel>
                 <TextField
                   select
                   label="Find Age"
@@ -234,9 +225,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
           <Grid container spacing={2} sx={{ marginTop: "-12px" }}>
             <Grid item xs={6}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
-                  Size
-                </InputLabel>
                 <TextField
                   select
                   label="Size"
@@ -254,9 +242,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <InputLabel htmlFor="rarity" sx={{ color: "white" }}>
-                  Inventory
-                </InputLabel>
                 <TextField
                   select
                   label="Inventory"
