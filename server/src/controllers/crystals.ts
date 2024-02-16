@@ -46,7 +46,7 @@ router.get("/suggested", async (req: Request, res: Response) => {
     searchTerm,
     selectedCrystalIds,
     excludedCrystalIds,
-    subscriptionType,
+    subscriptionId,
     month,
     year,
     cycle,
@@ -64,7 +64,7 @@ router.get("/suggested", async (req: Request, res: Response) => {
   const suggestions = await suggestCrystals({
     selectedCrystalIds: selectedCrystalIdsArray,
     excludedCrystalIds: excludedCrystalIdsArray,
-    subscriptionType: subscriptionType as string,
+    subscriptionId: parseInt(subscriptionId as string),
     month: parseInt(month as string),
     year: parseInt(year as string),
     cycle: parseInt(cycle as string),
