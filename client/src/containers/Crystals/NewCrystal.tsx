@@ -27,7 +27,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     rarity: ["LOW", "MEDIUM", "HIGH"],
     findAge: ["NEW", "OLD", "DEAD"],
     size: ["XS", "S", "M", "L", "XL"],
-    inventory: ["SMALL", "MEDIUM", "LARGE"],
+    inventory: ["HIGH", "MEDIUM", "LOW", "OUT"],
   }
 
   const initialValues: {
@@ -38,6 +38,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     description?: string
     image?: string
     findAge?: FindAgeT
+    size?: SizeT
+    inventory?: InventoryT
   } = {
     name: "",
     colorId: undefined,
@@ -46,6 +48,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     description: "",
     image: "",
     findAge: undefined,
+    size: "M",
+    inventory: "HIGH",
   }
 
   const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
@@ -61,6 +65,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
+    console.log("form data", formData)
     const newCrystal = await createCrystal({
       name: formData.name,
       colorId: formData.colorId,
@@ -75,12 +80,12 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     addCrystal(newCrystal)
     formik.resetForm()
   }
-
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: handleSubmit,
   })
+  console.log("formik", formik.errors)
 
   const fetchColors = async () => {
     const colorResponse = await getAllColors()
@@ -239,9 +244,11 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("size")}
                   sx={textFieldStyles}
                 >
-                  <MenuItem value="small">Small</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="large">Large</MenuItem>
+                  {enums["size"].map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </FormControl>
             </Grid>
@@ -257,9 +264,11 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                   {...formik.getFieldProps("inventory")}
                   sx={textFieldStyles}
                 >
-                  <MenuItem value="small">Small</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="large">Large</MenuItem>
+                  {enums["inventory"].map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </FormControl>
             </Grid>

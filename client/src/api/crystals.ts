@@ -56,7 +56,7 @@ export const getSuggestedCrystals = async ({
     ...(searchTerm ? { searchTerm } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
-    subscriptionType: selectedSubscriptionType,
+    subscriptionId: selectedSubscriptionType,
     month: selectedMonth.toString(),
     year: selectedYear.toString(),
     cycle: selectedCycle.toString(),

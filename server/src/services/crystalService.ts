@@ -1,15 +1,15 @@
-import { Crystal } from "../entity/Crystal";
+import { Crystal, Inventory } from "../entity/Crystal";
 import { Shipment } from "../entity/Shipment";
 import { PreBuild } from "../entity/PreBuild";
 import { In, Not, MoreThan } from "typeorm";
 
 // TODO: handle cycle range
-// TODO: limit by sub type
 
 const getPreviousShipmentCrystalIds = async (
   month: number,
   year: number,
-  cycle: number
+  cycle: number,
+  subscriptionId: number
 ) => {
   const previouslySentCrystals = [];
 
@@ -32,6 +32,9 @@ const getPreviousShipmentCrystalIds = async (
         month: currentMonth,
         year: currentYear,
         cycle: currentCycle,
+        subscription: {
+          id: subscriptionId,
+        },
       },
       relations: {
         crystals: true,
@@ -50,10 +53,16 @@ const getPreviousShipmentCrystalIds = async (
   return uniqueCrystals;
 };
 
-const getUpcomingPrebuildCrystalIds = async (cycle: number) => {
+const getUpcomingPrebuildCrystalIds = async (
+  cycle: number,
+  subscriptionId: number
+) => {
   const preBuilds = await PreBuild.find({
     where: {
       cycle: MoreThan(cycle),
+      subscription: {
+        id: subscriptionId,
+      },
     },
     relations: {
       crystals: true,
@@ -74,14 +83,14 @@ const getUpcomingPrebuildCrystalIds = async (cycle: number) => {
 export const suggestCrystals = async ({
   selectedCrystalIds = [],
   excludedCrystalIds = [],
-  subscriptionType,
+  subscriptionId,
   month,
   year,
   cycle,
 }: {
   selectedCrystalIds: string[];
   excludedCrystalIds: string[];
-  subscriptionType: string;
+  subscriptionId: number;
   month: number;
   year: number;
   cycle: number;
@@ -89,33 +98,50 @@ export const suggestCrystals = async ({
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
     month,
     year,
-    cycle
+    cycle,
+    subscriptionId
   );
-  const upcomingPrebuildCrystalIds = await getUpcomingPrebuildCrystalIds(month);
+  const upcomingPrebuildCrystalIds = await getUpcomingPrebuildCrystalIds(
+    cycle,
+    subscriptionId
+  );
 
   const barredCrystalIds = [
     ...previousShipmentCrystalIds,
     ...upcomingPrebuildCrystalIds,
+    ...excludedCrystalIds,
+    ...selectedCrystalIds,
   ];
 
-  const crystalsNotInIds = await Crystal.find({
-    where: {
-      id: Not(In(barredCrystalIds)),
-    },
-  });
+  // const crystalsNotInIds = await Crystal.find({
+  //   where: {
+  //     id: Not(In(barredCrystalIds)),
+  //   },
+  // });
+
+  const crystalsNotInIds = await Crystal.createQueryBuilder("crystal")
+    .where({ id: Not(In(barredCrystalIds)) })
+    // Use CASE WHEN THEN END for custom sorting
+    .orderBy(
+      `
+    CASE 
+      WHEN crystal.inventory = '${Inventory.HIGH}' THEN 1
+      WHEN crystal.inventory = '${Inventory.MEDIUM}' THEN 2
+      WHEN crystal.inventory = '${Inventory.LOW}' THEN 3
+      WHEN crystal.inventory = '${Inventory.OUT}' THEN 4
+      ELSE 5
+    END
+  `,
+      "ASC"
+    )
+    .take(20)
+    .getMany();
+
+  // order by highest inventory first
+  //
+  // get all colors in existing shipment, prioritize crystals with colors that are not in the existing shipment
+  //
+  // get all sizes in existing shipment, prioritize crystals with sizes that are not in the existing shipment
 
   return crystalsNotInIds;
 };
-
-// from the current month, year, and cycle, find all previous shipments that this user group has received. i.e. if the current month is 11, year is 2023, and cycle is 3, find month 10, year 2023, cycle 2, month 9, year 2023, cycle 1, etc. Return all crystal ids from all of those shipments. There is no cycle 0. Month 11 2022 precedes month 1 2023.
-//
-// from the current cycle, find all future prebuilds that this user group would receive. if cycle is 4, return all crystals that exist in prebuilds with a number higher than 4. Return alal crystal ids from all of those prebuilds.
-//
-// get all crystals and put the ones in the above lists last
-//
-// order by highest inventory first
-//
-// get all colors in existing shipment, prioritize crystals with colors that are not in the existing shipment
-//
-// get all sizes in existing shipment, prioritize crystals with sizes that are not in the existing shipment
-//

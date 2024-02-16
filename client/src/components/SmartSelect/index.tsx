@@ -42,9 +42,10 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
     setSuggestedCrystals(response.data || [])
   }
 
-  const handleRemoveCrystalFromSuggestions = (e, id: number) => {
+  const handleRemoveCrystalFromSuggestions = async (e, id: number) => {
     e.stopPropagation()
-    setExcludedCrystalIds([...excludedCrystalIds, id])
+    await setExcludedCrystalIds([...excludedCrystalIds, id])
+    fetchCrystalSuggestions()
   }
 
   return expanded ? (
