@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react"
 
-import { Box, Container } from "@mui/material"
+import { Box, Container, Tooltip } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
-// import dayjs from "dayjs"
 
 import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
 import type { PagingT } from "../../types/Paging"
-import ColorIndicator from "../../components/ColorIndicator"
-import Pagination from "../../components/Pagination"
-
-import NewCrystal from "./NewCrystal"
 import { defaultPaging } from "../../types/Paging"
+
+import Pagination from "../../components/Pagination"
+import ColorIndicator from "../../components/ColorIndicator"
+import NewCrystal from "./NewCrystal"
+import UpdateCrystalModal from "./UpdateCrystalModal"
 
 const Crystals = () => {
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
   const [paging, setPaging] = useState<PagingT>(defaultPaging)
+  const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
 
   const getCrystals = async ({ searchTerm = "", page = 1 }) => {
     const response = await getAllCrystals({ searchTerm, page })
@@ -24,7 +25,7 @@ const Crystals = () => {
   }
 
   useEffect(() => {
-    getCrystals({ page: 1 })
+    getCrystals({})
   }, [])
 
   const addCrystal = (newCrystal: CrystalT) => {
@@ -43,7 +44,11 @@ const Crystals = () => {
       minWidth: 300,
       flex: 3,
       renderCell: (params: GridCellParams) => {
-        return <Box sx={{ textTransform: "capitalize" }}>{params.row.name}</Box>
+        return (
+          <Tooltip title={params.row.description}>
+            <Box sx={{ textTransform: "capitalize" }}>{params.row.name}</Box>
+          </Tooltip>
+        )
       },
     },
     {
@@ -132,6 +137,13 @@ const Crystals = () => {
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewCrystal addCrystal={addCrystal} />
+      {crystalToUpdate ? (
+        <UpdateCrystalModal
+          crystal={crystalToUpdate}
+          onClose={() => setCrystalToUpdate(null)}
+          refreshCrystals={() => getCrystals({})}
+        />
+      ) : null}
       <Pagination fetchData={getCrystals} paging={paging} />
       <DataGrid
         sx={{
@@ -141,6 +153,7 @@ const Crystals = () => {
             fontWeight: 800,
           },
         }}
+        onRowClick={(item) => setCrystalToUpdate(item.row)}
         rows={crystals || []}
         columns={columns}
         disableColumnMenu

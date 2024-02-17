@@ -35,11 +35,9 @@ const ShipDay = () => {
                   textDecoration: "underline",
                 }}
               >
-                Cycle {shipment.cycle}
+                {shipment.subscription.shortName} #{shipment.cycle}
               </Typography>
-              <Typography sx={{ textAlign: "center", marginBottom: "24px" }}>
-                ({shipment.cycle})
-              </Typography>
+              <Typography sx={{ textAlign: "center", marginBottom: "24px" }}>(69)</Typography>
               {shipment.crystals.map((crystal) => {
                 return (
                   <Box

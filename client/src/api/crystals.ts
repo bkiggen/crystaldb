@@ -7,6 +7,14 @@ export const createCrystal = async (newCrystal: Omit<CrystalT, "id">): Promise<C
   return makeRestRequest<CrystalT>(endpoint, "POST", JSON.stringify(newCrystal))
 }
 
+export const updateCrystal = async (
+  crystalId,
+  updatedCrystal: Omit<CrystalT, "id">,
+): Promise<CrystalT> => {
+  const endpoint = `/crystals/${crystalId}`
+  return makeRestRequest<CrystalT>(endpoint, "PUT", JSON.stringify(updatedCrystal))
+}
+
 export const getAllCrystals = async ({
   searchTerm = "",
   page = 1,

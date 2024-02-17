@@ -3,7 +3,7 @@ interface RestRequestOptions {
   body?: string
 }
 
-const BASE_URL = "http://localhost:4000" // Adjust as needed
+const BASE_URL = "http://localhost:4000"
 
 export const makeRestRequest = async <T>(
   endpoint: string,

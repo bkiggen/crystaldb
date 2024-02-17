@@ -33,6 +33,9 @@ export class Shipment extends BaseEntity {
   @Column({ type: "int", nullable: true })
   cycleRangeEnd: number;
 
+  @Column({ type: "int", nullable: true })
+  userCount: number;
+
   @ManyToMany(() => Crystal)
   @JoinTable()
   crystals: Crystal[];

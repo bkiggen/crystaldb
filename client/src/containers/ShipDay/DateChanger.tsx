@@ -33,7 +33,7 @@ const DateChanger = ({ setShipments }) => {
   }
 
   const resetSubType = () => {
-    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
+    formik.setFieldValue("subscriptionId", "All")
   }
 
   useEffect(() => {
@@ -75,7 +75,8 @@ const DateChanger = ({ setShipments }) => {
       fetchShipments({
         month: formik.values.month,
         year: formik.values.year,
-        subscriptionId: formik.values.subscriptionId,
+        subscriptionId:
+          formik.values.subscriptionId === "All" ? null : formik.values.subscriptionId,
       })
     }
   }, [formik.values.month, formik.values.year, formik.values.subscriptionId])
@@ -129,6 +130,9 @@ const DateChanger = ({ setShipments }) => {
                 {...formik.getFieldProps("subscriptionId")}
                 sx={textFieldStyles}
               >
+                <MenuItem key="All" value="All">
+                  All
+                </MenuItem>
                 {allSubscriptions.map((subscription) => (
                   <MenuItem key={subscription.id} value={subscription.id}>
                     {subscription.name}
