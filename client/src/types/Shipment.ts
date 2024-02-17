@@ -14,4 +14,5 @@ export type ShipmentT = {
   updatedAt?: string
   subscriptionId: number
   subscription?: SubscriptionT
+  userCount: number
 }

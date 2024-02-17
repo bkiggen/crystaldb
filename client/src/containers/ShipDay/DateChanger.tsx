@@ -6,7 +6,6 @@ import dayjs from "dayjs"
 import * as Yup from "yup"
 import { Box, TextField, FormControl, Grid, MenuItem } from "@mui/material"
 
-import { getAllShipments } from "../../api/shipments"
 import { getAllSubscriptions } from "../../api/subscriptions"
 
 import type { SubscriptionT } from "../../types/Subscription"
@@ -16,16 +15,11 @@ import { monthOptions } from "../../lib/constants"
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
-const DateChanger = ({ setShipments }) => {
+const DateChanger = ({ fetchShipments }) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
-
-  const fetchShipments = async (args) => {
-    const response = await getAllShipments(args)
-    setShipments(response.data)
-  }
 
   const fetchSubscriptionTypes = async () => {
     const response = await getAllSubscriptions()

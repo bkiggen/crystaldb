@@ -7,8 +7,6 @@ import { Box, TextField, Button, MenuItem, FormControl, Grid } from "@mui/materi
 
 import { textFieldStyles } from "../../styles/vars"
 
-import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
-
 import {
   rarityOptions,
   findAgeOptions,
@@ -17,9 +15,13 @@ import {
   categoryOptions,
 } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
+import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+
+import useDebounce from "../../hooks/useDebounce"
 
 import { createCrystal } from "../../api/crystals"
 import { getAllColors } from "../../api/colors"
+import { getAllCrystals } from "../../api/crystals"
 
 import NewColorModal from "./NewColorModal"
 import ColorIndicator from "../../components/ColorIndicator"
@@ -27,9 +29,14 @@ import ColorIndicator from "../../components/ColorIndicator"
 type NewCrystalT = {
   addCrystal: (arg: CrystalT) => void
 }
+
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
+  const [crystals, setCrystals] = useState<CrystalT[]>([])
+  const [crystalsVisible, setCrystalsVisible] = useState(false)
+  const [rawSearch, setRawSearch] = useState(null)
+  const debouncedSearch = useDebounce(rawSearch, 300)
 
   const initialValues: {
     name: string
@@ -66,7 +73,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    console.log("form data", formData)
     const newCrystal = await createCrystal({
       name: formData.name,
       colorId: formData.colorId,
@@ -86,12 +92,31 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     validationSchema,
     onSubmit: handleSubmit,
   })
-  console.log("formik", formik.errors)
 
   const fetchColors = async () => {
     const colorResponse = await getAllColors()
     setColorOptions(colorResponse)
   }
+
+  const getCrystals = async ({ searchTerm = "" }) => {
+    const response = await getAllCrystals({ searchTerm, noPaging: true })
+    setCrystals(response.data || [])
+    setCrystalsVisible(true)
+  }
+
+  useEffect(() => {
+    if (formik.values.name && formik.values.name.length > 2) {
+      setRawSearch(formik.values.name)
+    } else if (formik.values.name.length === 0) {
+      setCrystalsVisible(false)
+    }
+  }, [formik.values.name])
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      getCrystals({ searchTerm: debouncedSearch })
+    }
+  }, [debouncedSearch])
 
   useEffect(() => {
     fetchColors()
@@ -131,7 +156,26 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 fullWidth
                 {...formik.getFieldProps("name")}
                 sx={textFieldStyles}
+                onBlur={() => setCrystalsVisible(false)}
               />
+              {crystalsVisible && crystals.length > 0 ? (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    zIndex: 123,
+                    background: colors.slate,
+                    padding: "12px 24px",
+                  }}
+                >
+                  {crystals.map((crystal) => {
+                    return (
+                      <Box key={crystal.id} sx={{ margin: "6px 0" }}>
+                        {crystal.name}
+                      </Box>
+                    )
+                  })}
+                </Box>
+              ) : null}
             </Grid>
             <Grid item xs={4}>
               <FormControl fullWidth variant="outlined">
