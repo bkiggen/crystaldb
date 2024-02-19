@@ -13,11 +13,14 @@ import { textFieldStyles } from "../../styles/vars"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { SubscriptionT } from "../../types/Subscription"
+import type { PreBuildT } from "../../types/PreBuild"
 
+import { getAllPreBuilds } from "../../api/preBuilds"
 import { createShipment } from "../../api/shipments"
 
 import CrystalSelect from "../../components/CrystalSelect"
 import SmartSelect from "../../components/SmartSelect"
+import CrystalChip from "../../components/SmartSelect/CrystalChip"
 
 type NewShipmentT = {
   addShipment: (arg: ShipmentT) => void
@@ -26,6 +29,17 @@ type NewShipmentT = {
 
 const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
+  const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
+  const [selectedPreBuildCrystals, setSelectedPreBuildCrystals] = useState<CrystalT[]>([])
+
+  const fetchPreBuilds = async (args) => {
+    const response = await getAllPreBuilds(args)
+    setPreBuilds(response.data)
+  }
+
+  useEffect(() => {
+    fetchPreBuilds({})
+  }, [])
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
@@ -255,14 +269,69 @@ const NewShipment = ({ addShipment, allSubscriptions }: NewShipmentT) => {
         <Box
           sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0 24px 0" }}
         />
-        <Grid container>
-          <FormControl fullWidth variant="outlined">
-            <SmartSelect formik={formik} />
-          </FormControl>
-          <FormControl fullWidth variant="outlined">
-            <CrystalSelect formik={formik} />
-          </FormControl>
+        <Grid container sx={{ marginBottom: "24px" }}>
+          <Grid item xs={6}>
+            <FormControl fullWidth variant="outlined">
+              <SmartSelect formik={formik} />
+            </FormControl>
+          </Grid>
+          <Grid item xs={6}>
+            <Box sx={{ width: "100%" }}>
+              <TextField
+                placeholder="PreBuild"
+                select
+                onChange={(e) => {
+                  const pb = preBuilds?.find((pb) => {
+                    return pb.id === parseInt(e.target.value)
+                  })
+                  setSelectedPreBuildCrystals(pb?.crystals || [])
+                }}
+                id="prebuild"
+                sx={{ ...textFieldStyles, width: "100%" }}
+              >
+                <MenuItem key="None" value={[]}>
+                  None
+                </MenuItem>
+                {preBuilds?.map((preBuild) => (
+                  <MenuItem key={preBuild.id} value={preBuild.id}>
+                    {preBuild.cycle ? (
+                      <Typography>
+                        {preBuild.subscription.shortName}: {preBuild.cycle}
+                      </Typography>
+                    ) : (
+                      <Typography>
+                        {preBuild.subscription.shortName}: {preBuild.cycleRangeStart} -{" "}
+                        {preBuild.cycleRangeEnd}
+                      </Typography>
+                    )}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  overflow: "hidden",
+                  marginTop: "24px",
+                }}
+              >
+                {selectedPreBuildCrystals.map((c) => {
+                  return (
+                    <CrystalChip
+                      crystal={c}
+                      formik={formik}
+                      selectedCrystalIds={formik.values.crystalIds}
+                    />
+                  )
+                })}
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
+        <FormControl fullWidth variant="outlined">
+          <CrystalSelect formik={formik} />
+        </FormControl>
         <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
           <Button type="submit" variant="contained" color="primary">
             Create Shipment
