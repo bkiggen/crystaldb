@@ -2,15 +2,13 @@ import React, { useState } from "react"
 
 import { useFormik } from "formik"
 
-import { Box, Chip, Tooltip, Typography } from "@mui/material"
-import CloseIcon from "@mui/icons-material/Close"
+import { Box, Typography } from "@mui/material"
 import LoopIcon from "@mui/icons-material/Loop"
 
 import { getSuggestedCrystals } from "../../api/crystals"
 
 import type { CrystalT } from "../../types/Crystal"
 
-import ColorIndicator from "../ColorIndicator"
 import CrystalChip from "./CrystalChip"
 
 type CrystalSelectT = {
@@ -55,7 +53,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
   return (
     <Box sx={{ marginBottom: crystals.length ? "24px" : 0, padding: "12px" }}>
       <Box
-        sx={{ display: "flex", alignItems: "center", marginBottom: "18px", cursor: "pointer" }}
+        sx={{ display: "flex", alignItems: "center", marginBottom: "36px", cursor: "pointer" }}
         onClick={fetchCrystalSuggestions}
       >
         <Typography
