@@ -51,7 +51,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
   }
 
   return (
-    <Box sx={{ marginBottom: crystals.length ? "24px" : 0, padding: "12px" }}>
+    <Box sx={{ marginBottom: crystals.length ? "24px" : 0, padding: "12px", marginLeft: "12px" }}>
       <Box
         sx={{ display: "flex", alignItems: "center", marginBottom: "36px", cursor: "pointer" }}
         onClick={fetchCrystalSuggestions}
