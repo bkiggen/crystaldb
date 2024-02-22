@@ -20,16 +20,25 @@ export const getAllCrystals = async ({
   page = 1,
   pageSize = 100,
   noPaging = false,
+  sortBy = "",
+  sortDirection = "",
+  inventory,
 }: {
   searchTerm?: string
   page?: number
   pageSize?: number
   noPaging?: boolean
+  sortBy?: string
+  sortDirection?: string
+  inventory?: string
 }): Promise<{ data: CrystalT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     ...(noPaging ? {} : { page: page.toString() }),
     ...(noPaging ? {} : { pageSize: pageSize.toString() }),
+    ...(sortBy ? { sortBy } : {}),
+    ...(sortDirection ? { sortDirection } : {}),
+    ...(inventory ? { inventory } : {}),
   }).toString()
   const endpoint = `/crystals?${query}`
   return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")

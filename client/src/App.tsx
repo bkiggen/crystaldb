@@ -10,6 +10,7 @@ import Crystals from "./containers/Crystals/index"
 import Shipments from "./containers/Shipments/index"
 import PreBuilds from "./containers/PreBuilds/index"
 import ShipDay from "./containers/ShipDay/index"
+import Reports from "./containers/Dashboard/index"
 import "./App.css"
 
 const App = () => {
@@ -19,7 +20,8 @@ const App = () => {
         <AppHeader />
         <Box sx={{ padding: "12px", paddingTop: "120px" }}>
           <Routes>
-            <Route path="/" element={<Shipments />} />
+            <Route path="/" element={<Reports />} />
+            <Route path="/shipments" element={<Shipments />} />
             <Route path="/crystals" element={<Crystals />} />
             <Route path="/pre-builds" element={<PreBuilds />} />
             <Route path="/ship-day" element={<ShipDay />} />

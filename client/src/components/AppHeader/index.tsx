@@ -40,7 +40,7 @@ const AppHeader = () => {
           flexGrow: 1,
         }}
       >
-        <NavItem linkTo="/" title="Shipments" pathname={pathname} />
+        <NavItem linkTo="/shipments" title="Shipments" pathname={pathname} />
         <NavItem linkTo="/crystals" title="Crystals" pathname={pathname} />
         <NavItem linkTo="/pre-builds" title="Pre-Builds" pathname={pathname} />
         <NavItem linkTo="/ship-day" title="ShipDay" pathname={pathname} />

@@ -7,25 +7,31 @@ import { suggestCrystals } from "../services/crystalService";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const { page = 1, pageSize = 1000, searchTerm } = req.query;
+  const { page = 1, pageSize = 1000, searchTerm, inventory } = req.query;
+  console.log("🚀 ~ router.get ~ inventory:", inventory);
 
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);
 
+  const sortBy = req.query.sortBy || ("name" as string);
+  const sortDirection = req.query.sortDirection || ("ASC" as string);
+
+  const order = {
+    // @ts-ignore
+    [sortBy]: sortDirection,
+  };
+
   let whereCondition = {};
-  if (searchTerm) {
-    whereCondition = {
-      name: ILike(`%${searchTerm}%`),
-    };
-  }
+  whereCondition = {
+    ...(searchTerm ? { name: ILike(`%${searchTerm}%`) } : {}),
+    ...(inventory ? { inventory: inventory } : {}),
+  };
 
   const [result, total] = await Crystal.findAndCount({
     where: whereCondition,
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
-    order: {
-      name: "ASC",
-    },
+    order,
     relations: ["color"],
   });
 
@@ -43,7 +49,6 @@ router.get("/suggested", async (req: Request, res: Response) => {
   const {
     page = 1,
     pageSize = 1000,
-    searchTerm,
     selectedCrystalIds,
     excludedCrystalIds,
     subscriptionId,
