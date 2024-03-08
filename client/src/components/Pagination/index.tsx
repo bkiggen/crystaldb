@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { Box, Typography, MenuItem, TextField, InputAdornment, IconButton } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
 import { useTheme } from "@mui/material/styles"
+import queryString from "query-string"
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
@@ -12,6 +13,7 @@ import useDebounce from "../../hooks/useDebounce"
 
 import type { PagingT } from "../../types/Paging"
 import { defaultPaging } from "../../types/Paging"
+import { useLocation } from "react-router-dom"
 
 type PaginationT = {
   paging: PagingT
@@ -31,11 +33,15 @@ const Pagination = ({
   const isTablet = width < 768
 
   const [rawSearch, setRawSearch] = useState(null)
-  const debouncedSearch = useDebounce(rawSearch, 300)
+  const searchTerm = useDebounce(rawSearch, 300) // debounced
+
+  const location = useLocation()
+
+  const { sortBy, sortDirection } = queryString.parse(location.search)
 
   useEffect(() => {
-    fetchData({ page: 1, searchTerm: debouncedSearch })
-  }, [debouncedSearch]) // eslint-disable-line react-hooks/exhaustive-deps
+    fetchData({ page: 1, searchTerm, sortBy, sortDirection })
+  }, [searchTerm]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -55,7 +61,7 @@ const Pagination = ({
   const endItem = Math.min(adjustedCurrent * paging.pageSize, paging.totalCount)
 
   const handleNavClick = (newPage) => {
-    fetchData({ page: newPage })
+    fetchData({ page: newPage, searchTerm, sortBy, sortDirection })
   }
 
   const pagesToRender = () => {
@@ -115,7 +121,7 @@ const Pagination = ({
             sx={{
               "& .MuiInputBase-root": {
                 height: "42px",
-                background: colors.slateA4Grey,
+                background: colors.slateA4,
                 color: "white",
                 border: "1px solid white",
               },
@@ -136,6 +142,9 @@ const Pagination = ({
             onChange={(event) =>
               fetchData({
                 subscriptionId: event.target.value === "All" ? null : event.target.value,
+                searchTerm,
+                sortBy,
+                sortDirection,
               })
             }
             sx={{ ...textFieldStyles, minWidth: "200px" }}

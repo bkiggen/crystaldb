@@ -8,13 +8,14 @@ const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   const { page = 1, pageSize = 1000, searchTerm, inventory } = req.query;
-  console.log("🚀 ~ router.get ~ inventory:", inventory);
 
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);
 
   const sortBy = req.query.sortBy || ("name" as string);
-  const sortDirection = req.query.sortDirection || ("ASC" as string);
+  console.log("🚀 ~ router.get ~ sortBy:", sortBy);
+  const sortDirection = req.query.sortDirection || ("asc" as string);
+  console.log("🚀 ~ router.get ~ sortDirection:", sortDirection);
 
   const order = {
     // @ts-ignore

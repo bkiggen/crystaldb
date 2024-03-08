@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
 
 import { Box, Container, Tooltip } from "@mui/material"
-import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
+import { DataGrid, GridCellParams, GridColDef, GridSortModel } from "@mui/x-data-grid"
 
 import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
@@ -14,12 +15,21 @@ import NewCrystal from "./NewCrystal"
 import UpdateCrystalModal from "./UpdateCrystalModal"
 
 const Crystals = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
   const [paging, setPaging] = useState<PagingT>(defaultPaging)
   const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
+  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
 
-  const getCrystals = async ({ searchTerm = "", page = 1 }) => {
-    const response = await getAllCrystals({ searchTerm, page })
+  const getCrystals = async ({
+    searchTerm = "",
+    page = 1,
+    sortBy = null,
+    sortDirection = null,
+  }) => {
+    const response = await getAllCrystals({ searchTerm, page, sortBy, sortDirection })
     setCrystals(response.data || [])
     setPaging(response.paging)
   }
@@ -56,6 +66,7 @@ const Crystals = () => {
       headerName: "Color",
       width: 80,
       align: "center",
+      sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
@@ -152,6 +163,18 @@ const Crystals = () => {
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 800,
           },
+        }}
+        sortingMode="server"
+        sortModel={sortModel}
+        onSortModelChange={(model) => {
+          if (model.length !== 0) {
+            const sortArgs = { sortBy: model[0]?.field, sortDirection: model[0]?.sort }
+            setSortModel(model)
+            getCrystals(sortArgs)
+            navigate(
+              `${location.pathname}?sortBy=${model[0]?.field}&sortDirection=${model[0]?.sort}`,
+            )
+          }
         }}
         onRowClick={(item) => setCrystalToUpdate(item.row)}
         rows={crystals || []}
