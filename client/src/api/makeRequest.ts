@@ -33,3 +33,19 @@ export const makeRestRequest = async <T>(
     throw error
   }
 }
+
+// const fetchProtectedData = async () => {
+//   const token = localStorage.getItem("userToken")
+//   try {
+//     const response = await fetch("/protected-endpoint", {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     })
+//     const data = await response.json()
+//     console.log(data)
+//     // Handle the protected data
+//   } catch (error) {
+//     console.error("An error occurred:", error)
+//   }
+// }

@@ -131,7 +131,8 @@ export const suggestCrystals = async ({
     .take(20)
     .getMany();
 
-  // order by highest inventory first
+  // TODO:
+  // Handle suggesting crystals they've gotten once or twice or whatever
   //
   // get all colors in existing shipment, prioritize crystals with colors that are not in the existing shipment
   //

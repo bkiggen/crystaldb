@@ -5,12 +5,13 @@ import { Box } from "@mui/material"
 
 import AppHeader from "./components/AppHeader"
 
-// import Home from "./containers/Home"
 import Crystals from "./containers/Crystals/index"
 import Shipments from "./containers/Shipments/index"
 import PreBuilds from "./containers/PreBuilds/index"
 import ShipDay from "./containers/ShipDay/index"
-import Reports from "./containers/Dashboard/index"
+import Reports from "./containers/Reports/index"
+import Login from "./containers/Login/index"
+
 import "./App.css"
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
             <Route path="/crystals" element={<Crystals />} />
             <Route path="/pre-builds" element={<PreBuilds />} />
             <Route path="/ship-day" element={<ShipDay />} />
+            <Route path="/login" element={<Login />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </Box>
