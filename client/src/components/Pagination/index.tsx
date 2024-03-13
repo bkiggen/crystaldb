@@ -121,7 +121,7 @@ const Pagination = ({
             sx={{
               "& .MuiInputBase-root": {
                 height: "42px",
-                background: colors.slateA4,
+                background: colors.slateGrey,
                 color: "white",
                 border: "1px solid white",
               },

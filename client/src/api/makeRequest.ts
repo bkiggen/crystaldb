@@ -10,9 +10,11 @@ export const makeRestRequest = async <T>(
   method: RestRequestOptions["method"],
   body?: string,
 ): Promise<T> => {
+  const token = localStorage.getItem("userToken")
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json",
+    Authorization: `Bearer ${token}`,
   }
 
   const options: RequestInit = {

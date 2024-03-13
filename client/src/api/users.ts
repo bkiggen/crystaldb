@@ -16,6 +16,7 @@ export const signInUser = async (
 
   if (data.token) {
     localStorage.setItem("userToken", data.token)
+    localStorage.setItem("userIsAdmin", data.user.isAdmin ? "true" : "false")
     console.log("Login successful")
   } else {
     console.error("Login failed")
@@ -26,6 +27,7 @@ export const signInUser = async (
 
 export const handleLogout = () => {
   localStorage.removeItem("userToken")
+  localStorage.removeItem("userIsAdmin")
   console.log("Logout successful")
   // Redirect to login page or update UI
 }

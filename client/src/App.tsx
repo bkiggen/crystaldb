@@ -1,5 +1,5 @@
 import React from "react"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 
 import { Box } from "@mui/material"
 
@@ -12,22 +12,79 @@ import ShipDay from "./containers/ShipDay/index"
 import Reports from "./containers/Reports/index"
 import Login from "./containers/Login/index"
 
+import { useStore } from "./store/store"
+
 import "./App.css"
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("userToken")
+
+  if (!token) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
+
 const App = () => {
+  const isFullScreen = useStore((state) => {
+    return state.isFullScreen
+  })
   return (
     <Router>
       <Box>
-        <AppHeader />
-        <Box sx={{ padding: "12px", paddingTop: "120px" }}>
+        {!isFullScreen && <AppHeader />}
+        <Box sx={{ padding: "12px", paddingTop: isFullScreen ? "20px" : "120px" }}>
           <Routes>
-            <Route path="/" element={<Reports />} />
-            <Route path="/shipments" element={<Shipments />} />
-            <Route path="/crystals" element={<Crystals />} />
-            <Route path="/pre-builds" element={<PreBuilds />} />
-            <Route path="/ship-day" element={<ShipDay />} />
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<h1>Not Found</h1>} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shipments"
+              element={
+                <ProtectedRoute>
+                  <Shipments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/crystals"
+              element={
+                <ProtectedRoute>
+                  <Crystals />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pre-builds"
+              element={
+                <ProtectedRoute>
+                  <PreBuilds />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ship-day"
+              element={
+                <ProtectedRoute>
+                  <ShipDay />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <ProtectedRoute>
+                  <h1>Not Found</h1>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Box>
       </Box>
