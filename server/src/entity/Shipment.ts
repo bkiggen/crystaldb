@@ -36,6 +36,9 @@ export class Shipment extends BaseEntity {
   @Column({ type: "int", nullable: true })
   userCount: number;
 
+  @Column({ type: "boolean", nullable: true })
+  userCountIsNew: number;
+
   @ManyToMany(() => Crystal)
   @JoinTable()
   crystals: Crystal[];

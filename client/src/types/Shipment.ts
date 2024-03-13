@@ -15,4 +15,5 @@ export type ShipmentT = {
   subscriptionId: number
   subscription?: SubscriptionT
   userCount: number
+  userCountIsNew: boolean
 }

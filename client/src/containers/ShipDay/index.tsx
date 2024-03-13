@@ -14,6 +14,7 @@ import { textFieldStyles } from "../../styles/vars"
 
 import FullscreenIcon from "@mui/icons-material/Fullscreen"
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit"
+import VisibilityIcon from "@mui/icons-material/Visibility"
 
 const ShipDay = () => {
   const [shipments, setShipments] = useState<ShipmentT[]>([])
@@ -29,6 +30,18 @@ const ShipDay = () => {
   const fetchShipments = async (args) => {
     const response = await getAllShipments(args)
     setShipments(response.data)
+  }
+
+  const updateLocalState = (newData) => {
+    setTimeout(() => {
+      const newShipments = shipments.map((s) => {
+        if (s.id === newData.id) {
+          return newData
+        }
+        return s
+      })
+      setShipments(newShipments)
+    }, 100)
   }
 
   return (
@@ -54,6 +67,7 @@ const ShipDay = () => {
           {shipments.map((shipment) => {
             return (
               <Box
+                key={shipment.id}
                 sx={{
                   padding: "12px",
                   margin: "12px",
@@ -83,27 +97,39 @@ const ShipDay = () => {
                       const newData = {
                         ...shipmentToUpdate,
                         userCount: e.target.value || shipmentToUpdate.userCount,
+                        userCountIsNew: true,
                       }
                       updateShipment(newData)
                       setShipmentToUpdate(null)
-                      setTimeout(() => {
-                        const newShipments = shipments.map((s) => {
-                          if (s.id === newData.id) {
-                            return newData
-                          }
-                          return s
-                        })
-                        setShipments(newShipments)
-                      }, 100)
+                      updateLocalState(newData)
                     }}
                   />
                 ) : (
-                  <Typography
-                    sx={{ textAlign: "center", marginBottom: "24px" }}
-                    onClick={() => setShipmentToUpdate(shipment)}
-                  >
-                    ({shipment.userCount || 0})
-                  </Typography>
+                  <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center" }}>
+                    <Typography
+                      sx={{
+                        textAlign: "center",
+                        color: shipment?.userCountIsNew ? "red" : "white",
+                        marginRight: "4px",
+                      }}
+                      onClick={() => setShipmentToUpdate(shipment)}
+                    >
+                      ({shipment.userCount || 0})
+                    </Typography>
+                    {shipment?.userCountIsNew && (
+                      <VisibilityIcon
+                        sx={{ color: "red", cursor: "pointer" }}
+                        onClick={() => {
+                          const newData = {
+                            ...shipment,
+                            userCountIsNew: false,
+                          }
+                          updateShipment(newData)
+                          updateLocalState(newData)
+                        }}
+                      />
+                    )}
+                  </Box>
                 )}
                 <Box>
                   {shipment.crystals
