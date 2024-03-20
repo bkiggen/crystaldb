@@ -10,12 +10,12 @@ const jwtExpirySeconds = 864000; // 10 days
 
 router.post("/signup", async (req: Request, res: Response) => {
   try {
-    const { email, password, nickname } = req.body;
-    if (!(email && password && nickname)) {
+    const { password, nickname } = req.body;
+    if (!(password && nickname)) {
       return res.status(400).send("All input is required");
     }
 
-    const oldUser = await User.findOneBy({ email });
+    const oldUser = await User.findOneBy({ nickname });
     if (oldUser) {
       return res.status(409).send("User Already Exist. Please Login");
     }
@@ -23,20 +23,19 @@ router.post("/signup", async (req: Request, res: Response) => {
     const encryptedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = User.create({
-      email,
       nickname,
       password: encryptedPassword,
     });
 
     await User.save(user);
 
-    const token = jwt.sign({ user_id: user.id, email }, JWT_SECRET, {
+    const token = jwt.sign({ user_id: user.id }, JWT_SECRET, {
       expiresIn: jwtExpirySeconds,
     });
 
     return res
       .status(200)
-      .json({ token, user: { id: user.id, email: user.email } });
+      .json({ token, user: { id: user.id, nickname: user.nickname } });
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -44,26 +43,26 @@ router.post("/signup", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { nickname, password } = req.body;
 
-    if (!(email && password)) {
-      return res.status(400).send("All input is required");
+    if (!(nickname && password)) {
+      return res.status(400).json({ message: "All input is required" });
     }
 
-    const user = await User.findOneBy({ email });
+    const user = await User.findOneBy({ nickname });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user.id, email }, JWT_SECRET, {
+      const token = jwt.sign({ user_id: user.id, nickname }, JWT_SECRET, {
         expiresIn: jwtExpirySeconds,
       });
 
       return res
         .status(200)
-        .json({ token, user: { id: user.id, email: user.email } });
+        .json({ token, user: { id: user.id, nickname: user.nickname } });
     }
-    return res.status(400).send("Invalid Credentials");
+    return res.status(400).json({ message: "Invalid Credentials" });
   } catch (error) {
-    return res.status(400).send(error.message);
+    return res.status(400).json({ message: error.message });
   }
 });
 

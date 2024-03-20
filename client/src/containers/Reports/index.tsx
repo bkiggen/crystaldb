@@ -6,7 +6,14 @@ import InventoryReport from "./InventoryReport"
 
 const Dashboard = () => {
   return (
-    <Container sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+    <Container
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
       <InventoryReport type="LOW" />
       <InventoryReport type="OUT" />
     </Container>

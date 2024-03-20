@@ -55,18 +55,18 @@ const InventoryReport = ({ type }: InventoryReportT) => {
     <Box
       sx={{
         height: "500px",
-        width: "45%",
+        width: "40%",
+        minWidth: "400px",
         backgroundColor: colors.slateA4,
         border: `1px solid white`,
         borderRadius: "4px",
         padding: "12px",
         paddingTop: "24px",
         margin: "12px",
-        minWidth: "400px",
         position: "relative",
       }}
     >
-      <button
+      <Button
         style={{
           position: "absolute",
           bottom: "12px",
@@ -76,7 +76,7 @@ const InventoryReport = ({ type }: InventoryReportT) => {
         onClick={handleCSVClick}
       >
         <DownloadIcon />
-      </button>
+      </Button>
       <Typography
         sx={{ fontSize: "32px", textAlign: "center", marginBottom: "12px", color: "white" }}
       >

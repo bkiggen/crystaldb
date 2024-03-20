@@ -9,7 +9,6 @@ import { textFieldStyles } from "../../styles/vars"
 import colors from "../../styles/colors"
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [nickname, setNickname] = useState("")
   const [signUpMode, setSignUpMode] = useState(false)
@@ -20,10 +19,10 @@ const LoginPage = () => {
     e.preventDefault()
 
     if (signUpMode) {
-      await signUpUser({ nickname, email, password })
+      await signUpUser({ nickname, password })
       navigate("/")
     } else {
-      const result = await signInUser({ email, password })
+      const result = await signInUser({ nickname, password })
       if (result.token) {
         navigate("/")
       }
@@ -48,32 +47,17 @@ const LoginPage = () => {
           Sign {signUpMode ? "Up" : "In"}
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
-          {signUpMode && (
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="nickname"
-              label="Nickname"
-              name="nickname"
-              autoComplete="nickname"
-              autoFocus
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              sx={textFieldStyles}
-            />
-          )}
           <TextField
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="nickname"
+            label="Nickname"
+            name="nickname"
+            autoComplete="nickname"
             autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
             sx={textFieldStyles}
           />
           <TextField

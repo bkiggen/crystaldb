@@ -14,6 +14,9 @@ import Login from "./containers/Login/index"
 
 import { useStore } from "./store/store"
 
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+
 import "./App.css"
 
 const ProtectedRoute = ({ children }) => {
@@ -31,64 +34,67 @@ const App = () => {
     return state.isFullScreen
   })
   return (
-    <Router>
-      <Box>
-        {!isFullScreen && <AppHeader />}
-        <Box sx={{ padding: "12px", paddingTop: isFullScreen ? "20px" : "120px" }}>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Reports />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/shipments"
-              element={
-                <ProtectedRoute>
-                  <Shipments />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/crystals"
-              element={
-                <ProtectedRoute>
-                  <Crystals />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/pre-builds"
-              element={
-                <ProtectedRoute>
-                  <PreBuilds />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/ship-day"
-              element={
-                <ProtectedRoute>
-                  <ShipDay />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <ProtectedRoute>
-                  <h1>Not Found</h1>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+    <>
+      <ToastContainer />
+      <Router>
+        <Box>
+          {!isFullScreen && <AppHeader />}
+          <Box sx={{ padding: "12px", paddingTop: isFullScreen ? "20px" : "120px" }}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Reports />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shipments"
+                element={
+                  <ProtectedRoute>
+                    <Shipments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/crystals"
+                element={
+                  <ProtectedRoute>
+                    <Crystals />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pre-builds"
+                element={
+                  <ProtectedRoute>
+                    <PreBuilds />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/ship-day"
+                element={
+                  <ProtectedRoute>
+                    <ShipDay />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <ProtectedRoute>
+                    <h1>Not Found</h1>
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Box>
         </Box>
-      </Box>
-    </Router>
+      </Router>
+    </>
   )
 }
 

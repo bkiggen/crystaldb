@@ -1,5 +1,6 @@
 import type { UserT } from "../types/User"
 import { makeRestRequest } from "./makeRequest" // Utility function we will create
+import { toast } from "react-toastify"
 
 export const signUpUser = async (newUser: UserT): Promise<UserT> => {
   const endpoint = "/users/signup"
@@ -8,7 +9,7 @@ export const signUpUser = async (newUser: UserT): Promise<UserT> => {
 }
 
 export const signInUser = async (
-  credentials: Pick<UserT, "email" | "password">,
+  credentials: Pick<UserT, "nickname" | "password">,
 ): Promise<{ token: string; user: UserT }> => {
   const endpoint = "/users/login"
   const body = JSON.stringify(credentials)
@@ -19,7 +20,7 @@ export const signInUser = async (
     localStorage.setItem("userIsAdmin", data.user.isAdmin ? "true" : "false")
     console.log("Login successful")
   } else {
-    console.error("Login failed")
+    toast.error("Login failed")
   }
 
   return data
