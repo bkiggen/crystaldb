@@ -196,7 +196,11 @@ const NewShipment = ({
         <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
         <Grid container>
           <Grid item xs={6}>
-            <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
+            <PreBuildAutocomplete
+              preBuilds={preBuilds}
+              formik={formik}
+              setCycleRangeMode={setCycleRangeMode}
+            />
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth variant="outlined">
