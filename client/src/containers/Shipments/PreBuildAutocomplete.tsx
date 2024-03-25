@@ -28,9 +28,10 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
     formik.setFieldValue("cycleRangeStart", tempFormValues.cycleRangeStart)
     formik.setFieldValue("cycleRangeEnd", tempFormValues.cycleRangeEnd)
     formik.setFieldValue("subscriptionId", tempFormValues.subscription.id)
+    const existingCrystalIds = formik.values.crystalIds
     formik.setFieldValue(
       "crystalIds",
-      tempFormValues.crystals.map((c) => c.id),
+      Array.from(new Set([...existingCrystalIds, ...selectedPreBuildCrystals.map((c) => c.id)])),
     )
   }
 
