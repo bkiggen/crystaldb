@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-import { Box, TextField, Autocomplete, Typography } from "@mui/material"
+import { Box, TextField, Autocomplete, Typography, Tooltip } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 import RemoveIcon from "@mui/icons-material/Remove"
 import { useFormik } from "formik"
@@ -35,8 +35,6 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
   }
 
   const removeSelectedCrystals = () => {
-    setSelectedPreBuildCrystals([])
-    setTempFormValues(null)
     formik.setFieldValue(
       "crystalIds",
       formik.values.crystalIds.filter(
@@ -93,42 +91,46 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
         />
         {selectedPreBuildCrystals.length ? (
           <Box>
-            <Box
-              sx={{
-                height: "24px",
-                width: "36px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "absolute",
-                right: "0",
-                marginTop: "8px",
-                cursor: "pointer",
-              }}
-              onClick={setFormWithTempValues}
-            >
-              <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
-                <AddIcon />
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                height: "24px",
-                width: "36px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "absolute",
-                right: "28px",
-                marginTop: "8px",
-                cursor: "pointer",
-              }}
-              onClick={removeSelectedCrystals}
-            >
-              <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
-                <RemoveIcon />
-              </Typography>
-            </Box>
+            <Tooltip title="Add all">
+              <Box
+                sx={{
+                  height: "24px",
+                  width: "36px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "absolute",
+                  right: "0",
+                  marginTop: "8px",
+                  cursor: "pointer",
+                }}
+                onClick={setFormWithTempValues}
+              >
+                <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
+                  <AddIcon />
+                </Typography>
+              </Box>
+            </Tooltip>
+            <Tooltip title="Remove all">
+              <Box
+                sx={{
+                  height: "24px",
+                  width: "36px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "absolute",
+                  right: "28px",
+                  marginTop: "8px",
+                  cursor: "pointer",
+                }}
+                onClick={removeSelectedCrystals}
+              >
+                <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
+                  <RemoveIcon />
+                </Typography>
+              </Box>
+            </Tooltip>
           </Box>
         ) : null}
       </Box>

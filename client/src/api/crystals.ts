@@ -54,6 +54,8 @@ export const getSuggestedCrystals = async ({
   selectedMonth,
   selectedYear,
   selectedCycle,
+  selectedCycleRangeStart,
+  selectedCycleRangeEnd,
 }: {
   searchTerm?: string
   page?: number
@@ -65,6 +67,8 @@ export const getSuggestedCrystals = async ({
   selectedMonth?: number
   selectedYear?: number
   selectedCycle?: number
+  selectedCycleRangeStart?: number
+  selectedCycleRangeEnd?: number
 }): Promise<{ data: CrystalT[]; paging: PagingT }> => {
   const selectedCrystalIdsParam = selectedCrystalIds.length > 0 ? selectedCrystalIds.join(",") : ""
   const excludedCrystalIdsParam = excludedCrystalIds.length > 0 ? excludedCrystalIds.join(",") : ""
@@ -76,10 +80,13 @@ export const getSuggestedCrystals = async ({
     subscriptionId: selectedSubscriptionType,
     month: selectedMonth.toString(),
     year: selectedYear.toString(),
-    cycle: selectedCycle.toString(),
+    ...(selectedCycle ? { cycle: selectedCycle.toString() } : {}),
+    ...(selectedCycleRangeStart ? { cycleRangeStart: selectedCycleRangeStart.toString() } : {}),
+    ...(selectedCycleRangeEnd ? { cycleRangeEnd: selectedCycleRangeEnd.toString() } : {}),
     selectedCrystalIds: selectedCrystalIdsParam,
     excludedCrystalIds: excludedCrystalIdsParam,
   }).toString()
+
   const endpoint = `/crystals/suggested?${query}`
 
   return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")

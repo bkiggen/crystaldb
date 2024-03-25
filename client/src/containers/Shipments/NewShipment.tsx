@@ -204,7 +204,7 @@ const NewShipment = ({
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth variant="outlined">
-              <SmartSelect formik={formik} />
+              {cycleRangeMode ? null : <SmartSelect formik={formik} />}
             </FormControl>
           </Grid>
         </Grid>

@@ -20,12 +20,6 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
   const [excludedCrystalIds, setExcludedCrystalIds] = useState<number[]>([])
   const [isAnimating, setIsAnimating] = useState(false)
 
-  const selectedCrystalIds = formik.values.crystalIds
-  const selectedSubscriptionType = formik.values.subscriptionId
-  const selectedMonth = formik.values.month
-  const selectedYear = formik.values.year
-  const selectedCycle = formik.values.cycle
-
   const crystals = suggestedCrystals.filter((crystal) => {
     return !excludedCrystalIds.includes(crystal.id)
   })
@@ -36,11 +30,13 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
 
     const response = await getSuggestedCrystals({
       excludedCrystalIds,
-      selectedCrystalIds,
-      selectedSubscriptionType,
-      selectedMonth,
-      selectedYear,
-      selectedCycle,
+      selectedCrystalIds: formik.values.crystalIds,
+      selectedSubscriptionType: formik.values.subscriptionId,
+      selectedMonth: formik.values.month,
+      selectedYear: formik.values.year,
+      selectedCycle: formik.values.cycle,
+      selectedCycleRangeStart: formik.values.cycleRangeStart,
+      selectedCycleRangeEnd: formik.values.cycleRangeEnd,
     })
     setSuggestedCrystals(response.data || [])
   }
@@ -73,7 +69,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
             crystal={crystal}
             formik={formik}
             handleRemoveCrystalFromSuggestions={handleRemoveCrystalFromSuggestions}
-            selectedCrystalIds={selectedCrystalIds}
+            selectedCrystalIds={formik.values.crystalIds}
           />
         )
       })}
