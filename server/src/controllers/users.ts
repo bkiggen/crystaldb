@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import { User } from "../entity/User";
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const saltRounds = 10; // For bcrypt password hashing
 const jwtExpirySeconds = 864000; // 10 days
 
@@ -21,7 +20,9 @@ router.post("/signup", async (req: Request, res: Response) => {
 
     const oldUser = await User.findOneBy({ nickname });
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res
+        .status(409)
+        .send({ message: "User Already Exist. Please Login" });
     }
 
     const encryptedPassword = await bcrypt.hash(password, saltRounds);
@@ -33,7 +34,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 
     await User.save(user);
 
-    const token = jwt.sign({ user_id: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET, {
       expiresIn: jwtExpirySeconds,
     });
 
@@ -41,7 +42,7 @@ router.post("/signup", async (req: Request, res: Response) => {
       .status(200)
       .json({ token, user: { id: user.id, nickname: user.nickname } });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).send({ message: error.message });
   }
 });
 
@@ -56,9 +57,13 @@ router.post("/login", async (req: Request, res: Response) => {
     const user = await User.findOneBy({ nickname });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user.id, nickname }, JWT_SECRET, {
-        expiresIn: jwtExpirySeconds,
-      });
+      const token = jwt.sign(
+        { user_id: user.id, nickname },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: jwtExpirySeconds,
+        }
+      );
 
       return res
         .status(200)

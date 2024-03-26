@@ -3,10 +3,11 @@ import { ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
 import { suggestCrystals } from "../services/crystalService";
+import { authenticateToken } from "./util/authenticateToken";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const { page = 1, pageSize = 1000, searchTerm, inventory } = req.query;
 
   const pageNumber = parseInt(page as string);
@@ -46,51 +47,55 @@ router.get("/", async (req: Request, res: Response) => {
   res.json({ data: result, paging });
 });
 
-router.get("/suggested", async (req: Request, res: Response) => {
-  const {
-    page = 1,
-    pageSize = 1000,
-    selectedCrystalIds,
-    excludedCrystalIds,
-    subscriptionId,
-    month,
-    year,
-    cycle,
-  } = req.query;
+router.get(
+  "/suggested",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const {
+      page = 1,
+      pageSize = 1000,
+      selectedCrystalIds,
+      excludedCrystalIds,
+      subscriptionId,
+      month,
+      year,
+      cycle,
+    } = req.query;
 
-  // TODO: handle cycle range
+    // TODO: handle cycle range
 
-  const selectedCrystalIdsArray = selectedCrystalIds.length
-    ? (selectedCrystalIds as string).split(",")
-    : [];
-  const excludedCrystalIdsArray = excludedCrystalIds.length
-    ? (excludedCrystalIds as string).split(",")
-    : [];
+    const selectedCrystalIdsArray = selectedCrystalIds.length
+      ? (selectedCrystalIds as string).split(",")
+      : [];
+    const excludedCrystalIdsArray = excludedCrystalIds.length
+      ? (excludedCrystalIds as string).split(",")
+      : [];
 
-  const suggestions = await suggestCrystals({
-    selectedCrystalIds: selectedCrystalIdsArray,
-    excludedCrystalIds: excludedCrystalIdsArray,
-    subscriptionId: parseInt(subscriptionId as string),
-    month: parseInt(month as string),
-    year: parseInt(year as string),
-    cycle: parseInt(cycle as string),
-  });
+    const suggestions = await suggestCrystals({
+      selectedCrystalIds: selectedCrystalIdsArray,
+      excludedCrystalIds: excludedCrystalIdsArray,
+      subscriptionId: parseInt(subscriptionId as string),
+      month: parseInt(month as string),
+      year: parseInt(year as string),
+      cycle: parseInt(cycle as string),
+    });
 
-  const total = 100;
-  const pageNumber = parseInt(page as string);
-  const pageSizeNumber = parseInt(pageSize as string);
+    const total = 100;
+    const pageNumber = parseInt(page as string);
+    const pageSizeNumber = parseInt(pageSize as string);
 
-  const paging = {
-    totalCount: total,
-    totalPages: Math.ceil(total / pageSizeNumber),
-    currentPage: pageNumber,
-    pageSize: pageSizeNumber,
-  };
+    const paging = {
+      totalCount: total,
+      totalPages: Math.ceil(total / pageSizeNumber),
+      currentPage: pageNumber,
+      pageSize: pageSizeNumber,
+    };
 
-  res.json({ data: suggestions, paging });
-});
+    res.json({ data: suggestions, paging });
+  }
+);
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   const crystal = await Crystal.findOneBy({ id: parseInt(req.params.id) });
   if (!crystal) {
     return res.status(404).send("Crystal not found");
@@ -98,7 +103,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   res.json(crystal);
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const color = await Color.findOneBy({ id: req.body.colorId });
     if (!color) {
@@ -113,7 +118,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   const crystal = await Crystal.findOneBy({ id: parseInt(req.params.id) });
   if (!crystal) {
     return res.status(404).send("Crystal not found");
@@ -123,13 +128,17 @@ router.put("/:id", async (req: Request, res: Response) => {
   res.json(crystal);
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const crystal = await Crystal.findOneBy({ id: parseInt(req.params.id) });
-  if (!crystal) {
-    return res.status(404).send("Crystal not found");
+router.delete(
+  "/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const crystal = await Crystal.findOneBy({ id: parseInt(req.params.id) });
+    if (!crystal) {
+      return res.status(404).send("Crystal not found");
+    }
+    await Crystal.remove(crystal);
+    res.status(204).send();
   }
-  await Crystal.remove(crystal);
-  res.status(204).send();
-});
+);
 
 export default router;

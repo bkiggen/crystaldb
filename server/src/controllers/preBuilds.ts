@@ -3,10 +3,11 @@ import { PreBuild } from "../entity/PreBuild";
 import { Subscription } from "../entity/Subscription";
 import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
+import { authenticateToken } from "./util/authenticateToken";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const { page = 1, pageSize = 1000, searchTerm, subscriptionId } = req.query;
 
   const pageNumber = parseInt(page as string);
@@ -39,7 +40,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.json({ data: result, paging });
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   const shipment = await PreBuild.findOne({
     where: { id: parseInt(req.params.id) },
     relations: { crystals: true },
@@ -50,7 +51,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   res.json(shipment);
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const { crystalIds, subscriptionId, ...shipmentData } = req.body;
     const subscription = await Subscription.findOneBy({ id: subscriptionId });
@@ -67,7 +68,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   let preBuild = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
   const { crystalIds } = req.body;
   if (!preBuild) {
@@ -82,13 +83,17 @@ router.put("/:id", async (req: Request, res: Response) => {
   res.json(preBuild);
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const shipment = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
-  if (!shipment) {
-    return res.status(404).send("PreBuild not found");
+router.delete(
+  "/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const shipment = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
+    if (!shipment) {
+      return res.status(404).send("PreBuild not found");
+    }
+    await PreBuild.remove(shipment);
+    res.status(204).send();
   }
-  await PreBuild.remove(shipment);
-  res.status(204).send();
-});
+);
 
 export default router;

@@ -3,10 +3,11 @@ import { Shipment } from "../entity/Shipment";
 import { Subscription } from "../entity/Subscription";
 import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
+import { authenticateToken } from "./util/authenticateToken";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const {
     page = 1,
     pageSize = 1000,
@@ -48,7 +49,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.json({ data: result, paging });
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   const shipment = await Shipment.findOne({
     where: { id: parseInt(req.params.id) },
     relations: { crystals: true },
@@ -59,7 +60,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   res.json(shipment);
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const { crystalIds, subscriptionId, ...shipmentData } = req.body;
     const subscription = await Subscription.findOneBy({ id: subscriptionId });
@@ -76,7 +77,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   let shipment = await Shipment.findOneBy({ id: parseInt(req.params.id) });
   const { crystalIds } = req.body;
   if (!shipment) {
@@ -91,13 +92,17 @@ router.put("/:id", async (req: Request, res: Response) => {
   res.json(shipment);
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const shipment = await Shipment.findOneBy({ id: parseInt(req.params.id) });
-  if (!shipment) {
-    return res.status(404).send("Shipment not found");
+router.delete(
+  "/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const shipment = await Shipment.findOneBy({ id: parseInt(req.params.id) });
+    if (!shipment) {
+      return res.status(404).send("Shipment not found");
+    }
+    await Shipment.remove(shipment);
+    res.json(shipment);
   }
-  await Shipment.remove(shipment);
-  res.json(shipment);
-});
+);
 
 export default router;

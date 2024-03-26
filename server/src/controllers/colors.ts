@@ -1,14 +1,15 @@
 import { Router, Request, Response } from "express";
 import { Color } from "../entity/Color";
+import { authenticateToken } from "./util/authenticateToken";
 
 const router = Router();
 
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", authenticateToken, async (_req: Request, res: Response) => {
   const colors = await Color.find();
   res.json(colors);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   const color = await Color.findOneBy({ id: parseInt(req.params.id) });
   if (!color) {
     return res.status(404).send("Color not found");
@@ -16,7 +17,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   res.json(color);
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
     const color = Color.create(req.body);
     await Color.save(color);
@@ -26,7 +27,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   const color = await Color.findOneBy({ id: parseInt(req.params.id) });
   if (!color) {
     return res.status(404).send("Color not found");
@@ -36,13 +37,17 @@ router.put("/:id", async (req: Request, res: Response) => {
   res.json(color);
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const color = await Color.findOneBy({ id: parseInt(req.params.id) });
-  if (!color) {
-    return res.status(404).send("Color not found");
+router.delete(
+  "/:id",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const color = await Color.findOneBy({ id: parseInt(req.params.id) });
+    if (!color) {
+      return res.status(404).send("Color not found");
+    }
+    await Color.remove(color);
+    res.status(204).send();
   }
-  await Color.remove(color);
-  res.status(204).send();
-});
+);
 
 export default router;
