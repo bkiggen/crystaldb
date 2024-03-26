@@ -10,9 +10,13 @@ const jwtExpirySeconds = 864000; // 10 days
 
 router.post("/signup", async (req: Request, res: Response) => {
   try {
-    const { password, nickname } = req.body;
+    const { secret, password, nickname } = req.body;
+    const validSecret = process.env.NEW_USER_SECRET;
     if (!(password && nickname)) {
-      return res.status(400).send("All input is required");
+      return res.status(400).json({ message: "All input is required" });
+    }
+    if (secret !== validSecret) {
+      return res.status(403).json({ message: "Invalid Secret" });
     }
 
     const oldUser = await User.findOneBy({ nickname });

@@ -11,6 +11,7 @@ import colors from "../../styles/colors"
 const LoginPage = () => {
   const [password, setPassword] = useState("")
   const [nickname, setNickname] = useState("")
+  const [secret, setSecret] = useState("")
   const [signUpMode, setSignUpMode] = useState(false)
 
   const navigate = useNavigate()
@@ -19,11 +20,14 @@ const LoginPage = () => {
     e.preventDefault()
 
     if (signUpMode) {
-      await signUpUser({ nickname, password })
-      navigate("/")
+      const newUser = await signUpUser(secret, { nickname, password })
+      console.log(newUser)
+      if (newUser.token) {
+        navigate("/")
+      }
     } else {
-      const result = await signInUser({ nickname, password })
-      if (result.token) {
+      const loggedInUser = await signInUser({ nickname, password })
+      if (loggedInUser.token) {
         navigate("/")
       }
     }
@@ -47,6 +51,21 @@ const LoginPage = () => {
           Sign {signUpMode ? "Up" : "In"}
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
+          {signUpMode ? (
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="secret"
+              label="Secret"
+              name="secret"
+              autoComplete="secret"
+              autoFocus
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+              sx={textFieldStyles}
+            />
+          ) : null}
           <TextField
             margin="normal"
             required

@@ -2,19 +2,9 @@ import type { UserT } from "../types/User"
 import { makeRestRequest } from "./makeRequest" // Utility function we will create
 import { toast } from "react-toastify"
 
-export const signUpUser = async (newUser: UserT): Promise<UserT> => {
-  const endpoint = "/users/signup"
-  const body = JSON.stringify(newUser)
-  return makeRestRequest<UserT>(endpoint, "POST", body)
-}
+type UserReturnT = { token: string; user: UserT }
 
-export const signInUser = async (
-  credentials: Pick<UserT, "nickname" | "password">,
-): Promise<{ token: string; user: UserT }> => {
-  const endpoint = "/users/login"
-  const body = JSON.stringify(credentials)
-  const data = await makeRestRequest<{ token: string; user: UserT }>(endpoint, "POST", body)
-
+const logUserIn = (data) => {
   if (data.token) {
     localStorage.setItem("userToken", data.token)
     localStorage.setItem("userIsAdmin", data.user.isAdmin ? "true" : "false")
@@ -26,9 +16,24 @@ export const signInUser = async (
   return data
 }
 
+export const signUpUser = async (secret, newUser: UserT): Promise<UserReturnT> => {
+  const endpoint = "/users/signup"
+  const body = JSON.stringify({ ...newUser, secret })
+  const data = await makeRestRequest<UserReturnT>(endpoint, "POST", body)
+  return logUserIn(data)
+}
+
+export const signInUser = async (
+  credentials: Pick<UserT, "nickname" | "password">,
+): Promise<UserReturnT> => {
+  const endpoint = "/users/login"
+  const body = JSON.stringify(credentials)
+  const data = await makeRestRequest<UserReturnT>(endpoint, "POST", body)
+  return logUserIn(data)
+}
+
 export const handleLogout = () => {
   localStorage.removeItem("userToken")
   localStorage.removeItem("userIsAdmin")
   console.log("Logout successful")
-  // Redirect to login page or update UI
 }
