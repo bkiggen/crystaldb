@@ -47,7 +47,7 @@ const AppHeader = () => {
           }}
         >
           <Link to="/">
-            <img src="/src/assets/crystal.png" alt="logo" height="42px" />
+            <img src="/src/assets/favicon.ico" alt="logo" height="42px" />
           </Link>
         </Box>
         {token && (
