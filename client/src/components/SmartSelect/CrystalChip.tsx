@@ -14,6 +14,7 @@ type CrystalChipT = {
   formik: ReturnType<typeof useFormik>
   handleRemoveCrystalFromSuggestions?: (e: React.MouseEvent, id: number) => void
   selectedCrystalIds: number[]
+  withoutDelete?: boolean
 }
 
 const CrystalChip = ({
@@ -21,6 +22,7 @@ const CrystalChip = ({
   formik,
   handleRemoveCrystalFromSuggestions = () => null,
   selectedCrystalIds,
+  withoutDelete,
 }: CrystalChipT) => {
   return (
     <Tooltip
@@ -45,12 +47,14 @@ const CrystalChip = ({
               <ColorIndicator indicatorValue={crystal?.color?.hex} />
               <Typography sx={{ fontSize: "14px" }}>{crystal?.name}</Typography>
             </Box>
-            <CloseIcon
-              sx={{ color: "white", fontSize: "16px", marginLeft: "16px" }}
-              onClick={(e) => {
-                handleRemoveCrystalFromSuggestions(e, crystal.id)
-              }}
-            />
+            {withoutDelete ? null : (
+              <CloseIcon
+                sx={{ color: "white", fontSize: "16px", marginLeft: "16px" }}
+                onClick={(e) => {
+                  handleRemoveCrystalFromSuggestions(e, crystal.id)
+                }}
+              />
+            )}
           </Box>
         }
         onClick={() => {

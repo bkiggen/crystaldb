@@ -74,6 +74,8 @@ router.get(
 
     let arrayOfRangeNumbers = [];
 
+    // TODO: FINISH THIS
+
     if (cycleRangeStartInt && cycleRangeEndInt) {
       arrayOfRangeNumbers = Array.from(
         { length: cycleRangeEndInt - cycleRangeStartInt + 1 },
@@ -149,7 +151,7 @@ router.delete(
       return res.status(404).send("Crystal not found");
     }
     await Crystal.remove(crystal);
-    res.status(204).send();
+    res.json(crystal);
   }
 );
 

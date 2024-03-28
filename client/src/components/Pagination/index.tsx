@@ -170,7 +170,7 @@ const Pagination = ({
         {paging.totalPages > 1 && (
           <>
             {!isTablet && (
-              <Typography sx={{ marginRight: "12px", color: colors.slateA4 }}>
+              <Typography sx={{ marginRight: "12px", color: colors.slateGrey }}>
                 Showing {startItem.toLocaleString()} - {endItem.toLocaleString()} of{" "}
                 {paging.totalCount.toLocaleString()}
               </Typography>

@@ -151,6 +151,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
               crystal={c}
               formik={formik}
               selectedCrystalIds={formik.values.crystalIds}
+              withoutDelete
             />
           )
         })}

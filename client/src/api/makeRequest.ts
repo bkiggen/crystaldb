@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 
-const BASE_URL = "/api"
+const BASE_URL = "http://localhost:4000"
 
 export const makeRestRequest = async <T>(
   endpoint: string,

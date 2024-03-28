@@ -6,7 +6,7 @@ import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/materi
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { getAllColors } from "../../api/colors"
-import { updateCrystal } from "../../api/crystals"
+import { updateCrystal, deleteCrystal } from "../../api/crystals"
 import ModalContainer from "../../components/Modals/ModalContainer"
 import type { CrystalT } from "../../types/Crystal"
 import {
@@ -71,6 +71,12 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
       onClose()
     },
   })
+
+  const onDelete = async () => {
+    await deleteCrystal(crystal.id)
+    refreshCrystals()
+    onClose()
+  }
 
   return (
     <ModalContainer
@@ -240,6 +246,14 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
             </Grid>
           </Grid>
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={onDelete}
+              sx={{ marginRight: "16px" }}
+            >
+              X
+            </Button>
             <Button type="submit" variant="contained" color="primary">
               Update Crystal
             </Button>

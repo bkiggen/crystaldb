@@ -15,6 +15,11 @@ export const updateCrystal = async (
   return makeRestRequest<CrystalT>(endpoint, "PUT", JSON.stringify(updatedCrystal))
 }
 
+export const deleteCrystal = async (crystalId: number): Promise<void> => {
+  const endpoint = `/crystals/${crystalId}`
+  return makeRestRequest<void>(endpoint, "DELETE")
+}
+
 export const getAllCrystals = async ({
   searchTerm = "",
   page = 1,
