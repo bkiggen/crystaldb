@@ -14,9 +14,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const pageSizeNumber = parseInt(pageSize as string);
 
   const sortBy = req.query.sortBy || ("name" as string);
-  console.log("🚀 ~ router.get ~ sortBy:", sortBy);
   const sortDirection = req.query.sortDirection || ("asc" as string);
-  console.log("🚀 ~ router.get ~ sortDirection:", sortDirection);
 
   const order = {
     // @ts-ignore
@@ -60,9 +58,12 @@ router.get(
       month,
       year,
       cycle,
+      cycleRangeStart,
+      cycleRangeEnd,
     } = req.query;
 
-    // TODO: handle cycle range
+    const cycleRangeStartInt = parseInt(cycleRangeStart as string);
+    const cycleRangeEndInt = parseInt(cycleRangeEnd as string);
 
     const selectedCrystalIdsArray = selectedCrystalIds.length
       ? (selectedCrystalIds as string).split(",")
@@ -70,6 +71,17 @@ router.get(
     const excludedCrystalIdsArray = excludedCrystalIds.length
       ? (excludedCrystalIds as string).split(",")
       : [];
+
+    let arrayOfRangeNumbers = [];
+
+    if (cycleRangeStartInt && cycleRangeEndInt) {
+      arrayOfRangeNumbers = Array.from(
+        { length: cycleRangeEndInt - cycleRangeStartInt + 1 },
+        (_, i) => cycleRangeStartInt + i
+      );
+    } else {
+      arrayOfRangeNumbers = [cycle];
+    }
 
     const suggestions = await suggestCrystals({
       selectedCrystalIds: selectedCrystalIdsArray,

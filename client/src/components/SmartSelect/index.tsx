@@ -11,11 +11,12 @@ import type { CrystalT } from "../../types/Crystal"
 
 import CrystalChip from "./CrystalChip"
 
-type CrystalSelectT = {
+type SmartSelectT = {
   formik: ReturnType<typeof useFormik>
+  cycleRangeMode: boolean
 }
 
-const CrystalSelect = ({ formik }: CrystalSelectT) => {
+const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
   const [suggestedCrystals, setSuggestedCrystals] = useState<CrystalT[]>([])
   const [excludedCrystalIds, setExcludedCrystalIds] = useState<number[]>([])
   const [isAnimating, setIsAnimating] = useState(false)
@@ -34,9 +35,9 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       selectedSubscriptionType: formik.values.subscriptionId,
       selectedMonth: formik.values.month,
       selectedYear: formik.values.year,
-      selectedCycle: formik.values.cycle,
-      selectedCycleRangeStart: formik.values.cycleRangeStart,
-      selectedCycleRangeEnd: formik.values.cycleRangeEnd,
+      ...(cycleRangeMode ? {} : { selectedCycle: formik.values.cycle }),
+      ...(cycleRangeMode ? {} : { selectedCycleRangeStart: formik.values.cycleRangeStart }),
+      ...(cycleRangeMode ? {} : { selectedCycleRangeEnd: formik.values.cycleRangeEnd }),
     })
     setSuggestedCrystals(response.data || [])
   }
@@ -77,4 +78,4 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
   )
 }
 
-export default CrystalSelect
+export default SmartSelect
