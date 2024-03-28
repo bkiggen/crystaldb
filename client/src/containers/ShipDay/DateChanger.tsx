@@ -27,7 +27,7 @@ const DateChanger = ({ fetchShipments }) => {
   }
 
   const resetSubType = () => {
-    formik.setFieldValue("subscriptionId", "All")
+    formik.setFieldValue("subscriptionId", 0)
   }
 
   useEffect(() => {
