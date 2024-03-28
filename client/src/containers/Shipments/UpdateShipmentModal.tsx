@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import dayjs from "dayjs"
 import * as Yup from "yup"
@@ -131,7 +131,12 @@ const UpdateShipmentModal = ({
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    await updateShipment({ ...formData, id: shipment.id })
+    await updateShipment({
+      ...formData,
+      id: shipment.id,
+      userCount: shipment.userCount,
+      userCountIsNew: shipment.userCountIsNew,
+    })
     setSelectedShipment(null)
     fetchShipments({})
     formik.resetForm()

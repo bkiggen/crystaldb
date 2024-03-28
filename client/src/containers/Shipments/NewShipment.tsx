@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import { useFormik } from "formik"
 import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from "@mui/material"
@@ -110,7 +110,7 @@ const NewShipment = ({
                 {cycleRangeMode ? "Cycle Range" : "Cycle"}
               </Typography>
               <Button
-                onClick={() => setCycleRangeMode((prev) => !prev)}
+                onClick={() => setCycleRangeMode(!cycleRangeMode)}
                 sx={{
                   margin: 0,
                   height: "14px",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import { useFormik } from "formik"
 import dayjs from "dayjs"
@@ -69,8 +69,7 @@ const DateChanger = ({ fetchShipments }) => {
       fetchShipments({
         month: formik.values.month,
         year: formik.values.year,
-        subscriptionId:
-          formik.values.subscriptionId === "All" ? null : formik.values.subscriptionId,
+        subscriptionId: formik.values.subscriptionId === 0 ? null : formik.values.subscriptionId,
       })
     }
   }, [formik.values.month, formik.values.year, formik.values.subscriptionId])
@@ -124,7 +123,7 @@ const DateChanger = ({ fetchShipments }) => {
                 {...formik.getFieldProps("subscriptionId")}
                 sx={textFieldStyles}
               >
-                <MenuItem key="All" value="All">
+                <MenuItem key="All" value={0}>
                   All
                 </MenuItem>
                 {allSubscriptions.map((subscription) => (

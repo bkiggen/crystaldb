@@ -11,5 +11,5 @@ export type PreBuildT = {
   createdAt?: string
   updatedAt?: string
   subscriptionId: number
-  subscription: SubscriptionT
+  subscription?: SubscriptionT
 }

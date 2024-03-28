@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react" // eslint-disable-line @typescript-eslint/no-unused-vars
+import { useEffect, useState } from "react"
 
 const useWindowSize = () => {
   // Initialize state with undefined width/height so server and client renders match

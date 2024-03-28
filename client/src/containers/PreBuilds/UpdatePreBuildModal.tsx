@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import ModalContainer from "../../components/Modals/ModalContainer"
 
 import * as Yup from "yup"

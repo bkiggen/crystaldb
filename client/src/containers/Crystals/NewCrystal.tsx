@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useFormik } from "formik"
 import colors from "../../styles/colors"
 
@@ -39,7 +39,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const debouncedSearch = useDebounce(rawSearch, 300)
 
   const initialValues: {
-    name: string
+    name?: string
     colorId?: number
     category?: string
     rarity?: RarityT

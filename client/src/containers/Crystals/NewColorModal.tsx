@@ -1,4 +1,3 @@
-import React from "react"
 import { Modal, Box, TextField, Button, Typography } from "@mui/material"
 
 import { HexColorPicker } from "react-colorful"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import { Container } from "@mui/material"
 import { useFormik } from "formik"
@@ -121,7 +121,7 @@ const Shipments = () => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newShipment = await createShipment(formData)
+    const newShipment = await createShipment({ ...formData, userCount: 0, userCountIsNew: false })
     addShipment(newShipment)
     await formik.resetForm()
     resetSubType()
