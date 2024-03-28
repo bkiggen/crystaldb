@@ -1,24 +1,41 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
 
-import { Box } from "@mui/material"
-import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
-import dayjs from "dayjs"
+import { Box, Container, Tooltip } from "@mui/material"
+import { DataGrid, GridCellParams, GridColDef, GridSortModel } from "@mui/x-data-grid"
 
-import { getAllCrystals } from "../../graphql/crystals"
+import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
-import ColorIndicator from "../../components/ColorIndicator"
+import type { PagingT } from "../../types/Paging"
+import { defaultPaging } from "../../types/Paging"
 
+import Pagination from "../../components/Pagination"
+import ColorIndicator from "../../components/ColorIndicator"
 import NewCrystal from "./NewCrystal"
+import UpdateCrystalModal from "./UpdateCrystalModal"
 
 const Crystals = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
+  const [paging, setPaging] = useState<PagingT>(defaultPaging)
+  const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
+  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
+
+  const getCrystals = async ({
+    searchTerm = "",
+    page = 1,
+    sortBy = null,
+    sortDirection = null,
+  }) => {
+    const response = await getAllCrystals({ searchTerm, page, sortBy, sortDirection })
+    setCrystals(response.data || [])
+    setPaging(response.paging)
+  }
 
   useEffect(() => {
-    const getCrystals = async () => {
-      const response = await getAllCrystals()
-      setCrystals(response || [])
-    }
-    getCrystals()
+    getCrystals({})
   }, [])
 
   const addCrystal = (newCrystal: CrystalT) => {
@@ -32,112 +49,145 @@ const Crystals = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "id",
-      headerName: "ID",
-      width: 100,
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.id}</div>
-      },
-    },
-    {
       field: "name",
       headerName: "Name",
-      width: 300,
-      flex: 1,
+      minWidth: 300,
+      flex: 3,
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.name}</div>
+        return (
+          <Tooltip title={params.row.description}>
+            <Box sx={{ textTransform: "capitalize" }}>{params.row.name}</Box>
+          </Tooltip>
+        )
       },
     },
     {
       field: "color",
       headerName: "Color",
-      width: 150,
+      width: 80,
+      align: "center",
+      sortable: false,
+      headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box
-              sx={{
-                width: "12px",
-                height: "12px",
-                borderRadius: "50%",
-                backgroundColor: params.row.color?.hex,
-                marginRight: "8px",
-              }}
-            />
-            {params.row.color?.name}
+            <ColorIndicator indicatorValue={params.row.color?.hex} />
           </Box>
         )
       },
     },
     {
-      field: "category",
-      headerName: "Category",
-      width: 200,
+      field: "size",
+      headerName: "Size",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.category}</div>
+        return params.row.size ? (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
+          </Box>
+        ) : (
+          <Box>-</Box>
+        )
+      },
+    },
+    {
+      field: "inventory",
+      headerName: "Inventory",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ColorIndicator indicatorType="inventory" indicatorValue={params.row.inventory} />
+            {params.row.inventory}
+          </Box>
+        )
       },
     },
     {
       field: "rarity",
       headerName: "Rarity",
-      width: 150,
+      width: 130,
       renderCell: (params: GridCellParams) => {
-        return (
+        return params.row.rarity ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
             {params.row.rarity}
           </Box>
+        ) : (
+          <Box>-</Box>
         )
       },
     },
     {
       field: "findAge",
       headerName: "Find Age",
-      width: 150,
+      width: 130,
       renderCell: (params: GridCellParams) => {
-        return (
+        return params.row.findAge ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
             {params.row.findAge}
           </Box>
+        ) : (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>-</Box>
         )
       },
     },
     {
-      field: "createdAt",
-      headerName: "Created At",
-      width: 200,
-      flex: 1,
+      field: "category",
+      headerName: "Category",
+      width: 150,
       renderCell: (params: GridCellParams) => {
-        return <div>{dayjs(params.row.createdAt).format("MMM D YYYY")}</div>
+        return <Box sx={{ textTransform: "capitalize" }}>{params.row.category}</Box>
       },
     },
   ]
 
   return (
-    <Box sx={{ paddingBottom: "240px" }}>
+    <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewCrystal addCrystal={addCrystal} />
-      <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          sx={{
-            background: "rgba(70, 90, 126, 0.4)",
-            color: "white",
-            maxWidth: "1200px",
-            width: "90%",
-            margin: "0 auto",
-          }}
-          rows={crystals || []}
-          columns={columns}
-          disableColumnMenu
-          disableColumnFilter
-          hideFooter
-          hideFooterPagination
-          checkboxSelection={false}
-          className="bg-white p-0"
-          autoHeight
+      {crystalToUpdate ? (
+        <UpdateCrystalModal
+          crystal={crystalToUpdate}
+          onClose={() => setCrystalToUpdate(null)}
+          refreshCrystals={() => getCrystals({})}
         />
-      </div>
-    </Box>
+      ) : null}
+      <Pagination fetchData={getCrystals} paging={paging} />
+      <DataGrid
+        sx={{
+          background: "rgba(70, 90, 126, 0.4)",
+          color: "white",
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: 800,
+          },
+        }}
+        sortingMode="server"
+        sortModel={sortModel}
+        onSortModelChange={(model) => {
+          if (model.length !== 0) {
+            const sortArgs = { sortBy: model[0]?.field, sortDirection: model[0]?.sort }
+            setSortModel(model)
+            getCrystals(sortArgs)
+            navigate(
+              `${location.pathname}?sortBy=${model[0]?.field}&sortDirection=${model[0]?.sort}`,
+            )
+          }
+        }}
+        onRowClick={(item) => setCrystalToUpdate(item.row)}
+        rows={crystals || []}
+        columns={columns}
+        disableColumnMenu
+        disableColumnFilter
+        hideFooter
+        hideFooterPagination
+        checkboxSelection={false}
+        className="bg-white p-0"
+        autoHeight
+      />
+    </Container>
   )
 }
 

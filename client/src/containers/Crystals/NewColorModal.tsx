@@ -1,38 +1,34 @@
-import React from "react";
-import { Modal, Box, TextField, Button, Typography } from "@mui/material";
+import { Modal, Box, TextField, Button, Typography } from "@mui/material"
 
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker } from "react-colorful"
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useFormik } from "formik"
+import * as Yup from "yup"
 
-import { createColor } from "../../graphql/colors";
+import { createColor } from "../../api/colors"
 
 const ColorCreationModal = ({ onClose }) => {
   const initialValues = {
     name: "",
     hex: "",
-  };
+  }
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     hex: Yup.string()
-      .matches(
-        /^#[0-9A-Fa-f]{6}$/,
-        "Hex color code must be valid (e.g., #RRGGBB)"
-      )
+      .matches(/^#[0-9A-Fa-f]{6}$/, "Hex color code must be valid (e.g., #RRGGBB)")
       .required("Hex color code is required"),
-  });
+  })
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      createColor(values);
-      formik.resetForm();
-      onClose();
+      createColor(values)
+      formik.resetForm()
+      onClose()
     },
-  });
+  })
 
   return (
     <Modal open onClose={onClose}>
@@ -78,7 +74,7 @@ const ColorCreationModal = ({ onClose }) => {
         </form>
       </Box>
     </Modal>
-  );
-};
+  )
+}
 
-export default ColorCreationModal;
+export default ColorCreationModal
