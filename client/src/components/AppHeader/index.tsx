@@ -5,6 +5,7 @@ import { Box } from "@mui/material"
 
 import { handleLogout } from "../../api/users"
 
+import CrystalImage from "../../assets/crystal.png"
 import NavItem from "./NavItem"
 
 const AppHeader = () => {
@@ -47,7 +48,7 @@ const AppHeader = () => {
           }}
         >
           <Link to="/">
-            <img src="/src/assets/favicon.ico" alt="logo" height="42px" />
+            <img src={CrystalImage} alt="logo" height="42px" />
           </Link>
         </Box>
         {token && (
