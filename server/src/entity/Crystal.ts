@@ -49,6 +49,9 @@ export class Crystal extends BaseEntity {
   @Column({ nullable: true })
   category: string;
 
+  @Column({ nullable: true })
+  location: string;
+
   @Column({
     type: "enum",
     enum: Rarity,

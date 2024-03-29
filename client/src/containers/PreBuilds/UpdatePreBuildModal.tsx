@@ -20,7 +20,7 @@ import {
 import { textFieldStyles } from "../../styles/vars"
 import { getAllCrystals } from "../../api/crystals"
 import { getAllSubscriptions } from "../../api/subscriptions"
-import { updatePreBuild } from "../../api/preBuilds"
+import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
 
 import { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
@@ -49,6 +49,12 @@ const UpdatePreBuildModal = ({
   useEffect(() => {
     fetchSubscriptionTypes()
   }, [])
+
+  const onDelete = async () => {
+    await deletePreBuild(preBuild.id)
+    fetchPreBuilds({})
+    setSelectedPreBuild(null)
+  }
 
   const initialValues: {
     cycle: number
@@ -115,7 +121,7 @@ const UpdatePreBuildModal = ({
   })
 
   return (
-    <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Prebuild">
+    <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Pre-Build">
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
@@ -286,6 +292,14 @@ const UpdatePreBuildModal = ({
           </Grid>
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={onDelete}
+              sx={{ marginRight: "16px" }}
+            >
+              X
+            </Button>
             <Button type="submit" variant="contained" color="primary">
               Update PreBuild
             </Button>

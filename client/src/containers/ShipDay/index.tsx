@@ -60,7 +60,9 @@ const ShipDay = () => {
         <DateChanger fetchShipments={fetchShipments} />
         <Box sx={{ display: "flex", flexWrap: "wrap" }}>
           {shipments.map((shipment) => {
-            return <Shipment shipment={shipment} updateLocalState={updateLocalState} />
+            return (
+              <Shipment key={shipment.id} shipment={shipment} updateLocalState={updateLocalState} />
+            )
           })}
         </Box>
       </Box>

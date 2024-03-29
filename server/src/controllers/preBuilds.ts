@@ -87,12 +87,12 @@ router.delete(
   "/:id",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const shipment = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
-    if (!shipment) {
+    const preBuild = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
+    if (!preBuild) {
       return res.status(404).send("PreBuild not found");
     }
-    await PreBuild.remove(shipment);
-    res.status(204).send();
+    await PreBuild.remove(preBuild);
+    res.json(preBuild);
   }
 );
 

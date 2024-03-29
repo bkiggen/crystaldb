@@ -33,3 +33,8 @@ export const updatePreBuild = async (updatedPreBuild: PreBuildT): Promise<PreBui
   const endpoint = `/preBuilds/${updatedPreBuild.id}`
   return makeRestRequest<PreBuildT>(endpoint, "PUT", JSON.stringify(updatedPreBuild))
 }
+
+export const deletePreBuild = async (id: number): Promise<void> => {
+  const endpoint = `/preBuilds/${id}`
+  return makeRestRequest<void>(endpoint, "DELETE")
+}

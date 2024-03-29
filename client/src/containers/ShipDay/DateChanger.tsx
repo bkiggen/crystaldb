@@ -65,7 +65,7 @@ const DateChanger = ({ fetchShipments }) => {
   })
 
   useEffect(() => {
-    if (formik.values.month && formik.values.year && formik.values.subscriptionId) {
+    if (formik.values.month && formik.values.year) {
       fetchShipments({
         month: formik.values.month,
         year: formik.values.year,
@@ -126,11 +126,13 @@ const DateChanger = ({ fetchShipments }) => {
                 <MenuItem key="All" value={0}>
                   All
                 </MenuItem>
-                {allSubscriptions.map((subscription) => (
-                  <MenuItem key={subscription.id} value={subscription.id}>
-                    {subscription.name}
-                  </MenuItem>
-                ))}
+                {allSubscriptions.map((subscription) => {
+                  return (
+                    <MenuItem key={subscription.id} value={subscription.id}>
+                      {subscription.name}
+                    </MenuItem>
+                  )
+                })}
               </TextField>
             </FormControl>
           </Grid>

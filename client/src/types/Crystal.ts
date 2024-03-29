@@ -47,6 +47,18 @@ export const category = {
 export type CategoryType = (typeof category)[keyof typeof category]
 export const categoryOptions = Object.values(category)
 
+export const location = {
+  brazil: "Brazil",
+  madagascar: "Madagascar",
+  morocco: "Morocco",
+  china: "China",
+  mexico: "Mexico",
+  afghanistan: "Afghanistan",
+  peru: "Peru",
+} as const
+export type LocationType = (typeof location)[keyof typeof location]
+export const locationOptions = Object.values(location)
+
 export type CrystalT = {
   id: number
   name: string
@@ -61,4 +73,5 @@ export type CrystalT = {
   inventory?: InventoryT
   updatedAt?: string
   size?: SizeT
+  location?: string
 }

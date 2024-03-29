@@ -13,11 +13,13 @@ import {
   sizeOptions,
   inventoryOptions,
   categoryOptions,
+  locationOptions,
 } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
 
 import useDebounce from "../../hooks/useDebounce"
+import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
 
 import { createCrystal } from "../../api/crystals"
 import { getAllColors } from "../../api/colors"
@@ -42,6 +44,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     name?: string
     colorId?: number
     category?: string
+    location?: string
     rarity?: RarityT
     description?: string
     image?: string
@@ -52,6 +55,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     name: "",
     colorId: undefined,
     category: "",
+    location: "",
     rarity: undefined,
     description: "",
     image: "",
@@ -64,6 +68,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer(),
     category: Yup.string(),
+    location: Yup.string(),
     rarity: Yup.string().oneOf(rarityOptions as RarityT[], "Invalid rarity value"),
     description: Yup.string(),
     image: Yup.string(),
@@ -74,7 +79,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
 
   const handleSubmit = async (formData: typeof initialValues) => {
     const newCrystal = await createCrystal({
-      name: formData.name,
+      name: capitalizeFirstLetter(formData.name),
       colorId: formData.colorId,
       category: formData.category,
       rarity: formData.rarity,
@@ -83,6 +88,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       findAge: formData.findAge,
       size: formData.size,
       inventory: formData.inventory,
+      location: formData.location,
     })
     addCrystal(newCrystal)
     formik.resetForm()
@@ -275,7 +281,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             </Grid>
           </Grid>
           <Grid container spacing={2} sx={{ marginTop: "-12px" }}>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <TextField
                   select
@@ -292,7 +298,24 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 </TextField>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
+              <TextField
+                id="location"
+                label="Location"
+                variant="outlined"
+                fullWidth
+                select
+                {...formik.getFieldProps("location")}
+                sx={textFieldStyles}
+              >
+                {locationOptions.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <TextField
                   select
