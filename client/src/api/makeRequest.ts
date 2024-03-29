@@ -1,6 +1,6 @@
 import { toast } from "react-toastify"
 
-const BASE_URL = "/api"
+const BASE_URL = process.env.NODE_ENV === "production" ? "/api" : "http://localhost:4000"
 
 export const makeRestRequest = async <T>(
   endpoint: string,
