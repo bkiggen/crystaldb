@@ -6,8 +6,8 @@ import { DataGrid, GridCellParams, GridColDef, GridSortModel } from "@mui/x-data
 
 import { getAllCrystals } from "../../api/crystals"
 import type { CrystalT } from "../../types/Crystal"
-import type { PagingT } from "../../types/Paging"
-import { defaultPaging } from "../../types/Paging"
+
+import usePaging from "../../hooks/usePaging"
 
 import Pagination from "../../components/Pagination"
 import ColorIndicator from "../../components/ColorIndicator"
@@ -18,8 +18,8 @@ const Crystals = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const [paging, setPaging] = usePaging()
   const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
-  const [paging, setPaging] = useState<PagingT>(defaultPaging)
   const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
   const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
 

@@ -8,8 +8,8 @@ import { getAllSubscriptions } from "../../api/subscriptions"
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
-import type { PagingT } from "../../types/Paging"
-import { defaultPaging } from "../../types/Paging"
+
+import usePaging from "../../hooks/usePaging"
 
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
@@ -18,7 +18,7 @@ import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
   const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
-  const [paging, setPaging] = useState<PagingT>(defaultPaging)
+  const [paging, setPaging] = usePaging()
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
 

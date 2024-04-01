@@ -11,9 +11,9 @@ import { createShipment } from "../../api/shipments"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { SubscriptionT } from "../../types/Subscription"
-import type { PagingT } from "../../types/Paging"
 import type { CrystalT } from "../../types/Crystal"
-import { defaultPaging } from "../../types/Paging"
+
+import usePaging from "../../hooks/usePaging"
 
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 import NewShipment from "./NewShipment"
@@ -21,7 +21,7 @@ import Table from "./Table"
 
 const Shipments = () => {
   const [shipments, setShipments] = useState<ShipmentT[] | null>(null)
-  const [paging, setPaging] = useState<PagingT>(defaultPaging)
+  const [paging, setPaging] = usePaging()
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
 
