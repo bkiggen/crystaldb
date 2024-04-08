@@ -18,6 +18,7 @@ import {
 } from "@mui/material"
 
 import { textFieldStyles } from "../../styles/vars"
+
 import { getAllCrystals } from "../../api/crystals"
 import { getAllSubscriptions } from "../../api/subscriptions"
 import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
@@ -25,6 +26,8 @@ import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
 import { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
+
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
@@ -40,6 +43,7 @@ const UpdatePreBuildModal = ({
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
   const fetchSubscriptionTypes = async () => {
     const response = await getAllSubscriptions()
@@ -295,7 +299,7 @@ const UpdatePreBuildModal = ({
             <Button
               variant="contained"
               color="error"
-              onClick={onDelete}
+              onClick={() => setDeleteConfirmVisible(true)}
               sx={{ marginRight: "16px" }}
             >
               X
@@ -305,6 +309,11 @@ const UpdatePreBuildModal = ({
             </Button>
           </Box>
         </Box>
+        <ConfirmDialogue
+          open={deleteConfirmVisible}
+          onClose={() => setDeleteConfirmVisible(false)}
+          onConfirm={onDelete}
+        />
       </form>
     </ModalContainer>
   )
