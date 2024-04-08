@@ -15,6 +15,7 @@ import {
   Autocomplete,
   Typography,
   MenuItem,
+  Popper,
 } from "@mui/material"
 
 import { textFieldStyles } from "../../styles/vars"
@@ -239,7 +240,6 @@ const UpdatePreBuildModal = ({
             <Grid item xs={12}>
               <FormControl fullWidth variant="outlined">
                 <Autocomplete
-                  disablePortal
                   id="crystal-select"
                   disableCloseOnSelect
                   multiple
@@ -280,6 +280,10 @@ const UpdatePreBuildModal = ({
                     <li {...props}>
                       <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
                     </li>
+                  )}
+                  // varies from other similar elements. Also, disablePortal is false here
+                  PopperComponent={(popperProps) => (
+                    <Popper {...popperProps} placement="top" style={{ zIndex: 1300 }} />
                   )}
                   filterOptions={(options, params) => {
                     const filtered = options.filter((option) => {
