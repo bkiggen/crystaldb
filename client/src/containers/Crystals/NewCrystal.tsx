@@ -4,6 +4,7 @@ import colors from "../../styles/colors"
 
 import * as Yup from "yup"
 import { Box, TextField, Button, MenuItem, FormControl, Grid } from "@mui/material"
+import EditIcon from "@mui/icons-material/Edit"
 
 import { textFieldStyles } from "../../styles/vars"
 
@@ -34,7 +35,7 @@ type NewCrystalT = {
 
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
-  const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
+  const [colorModalOpen, setColorModalOpen] = useState<boolean | ColorT[]>(false)
   const [crystals, setCrystals] = useState<CrystalT[]>([])
   const [crystalsVisible, setCrystalsVisible] = useState(false)
   const [rawSearch, setRawSearch] = useState(null)
@@ -128,6 +129,11 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     fetchColors()
   }, [])
 
+  const handleColorEdit = (e, colorToEdit) => {
+    e.stopPropagation()
+    setColorModalOpen(colorToEdit)
+  }
+
   const indicatorOptions = (indicatorName, indicatorValues) => {
     return indicatorValues.map((value) => (
       <MenuItem key={value} value={value}>
@@ -204,19 +210,27 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                           sx={{
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "space-between",
                             textTransform: "capitalize",
+                            width: "100%",
                           }}
                         >
-                          <Box
-                            sx={{
-                              width: "12px",
-                              height: "12px",
-                              borderRadius: "50%",
-                              backgroundColor: colorOption.hex,
-                              marginRight: "8px",
-                            }}
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Box
+                              sx={{
+                                width: "12px",
+                                height: "12px",
+                                borderRadius: "50%",
+                                backgroundColor: colorOption.hex,
+                                marginRight: "8px",
+                              }}
+                            />
+                            {colorOption.name}
+                          </Box>
+                          <EditIcon
+                            sx={{ color: "#708090", cursor: "pointer" }}
+                            onClick={(e) => handleColorEdit(e, colorOption)}
                           />
-                          {colorOption.name}
                         </Box>
                       </MenuItem>
                     )
@@ -342,6 +356,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       </form>
       {colorModalOpen && (
         <NewColorModal
+          colorToEdit={colorModalOpen}
           onClose={() => {
             setColorModalOpen(false)
             setTimeout(() => {

@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { Modal, Box, TextField, Button, Typography } from "@mui/material"
 
 import { HexColorPicker } from "react-colorful"
@@ -5,12 +7,15 @@ import { HexColorPicker } from "react-colorful"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 
-import { createColor } from "../../api/colors"
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 
-const ColorCreationModal = ({ onClose }) => {
+import { createColor, updateColor, deleteColor } from "../../api/colors"
+
+const ColorCreationModal = ({ onClose, colorToEdit }) => {
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
   const initialValues = {
-    name: "",
-    hex: "",
+    name: colorToEdit.name || "",
+    hex: colorToEdit.hex || "#000000",
   }
 
   const validationSchema = Yup.object({
@@ -24,11 +29,20 @@ const ColorCreationModal = ({ onClose }) => {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      createColor(values)
+      if (colorToEdit) {
+        updateColor(colorToEdit.id, values)
+      } else {
+        createColor(values)
+      }
       formik.resetForm()
       onClose()
     },
   })
+
+  const handleDeleteColor = () => {
+    deleteColor(colorToEdit.id)
+    onClose()
+  }
 
   return (
     <Modal open onClose={onClose}>
@@ -45,7 +59,9 @@ const ColorCreationModal = ({ onClose }) => {
           textAlign: "center",
         }}
       >
-        <Typography variant="h6">Create a New Color</Typography>
+        <Typography variant="h5" sx={{ color: "black", fontWeight: 600, marginBottom: "12px" }}>
+          {colorToEdit ? "Update" : "Create"} Color
+        </Typography>
         <form onSubmit={formik.handleSubmit}>
           <TextField
             fullWidth
@@ -55,23 +71,46 @@ const ColorCreationModal = ({ onClose }) => {
             margin="normal"
             {...formik.getFieldProps("name")}
             error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
+            helperText={formik.touched.name ? formik.errors.name : ""}
           />
-          <HexColorPicker
-            color={formik.values.hex}
-            onChange={(val) => formik.setFieldValue("hex", val)}
-          />
-          ;
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            style={{ marginTop: "16px" }}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "36px 0 48px 0",
+            }}
           >
-            Create Color
-          </Button>
+            <HexColorPicker
+              color={formik.values.hex}
+              onChange={(val) => formik.setFieldValue("hex", val)}
+            />
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            {colorToEdit ? (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => setDeleteConfirmVisible(true)}
+              >
+                X
+              </Button>
+            ) : null}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ marginLeft: "24px" }}
+            >
+              {colorToEdit ? "Update" : "Create"} Color
+            </Button>
+          </Box>
         </form>
+        <ConfirmDialogue
+          open={deleteConfirmVisible}
+          onClose={() => setDeleteConfirmVisible(false)}
+          onConfirm={handleDeleteColor}
+        />
       </Box>
     </Modal>
   )
