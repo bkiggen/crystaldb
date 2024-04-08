@@ -5,10 +5,12 @@ import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/materi
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
+
 import { getAllColors } from "../../api/colors"
 import { updateCrystal, deleteCrystal } from "../../api/crystals"
-import ModalContainer from "../../components/Modals/ModalContainer"
+
 import type { CrystalT } from "../../types/Crystal"
+import type { ColorT } from "../../types/Color"
 import {
   rarityOptions,
   findAgeOptions,
@@ -16,8 +18,10 @@ import {
   inventoryOptions,
   categoryOptions,
 } from "../../types/Crystal"
-import type { ColorT } from "../../types/Color"
+
+import ModalContainer from "../../components/Modals/ModalContainer"
 import NewColorModal from "./NewColorModal"
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 type UpdateCrystalModalT = {
   crystal: CrystalT
@@ -28,6 +32,7 @@ type UpdateCrystalModalT = {
 const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystalModalT) => {
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
   const fetchColors = async () => {
     const response = await getAllColors()
@@ -249,7 +254,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
             <Button
               variant="contained"
               color="error"
-              onClick={onDelete}
+              onClick={() => setDeleteConfirmVisible(true)}
               sx={{ marginRight: "16px" }}
             >
               X
@@ -262,12 +267,18 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
       </form>
       {colorModalOpen && (
         <NewColorModal
+          colorToEdit={null}
           onClose={() => {
             setColorModalOpen(false)
             setTimeout(fetchColors, 500)
           }}
         />
       )}
+      <ConfirmDialogue
+        open={deleteConfirmVisible}
+        onClose={() => setDeleteConfirmVisible(false)}
+        onConfirm={onDelete}
+      />
     </ModalContainer>
   )
 }
