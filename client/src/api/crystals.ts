@@ -1,6 +1,7 @@
 import type { CrystalT } from "../types/Crystal"
 import { makeRestRequest } from "./makeRequest"
 import type { PagingT } from "../types/Paging"
+import { useCrystalStore } from "../store/crystalStore"
 
 export const createCrystal = async (newCrystal: Omit<CrystalT, "id">): Promise<CrystalT> => {
   const endpoint = "/crystals"
@@ -74,7 +75,7 @@ export const getSuggestedCrystals = async ({
   selectedCycle?: number
   selectedCycleRangeStart?: number
   selectedCycleRangeEnd?: number
-}): Promise<{ data: CrystalT[]; paging: PagingT }> => {
+}) => {
   const selectedCrystalIdsParam = selectedCrystalIds.length > 0 ? selectedCrystalIds.join(",") : ""
   const excludedCrystalIdsParam = excludedCrystalIds.length > 0 ? excludedCrystalIds.join(",") : ""
 
@@ -94,5 +95,9 @@ export const getSuggestedCrystals = async ({
 
   const endpoint = `/crystals/suggested?${query}`
 
-  return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")
+  const { data } = await makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")
+
+  useCrystalStore.getState().setSuggestedCrystals(data)
+
+  return null
 }

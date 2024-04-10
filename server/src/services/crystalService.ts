@@ -128,7 +128,6 @@ export const suggestCrystals = async ({
   `,
       "ASC"
     )
-    .take(20)
     .getMany();
 
   // TODO:

@@ -4,7 +4,7 @@ import { Box } from "@mui/material"
 
 import type { ShipmentT } from "../../types/Shipment"
 import { getAllShipments } from "../../api/shipments"
-import { useStore } from "../../store/store"
+import { useStore } from "../../store/utilityStore"
 
 import DateChanger from "./DateChanger"
 

@@ -11,7 +11,7 @@ import ShipDay from "./containers/ShipDay/index"
 import Reports from "./containers/Reports/index"
 import Login from "./containers/Login/index"
 
-import { useStore } from "./store/store"
+import { useStore } from "./store/utilityStore"
 
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
