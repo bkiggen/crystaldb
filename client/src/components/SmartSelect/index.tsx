@@ -49,6 +49,7 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
 
   const fetchCrystalSuggestions = async () => {
     setIsAnimating(true)
+    setCurrentPage(1)
     setTimeout(() => setIsAnimating(false), 1500)
 
     getSuggestedCrystals({
