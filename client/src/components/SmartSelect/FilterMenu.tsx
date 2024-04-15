@@ -12,7 +12,7 @@ const FilterMenu = ({ onFilterChange }) => {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(crystalFilterOptions.colorOptions.options).length > 0 && !loaded) {
+    if (Object.keys(crystalFilterOptions.color.options).length > 0 && !loaded) {
       setActiveFilters(crystalFilterOptions)
       setLoaded(true)
     }
@@ -37,7 +37,7 @@ const FilterMenu = ({ onFilterChange }) => {
           ...activeFilters[category].options,
           [option]: {
             ...activeFilters[category].options[option],
-            value: !activeFilters[category].options[option].value,
+            selected: !activeFilters[category].options[option].selected,
           },
         },
       },
@@ -45,14 +45,20 @@ const FilterMenu = ({ onFilterChange }) => {
 
     const filtersToExclude = Object.keys(newFilters).reduce((acc, categoryKey) => {
       const category = newFilters[categoryKey]
+
       const options = Object.keys(category.options).reduce((acc, optionKey) => {
         const option = category.options[optionKey]
-        if (!option.value) {
+        if (!option.selected) {
           acc.push(optionKey)
         }
         return acc
       }, [])
-      const newCategoryKey = categoryKey.replace("Options", "")
+
+      let newCategoryKey = categoryKey
+      if (categoryKey === "color") {
+        newCategoryKey = "colorId"
+      }
+
       return { ...acc, [newCategoryKey]: options }
     }, {})
 
@@ -79,14 +85,14 @@ const FilterMenu = ({ onFilterChange }) => {
             const option = category.options[optionKey]
             return (
               <MenuItem
-                key={option.name}
+                key={option.value}
                 onClick={(event) => {
                   event.stopPropagation()
                   handleToggleFilter(categoryKey, optionKey)
                 }}
                 sx={{ padding: 0 }}
               >
-                <Checkbox checked={option.value} edge="start" sx={{ color: "white" }} />
+                <Checkbox checked={option.selected} edge="start" sx={{ color: "white" }} />
                 <Typography sx={{ fontSize: "14px", color: "white", textTransform: "uppercase" }}>
                   {option.name}
                 </Typography>

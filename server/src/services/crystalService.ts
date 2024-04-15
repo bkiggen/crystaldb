@@ -80,14 +80,32 @@ const getUpcomingPrebuildCrystalIds = async (
   return uniqueCrystalIds;
 };
 
+// const addFilters = (query, allFilters) => {
+//   Object.keys(allFilters).forEach((filterKey) => {
+//     if (!allFilters[filterKey]) return;
+//     const filterValue = allFilters[filterKey];
+//     if (filterValue.length > 0) {
+//       query = query.andWhere(`crystal.${filterKey} = :${filterKey}`, {
+//         [filterKey]: filterValue,
+//       });
+//     }
+//   });
+//   return query;
+// };
+
 const addFilters = (query, allFilters) => {
   Object.keys(allFilters).forEach((filterKey) => {
-    if (!allFilters[filterKey]) return;
     const filterValue = allFilters[filterKey];
-    if (filterValue.length > 0) {
-      query = query.andWhere(`crystal.${filterKey} = :${filterKey}`, {
-        [filterKey]: filterValue,
-      });
+    if (typeof filterValue === "string" && filterValue.trim() !== "") {
+      const filterArray = filterValue.split(",").map((item) => item.trim()); // Trim any extra whitespace
+      if (filterArray.length > 0) {
+        query = query.andWhere(
+          `crystal.${filterKey} NOT IN (:...${filterKey})`, // Use spread syntax for array parameters
+          {
+            [filterKey]: filterArray, // Pass the array here
+          }
+        );
+      }
     }
   });
   return query;
@@ -105,7 +123,7 @@ export const suggestCrystals = async ({
   inventory,
   category,
   location,
-  color,
+  colorId,
   rarity,
 }) => {
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
@@ -131,13 +149,13 @@ export const suggestCrystals = async ({
   });
 
   const allFilters = {
-    findAge,
-    size,
-    inventory,
-    category,
-    location,
-    color,
-    rarity,
+    ...(findAge && { findAge }),
+    ...(size && { size }),
+    ...(inventory && { inventory }),
+    ...(category && { category }),
+    ...(location && { location }),
+    ...(colorId && { colorId }),
+    ...(rarity && { rarity }),
   };
 
   query = addFilters(query, allFilters);

@@ -25,46 +25,47 @@ const useCrystalFilterOptions = () => {
   }, [])
 
   const crystalFilterOptions = {
-    rarityOptions: {
+    rarity: {
       label: "Rarity",
       options: rarityOptions.reduce((acc, rarity) => {
-        return { ...acc, [rarity]: { name: rarity, value: true } }
+        return { ...acc, [rarity]: { name: rarity, selected: true, value: rarity } }
       }, {}),
     },
     findAgeOptions: {
       label: "Find Age",
       options: findAgeOptions.reduce((acc, findAge) => {
-        return { ...acc, [findAge]: { name: findAge, value: true } }
+        return { ...acc, [findAge]: { name: findAge, selected: true, value: findAge } }
       }, {}),
     },
-    sizeOptions: {
+    size: {
       label: "Size",
       options: sizeOptions.reduce((acc, size) => {
-        return { ...acc, [size]: { name: size, value: true } }
+        return { ...acc, [size]: { name: size, selected: true, value: size } }
       }, {}),
     },
-    inventoryOptions: {
+    inventory: {
       label: "Inventory",
       options: inventoryOptions.reduce((acc, inventory) => {
-        return { ...acc, [inventory]: { name: inventory, value: true } }
+        return { ...acc, [inventory]: { name: inventory, selected: true, value: inventory } }
       }, {}),
     },
-    categoryOptions: {
+    category: {
       label: "Category",
       options: categoryOptions.reduce((acc, category) => {
-        return { ...acc, [category]: { name: category, value: true } }
+        return { ...acc, [category]: { name: category, selected: true, value: category } }
       }, {}),
     },
-    locationOptions: {
+    location: {
       label: "Location",
       options: locationOptions.reduce((acc, location) => {
-        return { ...acc, [location]: { name: location, value: true } }
+        return { ...acc, [location]: { name: location, selected: true, value: location } }
       }, {}),
     },
-    colorOptions: {
+    color: {
       label: "Color",
+      dbLabel: "colorId",
       options: colorOptions.reduce((acc, color) => {
-        return { ...acc, [color.name]: { name: color.name, value: true } }
+        return { ...acc, [color.id]: { name: color.name, selected: true, value: color.id } }
       }, {}),
     },
   }

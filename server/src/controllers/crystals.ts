@@ -66,7 +66,7 @@ router.get(
       inventory,
       category,
       location,
-      color,
+      colorId,
     } = req.query as {
       [key: string]: string;
     };
@@ -107,7 +107,7 @@ router.get(
       inventory: inventory as string,
       category: category as string,
       location: location as string,
-      color: color as string,
+      colorId: colorId as string,
     });
 
     const total = 100;
