@@ -60,7 +60,16 @@ router.get(
       cycle,
       cycleRangeStart,
       cycleRangeEnd,
-    } = req.query;
+      rarity,
+      findAge,
+      size,
+      inventory,
+      category,
+      location,
+      color,
+    } = req.query as {
+      [key: string]: string;
+    };
 
     const cycleRangeStartInt = parseInt(cycleRangeStart as string);
     const cycleRangeEndInt = parseInt(cycleRangeEnd as string);
@@ -74,7 +83,7 @@ router.get(
 
     let arrayOfRangeNumbers = [];
 
-    // TODO: FINISH THIS
+    // TODO: FINISH RANGE FUNCTIONALITY
 
     if (cycleRangeStartInt && cycleRangeEndInt) {
       arrayOfRangeNumbers = Array.from(
@@ -92,6 +101,13 @@ router.get(
       month: parseInt(month as string),
       year: parseInt(year as string),
       cycle: parseInt(cycle as string),
+      rarity: rarity ? rarity.split(",").map((item) => item.trim()) : [],
+      findAge: findAge as string,
+      size: size as string,
+      inventory: inventory as string,
+      category: category as string,
+      location: location as string,
+      color: color as string,
     });
 
     const total = 100;

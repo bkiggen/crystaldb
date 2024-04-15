@@ -62,6 +62,7 @@ export const getSuggestedCrystals = async ({
   selectedCycle,
   selectedCycleRangeStart,
   selectedCycleRangeEnd,
+  filters = {},
 }: {
   searchTerm?: string
   page?: number
@@ -75,6 +76,7 @@ export const getSuggestedCrystals = async ({
   selectedCycle?: number
   selectedCycleRangeStart?: number
   selectedCycleRangeEnd?: number
+  filters?: Record<string, string>
 }) => {
   const selectedCrystalIdsParam = selectedCrystalIds.length > 0 ? selectedCrystalIds.join(",") : ""
   const excludedCrystalIdsParam = excludedCrystalIds.length > 0 ? excludedCrystalIds.join(",") : ""
@@ -91,6 +93,7 @@ export const getSuggestedCrystals = async ({
     ...(selectedCycleRangeEnd ? { cycleRangeEnd: selectedCycleRangeEnd.toString() } : {}),
     selectedCrystalIds: selectedCrystalIdsParam,
     excludedCrystalIds: excludedCrystalIdsParam,
+    ...filters,
   }).toString()
 
   const endpoint = `/crystals/suggested?${query}`

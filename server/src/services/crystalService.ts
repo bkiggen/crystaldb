@@ -80,6 +80,19 @@ const getUpcomingPrebuildCrystalIds = async (
   return uniqueCrystalIds;
 };
 
+const addFilters = (query, allFilters) => {
+  Object.keys(allFilters).forEach((filterKey) => {
+    if (!allFilters[filterKey]) return;
+    const filterValue = allFilters[filterKey];
+    if (filterValue.length > 0) {
+      query = query.andWhere(`crystal.${filterKey} = :${filterKey}`, {
+        [filterKey]: filterValue,
+      });
+    }
+  });
+  return query;
+};
+
 export const suggestCrystals = async ({
   selectedCrystalIds = [],
   excludedCrystalIds = [],
@@ -87,13 +100,13 @@ export const suggestCrystals = async ({
   month,
   year,
   cycle,
-}: {
-  selectedCrystalIds: string[];
-  excludedCrystalIds: string[];
-  subscriptionId: number;
-  month: number;
-  year: number;
-  cycle: number;
+  findAge,
+  size,
+  inventory,
+  category,
+  location,
+  color,
+  rarity,
 }) => {
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
     month,
@@ -113,9 +126,23 @@ export const suggestCrystals = async ({
     ...selectedCrystalIds,
   ];
 
-  const crystalsNotInIds = await Crystal.createQueryBuilder("crystal")
-    .where({ id: Not(In(barredCrystalIds)) })
-    // Use CASE WHEN THEN END for custom sorting
+  let query = Crystal.createQueryBuilder("crystal").where({
+    id: Not(In(barredCrystalIds)),
+  });
+
+  const allFilters = {
+    findAge,
+    size,
+    inventory,
+    category,
+    location,
+    color,
+    rarity,
+  };
+
+  query = addFilters(query, allFilters);
+
+  const crystalsNotInIds = await query
     .orderBy(
       `
     CASE 

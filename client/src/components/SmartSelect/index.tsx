@@ -8,9 +8,13 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight"
 
 import { getSuggestedCrystals } from "../../api/crystals"
+
+import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
+
 import { useCrystalStore } from "../../store/crystalStore"
 
 import CrystalChip from "./CrystalChip"
+import FilterMenu from "./FilterMenu"
 
 type SmartSelectT = {
   formik: ReturnType<typeof useFormik>
@@ -47,7 +51,7 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
     }
   }
 
-  const fetchCrystalSuggestions = async () => {
+  const fetchCrystalSuggestions = async (filters = {}) => {
     setIsAnimating(true)
     setCurrentPage(1)
     setTimeout(() => setIsAnimating(false), 1500)
@@ -61,6 +65,7 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
       ...(cycleRangeMode ? {} : { selectedCycle: formik.values.cycle }),
       ...(cycleRangeMode ? {} : { selectedCycleRangeStart: formik.values.cycleRangeStart }),
       ...(cycleRangeMode ? {} : { selectedCycleRangeEnd: formik.values.cycleRangeEnd }),
+      filters,
     })
   }
 
@@ -72,22 +77,29 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
   return (
     <Box sx={{ marginBottom: crystals.length ? "24px" : 0, padding: "12px", marginLeft: "12px" }}>
       <Box
-        sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
-        onClick={fetchCrystalSuggestions}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          cursor: "pointer",
+          justifyContent: "space-between",
+        }}
       >
-        <Typography
-          sx={{ fontSize: "24px", color: "white", fontStyle: "italic", marginRight: "12px" }}
-        >
-          Smart Select
-        </Typography>
-        <LoopIcon
-          sx={{
-            animation: isAnimating ? "rotate360 1s linear" : "none",
-          }}
-        />
+        <Box sx={{ display: "flex", alignItems: "center" }} onClick={fetchCrystalSuggestions}>
+          <Typography
+            sx={{ fontSize: "24px", color: "white", fontStyle: "italic", marginRight: "12px" }}
+          >
+            Smart Select
+          </Typography>
+          <LoopIcon
+            sx={{
+              animation: isAnimating ? "rotate360 1s linear" : "none",
+            }}
+          />
+        </Box>
+        <FilterMenu onFilterChange={fetchCrystalSuggestions} />
       </Box>
       {crystals.length > 0 ? (
-        <Box sx={{ display: "flex", alignItems: "center", marginBottom: "36px" }}>
+        <Box sx={{ display: "flex", alignItems: "center", marginBottom: "12px" }}>
           <ArrowLeftIcon
             sx={{ fontSize: "32px", cursor: "pointer" }}
             onClick={() => updatePage("left")}
