@@ -97,12 +97,12 @@ const addFilters = (query, allFilters) => {
   Object.keys(allFilters).forEach((filterKey) => {
     const filterValue = allFilters[filterKey];
     if (typeof filterValue === "string" && filterValue.trim() !== "") {
-      const filterArray = filterValue.split(",").map((item) => item.trim()); // Trim any extra whitespace
+      const filterArray = filterValue.split(",").map((item) => item.trim());
       if (filterArray.length > 0) {
         query = query.andWhere(
-          `crystal.${filterKey} NOT IN (:...${filterKey})`, // Use spread syntax for array parameters
+          `crystal.${filterKey} NOT IN (:...${filterKey})`,
           {
-            [filterKey]: filterArray, // Pass the array here
+            [filterKey]: filterArray,
           }
         );
       }

@@ -82,7 +82,7 @@ export class Crystal extends BaseEntity {
   @Column({
     type: "enum",
     enum: Inventory,
-    default: Inventory.HIGH,
+    default: Inventory.MEDIUM,
     nullable: true,
   })
   inventory: Inventory;
