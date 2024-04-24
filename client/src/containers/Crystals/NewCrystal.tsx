@@ -62,7 +62,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     image: "",
     findAge: undefined,
     size: "M",
-    inventory: "HIGH",
+    inventory: "MEDIUM",
   }
 
   const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
@@ -160,7 +160,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <TextField
                 id="name"
                 label="Name"
@@ -189,7 +189,9 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 </Box>
               ) : null}
             </Grid>
-            <Grid item xs={4}>
+          </Grid>
+          <Grid container spacing={2} sx={{ marginTop: "0px" }}>
+            <Grid item xs={6}>
               <FormControl fullWidth variant="outlined">
                 <TextField
                   select
@@ -238,7 +240,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 </TextField>
               </FormControl>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <TextField
                 id="category"
                 label="Category"
@@ -257,62 +259,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
             </Grid>
           </Grid>
           <Grid container spacing={2} sx={{ marginTop: "0px" }}>
-            <Grid item xs={4}>
-              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <TextField
-                  select
-                  label="Rarity"
-                  id="rarity"
-                  {...formik.getFieldProps("rarity")}
-                  sx={textFieldStyles}
-                >
-                  {indicatorOptions("rarity", rarityOptions)}
-                </TextField>
-              </FormControl>
-              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <TextField
-                  select
-                  label="Find Age"
-                  id="findAge"
-                  {...formik.getFieldProps("findAge")}
-                  sx={textFieldStyles}
-                >
-                  {indicatorOptions("findAge", findAgeOptions)}
-                </TextField>
-              </FormControl>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                id="description"
-                label="Description"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                {...formik.getFieldProps("description")}
-                sx={textFieldStyles}
-              />
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ marginTop: "-12px" }}>
-            <Grid item xs={4}>
-              <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
-                <TextField
-                  select
-                  label="Size"
-                  id="size"
-                  {...formik.getFieldProps("size")}
-                  sx={textFieldStyles}
-                >
-                  {sizeOptions.map((value) => (
-                    <MenuItem key={value} value={value}>
-                      {value}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </FormControl>
-            </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <TextField
                 id="location"
                 label="Location"
@@ -329,7 +276,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <FormControl fullWidth variant="outlined" sx={{ marginBottom: "12px" }}>
                 <TextField
                   select

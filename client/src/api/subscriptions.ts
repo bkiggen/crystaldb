@@ -3,5 +3,5 @@ import { makeRestRequest } from "./makeRequest"
 
 export const getAllSubscriptions = async (): Promise<SubscriptionT[]> => {
   const endpoint = "/subscriptions"
-  return makeRestRequest<SubscriptionT[]>(endpoint, "GET")
+  return makeRestRequest<SubscriptionT[]>({ endpoint, method: "GET" })
 }

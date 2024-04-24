@@ -5,7 +5,12 @@ import { useCrystalStore } from "../store/crystalStore"
 
 export const createCrystal = async (newCrystal: Omit<CrystalT, "id">): Promise<CrystalT> => {
   const endpoint = "/crystals"
-  return makeRestRequest<CrystalT>(endpoint, "POST", JSON.stringify(newCrystal))
+  return makeRestRequest<CrystalT>({
+    endpoint,
+    method: "POST",
+    body: JSON.stringify(newCrystal),
+    successMessage: "Crystal Created!",
+  })
 }
 
 export const updateCrystal = async (
@@ -13,12 +18,17 @@ export const updateCrystal = async (
   updatedCrystal: Omit<CrystalT, "id">,
 ): Promise<CrystalT> => {
   const endpoint = `/crystals/${crystalId}`
-  return makeRestRequest<CrystalT>(endpoint, "PUT", JSON.stringify(updatedCrystal))
+  return makeRestRequest<CrystalT>({
+    endpoint,
+    method: "PUT",
+    body: JSON.stringify(updatedCrystal),
+    successMessage: "Crystal Updated!",
+  })
 }
 
 export const deleteCrystal = async (crystalId: number): Promise<void> => {
   const endpoint = `/crystals/${crystalId}`
-  return makeRestRequest<void>(endpoint, "DELETE")
+  return makeRestRequest<void>({ endpoint, method: "DELETE", successMessage: "Crystal Deleted!" })
 }
 
 export const getAllCrystals = async ({
@@ -47,7 +57,7 @@ export const getAllCrystals = async ({
     ...(inventory ? { inventory } : {}),
   }).toString()
   const endpoint = `/crystals?${query}`
-  return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")
+  return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>({ endpoint, method: "GET" })
 }
 
 export const getSuggestedCrystals = async ({
@@ -98,7 +108,10 @@ export const getSuggestedCrystals = async ({
 
   const endpoint = `/crystals/suggested?${query}`
 
-  const { data } = await makeRestRequest<{ data: CrystalT[]; paging: PagingT }>(endpoint, "GET")
+  const { data } = await makeRestRequest<{ data: CrystalT[]; paging: PagingT }>({
+    endpoint,
+    method: "GET",
+  })
 
   useCrystalStore.getState().setSuggestedCrystals(data)
 

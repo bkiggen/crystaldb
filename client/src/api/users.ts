@@ -19,7 +19,7 @@ const logUserIn = (data) => {
 export const signUpUser = async (secret, newUser: UserT): Promise<UserReturnT> => {
   const endpoint = "/users/signup"
   const body = JSON.stringify({ ...newUser, secret })
-  const data = await makeRestRequest<UserReturnT>(endpoint, "POST", body)
+  const data = await makeRestRequest<UserReturnT>({ endpoint, method: "POST", body })
   return logUserIn(data)
 }
 
@@ -28,7 +28,7 @@ export const signInUser = async (
 ): Promise<UserReturnT> => {
   const endpoint = "/users/login"
   const body = JSON.stringify(credentials)
-  const data = await makeRestRequest<UserReturnT>(endpoint, "POST", body)
+  const data = await makeRestRequest<UserReturnT>({ endpoint, method: "POST", body })
   return logUserIn(data)
 }
 

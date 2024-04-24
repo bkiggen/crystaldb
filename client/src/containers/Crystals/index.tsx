@@ -76,22 +76,22 @@ const Crystals = () => {
         )
       },
     },
-    {
-      field: "size",
-      headerName: "Size",
-      width: 80,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params: GridCellParams) => {
-        return params.row.size ? (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
-          </Box>
-        ) : (
-          <Box>-</Box>
-        )
-      },
-    },
+    // {
+    //   field: "size",
+    //   headerName: "Size",
+    //   width: 80,
+    //   align: "center",
+    //   headerAlign: "center",
+    //   renderCell: (params: GridCellParams) => {
+    //     return params.row.size ? (
+    //       <Box sx={{ display: "flex", alignItems: "center" }}>
+    //         <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
+    //       </Box>
+    //     ) : (
+    //       <Box>-</Box>
+    //     )
+    //   },
+    // },
     {
       field: "inventory",
       headerName: "Inventory",
@@ -105,36 +105,36 @@ const Crystals = () => {
         )
       },
     },
-    {
-      field: "rarity",
-      headerName: "Rarity",
-      width: 130,
-      renderCell: (params: GridCellParams) => {
-        return params.row.rarity ? (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
-            {params.row.rarity}
-          </Box>
-        ) : (
-          <Box>-</Box>
-        )
-      },
-    },
-    {
-      field: "findAge",
-      headerName: "Find Age",
-      width: 130,
-      renderCell: (params: GridCellParams) => {
-        return params.row.findAge ? (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
-            {params.row.findAge}
-          </Box>
-        ) : (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>-</Box>
-        )
-      },
-    },
+    // {
+    //   field: "rarity",
+    //   headerName: "Rarity",
+    //   width: 130,
+    //   renderCell: (params: GridCellParams) => {
+    //     return params.row.rarity ? (
+    //       <Box sx={{ display: "flex", alignItems: "center" }}>
+    //         <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
+    //         {params.row.rarity}
+    //       </Box>
+    //     ) : (
+    //       <Box>-</Box>
+    //     )
+    //   },
+    // },
+    // {
+    //   field: "findAge",
+    //   headerName: "Find Age",
+    //   width: 130,
+    //   renderCell: (params: GridCellParams) => {
+    //     return params.row.findAge ? (
+    //       <Box sx={{ display: "flex", alignItems: "center" }}>
+    //         <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
+    //         {params.row.findAge}
+    //       </Box>
+    //     ) : (
+    //       <Box sx={{ display: "flex", justifyContent: "center" }}>-</Box>
+    //     )
+    //   },
+    // },
     {
       field: "category",
       headerName: "Category",
