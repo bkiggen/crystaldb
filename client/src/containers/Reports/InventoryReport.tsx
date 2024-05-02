@@ -121,6 +121,8 @@ const InventoryReport = ({ type }: InventoryReportT) => {
                 alignItems: "center",
                 marginBottom: "6px",
                 borderRadius: "4px",
+                border: "1px solid white",
+                padding: "4px 12px",
               }}
             >
               <ColorIndicator indicatorValue={c.color?.hex} />

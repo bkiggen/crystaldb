@@ -80,19 +80,6 @@ const getUpcomingPrebuildCrystalIds = async (
   return uniqueCrystalIds;
 };
 
-// const addFilters = (query, allFilters) => {
-//   Object.keys(allFilters).forEach((filterKey) => {
-//     if (!allFilters[filterKey]) return;
-//     const filterValue = allFilters[filterKey];
-//     if (filterValue.length > 0) {
-//       query = query.andWhere(`crystal.${filterKey} = :${filterKey}`, {
-//         [filterKey]: filterValue,
-//       });
-//     }
-//   });
-//   return query;
-// };
-
 const addFilters = (query, allFilters) => {
   Object.keys(allFilters).forEach((filterKey) => {
     const filterValue = allFilters[filterKey];
@@ -100,10 +87,8 @@ const addFilters = (query, allFilters) => {
       const filterArray = filterValue.split(",").map((item) => item.trim());
       if (filterArray.length > 0) {
         query = query.andWhere(
-          `crystal.${filterKey} NOT IN (:...${filterKey})`,
-          {
-            [filterKey]: filterArray,
-          }
+          `(crystal.${filterKey} NOT IN (:...${filterKey}) OR crystal.${filterKey} IS NULL)`,
+          { [filterKey]: filterArray }
         );
       }
     }
@@ -170,7 +155,7 @@ export const suggestCrystals = async ({
       WHEN crystal.inventory = '${Inventory.OUT}' THEN 4
       ELSE 5
     END
-  `,
+    `,
       "ASC"
     )
     .getMany();

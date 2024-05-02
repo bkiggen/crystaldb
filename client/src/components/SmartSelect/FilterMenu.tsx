@@ -28,39 +28,53 @@ const FilterMenu = ({ onFilterChange }) => {
     setMainAnchorEl(null)
   }
 
-  const handleToggleFilter = (category, option) => {
-    const newFilters = {
-      ...activeFilters,
-      [category]: {
-        ...activeFilters[category],
-        options: {
-          ...activeFilters[category].options,
-          [option]: {
-            ...activeFilters[category].options[option],
-            selected: !activeFilters[category].options[option].selected,
-          },
+  const toggleOptionSelected = (options, optionKey) => ({
+    ...options,
+    [optionKey]: {
+      ...options[optionKey],
+      selected: !options[optionKey].selected,
+    },
+  })
+
+  const getAllOptionsToggled = (options) =>
+    Object.keys(options).reduce(
+      (acc, optionKey) => ({
+        ...acc,
+        [optionKey]: {
+          ...options[optionKey],
+          selected: !options[optionKey].selected,
         },
-      },
-    }
+      }),
+      {},
+    )
 
-    const filtersToExclude = Object.keys(newFilters).reduce((acc, categoryKey) => {
-      const category = newFilters[categoryKey]
-
-      const options = Object.keys(category.options).reduce((acc, optionKey) => {
-        const option = category.options[optionKey]
+  const mapFiltersToExclude = (filters) =>
+    Object.keys(filters).reduce((acc, categoryKey) => {
+      const options = Object.keys(filters[categoryKey].options).reduce((acc, optionKey) => {
+        const option = filters[categoryKey].options[optionKey]
         if (!option.selected) {
           acc.push(optionKey)
         }
         return acc
       }, [])
 
-      let newCategoryKey = categoryKey
-      if (categoryKey === "color") {
-        newCategoryKey = "colorId"
-      }
-
+      const newCategoryKey = categoryKey === "color" ? "colorId" : categoryKey
       return { ...acc, [newCategoryKey]: options }
     }, {})
+
+  const handleToggleFilter = (category, option) => {
+    const newFilters = {
+      ...activeFilters,
+      [category]: {
+        ...activeFilters[category],
+        options:
+          option === "all"
+            ? getAllOptionsToggled(activeFilters[category].options)
+            : toggleOptionSelected(activeFilters[category].options, option),
+      },
+    }
+
+    const filtersToExclude = mapFiltersToExclude(newFilters)
 
     setActiveFilters(newFilters)
     onFilterChange(filtersToExclude)
@@ -77,6 +91,11 @@ const FilterMenu = ({ onFilterChange }) => {
               fontSize: "18px",
               color: "white",
               marginBottom: "12px",
+              cursor: "pointer",
+            }}
+            onClick={(event) => {
+              event.stopPropagation()
+              handleToggleFilter(categoryKey, "all")
             }}
           >
             {category.label}
