@@ -3,9 +3,9 @@ import { useEffect, useState } from "react"
 import { getAllColors } from "../api/colors"
 
 import {
-  rarityOptions,
-  findAgeOptions,
-  sizeOptions,
+  // rarityOptions,
+  // findAgeOptions,
+  // sizeOptions,
   inventoryOptions,
   categoryOptions,
   locationOptions,
@@ -25,24 +25,24 @@ const useCrystalFilterOptions = () => {
   }, [])
 
   const crystalFilterOptions = {
-    rarity: {
-      label: "Rarity",
-      options: rarityOptions.reduce((acc, rarity) => {
-        return { ...acc, [rarity]: { name: rarity, selected: true, value: rarity } }
-      }, {}),
-    },
-    findAgeOptions: {
-      label: "Find Age",
-      options: findAgeOptions.reduce((acc, findAge) => {
-        return { ...acc, [findAge]: { name: findAge, selected: true, value: findAge } }
-      }, {}),
-    },
-    size: {
-      label: "Size",
-      options: sizeOptions.reduce((acc, size) => {
-        return { ...acc, [size]: { name: size, selected: true, value: size } }
-      }, {}),
-    },
+    // rarity: {
+    //   label: "Rarity",
+    //   options: rarityOptions.reduce((acc, rarity) => {
+    //     return { ...acc, [rarity]: { name: rarity, selected: true, value: rarity } }
+    //   }, {}),
+    // },
+    // findAgeOptions: {
+    //   label: "Find Age",
+    //   options: findAgeOptions.reduce((acc, findAge) => {
+    //     return { ...acc, [findAge]: { name: findAge, selected: true, value: findAge } }
+    //   }, {}),
+    // },
+    // size: {
+    //   label: "Size",
+    //   options: sizeOptions.reduce((acc, size) => {
+    //     return { ...acc, [size]: { name: size, selected: true, value: size } }
+    //   }, {}),
+    // },
     inventory: {
       label: "Inventory",
       options: inventoryOptions.reduce((acc, inventory) => {

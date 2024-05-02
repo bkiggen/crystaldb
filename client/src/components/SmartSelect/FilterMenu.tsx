@@ -141,6 +141,7 @@ const FilterMenu = ({ onFilterChange }) => {
             display: "flex",
             background: colors.darkBlue,
             margin: "-8px 0",
+            padding: "0 24px",
           }}
         >
           {optionElems}
