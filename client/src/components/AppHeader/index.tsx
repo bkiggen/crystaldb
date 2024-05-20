@@ -7,6 +7,7 @@ import { handleLogout } from "../../api/users"
 
 import CrystalImage from "../../assets/crystal.png"
 import NavItem from "./NavItem"
+import LogoutButton from "./LogoutButton"
 
 const AppHeader = () => {
   const { pathname } = useLocation()
@@ -66,13 +67,7 @@ const AppHeader = () => {
           </Box>
         )}
       </Box>
-      <Box>
-        {token && (
-          <Link to="/login" style={{ color: "white", textDecoration: "none" }} onClick={onLogout}>
-            Log Out
-          </Link>
-        )}
-      </Box>
+      <Box>{token && <LogoutButton onLogout={onLogout} />}</Box>
     </Box>
   )
 }

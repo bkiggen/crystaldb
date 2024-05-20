@@ -27,7 +27,7 @@ import { getAllColors } from "../../api/colors"
 import { getAllCrystals } from "../../api/crystals"
 
 import NewColorModal from "./NewColorModal"
-import ColorIndicator from "../../components/ColorIndicator"
+// import ColorIndicator from "../../components/ColorIndicator"
 
 type NewCrystalT = {
   addCrystal: (arg: CrystalT) => void
@@ -134,16 +134,16 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     setColorModalOpen(colorToEdit)
   }
 
-  const indicatorOptions = (indicatorName, indicatorValues) => {
-    return indicatorValues.map((value) => (
-      <MenuItem key={value} value={value}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <ColorIndicator indicatorType={indicatorName} indicatorValue={value} />
-          {value}
-        </Box>
-      </MenuItem>
-    ))
-  }
+  // const indicatorOptions = (indicatorName, indicatorValues) => {
+  //   return indicatorValues.map((value) => (
+  //     <MenuItem key={value} value={value}>
+  //       <Box sx={{ display: "flex", alignItems: "center" }}>
+  //         <ColorIndicator indicatorType={indicatorName} indicatorValue={value} />
+  //         {value}
+  //       </Box>
+  //     </MenuItem>
+  //   ))
+  // }
 
   return (
     <>

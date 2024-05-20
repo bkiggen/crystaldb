@@ -18,7 +18,9 @@ const NavItem = ({ linkTo, title, pathname }: NavItemT) => {
           variant="h6"
           sx={{
             color,
-            fontWeight: "500",
+            fontWeight: "600",
+            letterSpacing: "1px",
+
             "&:hover": {
               color: colors.pink,
             },
