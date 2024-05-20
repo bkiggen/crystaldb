@@ -29,10 +29,14 @@ export const makeRestRequest = async <T>({
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options)
     const data = await response.json()
-    console.log("🚀 ~ response:", response)
+
     if (!response.ok) {
       const errorMessage = data.message || "An unexpected error occurred"
       toast.error(errorMessage)
+      // forward to login screen
+      if (response.status === 403 || response.status === 401) {
+        window.location.href = "/login"
+      }
     } else {
       console.log("OK", successMessage)
       if (successMessage) {
