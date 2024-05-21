@@ -5,18 +5,16 @@ import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/materi
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-
 import { getAllColors } from "../../api/colors"
 import { updateCrystal, deleteCrystal } from "../../api/crystals"
 
 import type { CrystalT } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 import {
-  rarityOptions,
-  findAgeOptions,
   sizeOptions,
   inventoryOptions,
   categoryOptions,
+  locationOptions,
 } from "../../types/Crystal"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
@@ -47,11 +45,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
     name: crystal.name,
     colorId: crystal.color?.id,
     category: crystal.category,
-    rarity: crystal.rarity,
-    description: crystal.description,
-    image: crystal.image,
-    findAge: crystal.findAge,
-    size: crystal.size,
+    location: crystal.location,
     inventory: crystal.inventory,
   }
 
@@ -59,11 +53,8 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer().nullable(),
     category: Yup.string().nullable(),
-    rarity: Yup.mixed().oneOf(rarityOptions),
-    description: Yup.string().nullable(),
-    image: Yup.string().url("Must be a valid URL").nullable(),
-    findAge: Yup.mixed().oneOf(findAgeOptions),
     size: Yup.mixed().oneOf(sizeOptions).nullable(),
+    location: Yup.mixed().oneOf(locationOptions).nullable(),
     inventory: Yup.mixed().oneOf(inventoryOptions),
   })
 
@@ -155,59 +146,17 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
             </Grid>
             <Grid item xs={6}>
               <TextField
-                id="rarity"
-                label="Rarity"
+                id="location"
+                label="Location"
                 variant="outlined"
                 fullWidth
                 select
-                {...formik.getFieldProps("rarity")}
+                {...formik.getFieldProps("location")}
                 sx={textFieldStyles}
-                error={formik.touched.rarity && Boolean(formik.errors.rarity)}
-                helperText={formik.touched.rarity && formik.errors.rarity}
               >
-                {rarityOptions.map((rarity) => (
-                  <MenuItem key={rarity} value={rarity}>
-                    {rarity}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ marginBottom: "16px" }}>
-            <Grid item xs={6}>
-              <TextField
-                id="findAge"
-                label="Find Age"
-                variant="outlined"
-                fullWidth
-                select
-                {...formik.getFieldProps("findAge")}
-                sx={textFieldStyles}
-                error={formik.touched.findAge && Boolean(formik.errors.findAge)}
-                helperText={formik.touched.findAge && formik.errors.findAge}
-              >
-                {findAgeOptions.map((findAge) => (
-                  <MenuItem key={findAge} value={findAge}>
-                    {findAge}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                id="size"
-                label="Size"
-                variant="outlined"
-                fullWidth
-                select
-                {...formik.getFieldProps("size")}
-                sx={textFieldStyles}
-                error={formik.touched.size && Boolean(formik.errors.size)}
-                helperText={formik.touched.size && formik.errors.size}
-              >
-                {sizeOptions.map((size) => (
-                  <MenuItem key={size} value={size}>
-                    {size}
+                {locationOptions.map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
                   </MenuItem>
                 ))}
               </TextField>
@@ -234,22 +183,6 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
               </TextField>
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                id="description"
-                label="Description"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                {...formik.getFieldProps("description")}
-                sx={textFieldStyles}
-                error={formik.touched.description && Boolean(formik.errors.description)}
-                helperText={formik.touched.description && formik.errors.description}
-              />
-            </Grid>
-          </Grid>
           <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="contained"
@@ -257,7 +190,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
               onClick={() => setDeleteConfirmVisible(true)}
               sx={{ marginRight: "16px" }}
             >
-              X
+              Delete
             </Button>
             <Button type="submit" variant="contained" color="primary">
               Update Crystal
