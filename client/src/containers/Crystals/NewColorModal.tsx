@@ -71,7 +71,7 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
             margin="normal"
             {...formik.getFieldProps("name")}
             error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name ? formik.errors.name : ""}
+            helperText={<>{formik.touched.name ? formik.errors.name : ""}</>}
           />
           <Box
             sx={{

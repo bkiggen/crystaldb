@@ -9,7 +9,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight"
 
 import { getSuggestedCrystals } from "../../api/crystals"
 
-import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
+// import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
 
 import { useCrystalStore } from "../../store/crystalStore"
 
