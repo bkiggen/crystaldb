@@ -39,6 +39,7 @@ export const getAllCrystals = async ({
   sortBy = "",
   sortDirection = "",
   inventory,
+  filters,
 }: {
   searchTerm?: string
   page?: number
@@ -47,6 +48,7 @@ export const getAllCrystals = async ({
   sortBy?: string
   sortDirection?: string
   inventory?: string
+  filters?: Record<string, string>
 }): Promise<{ data: CrystalT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
@@ -55,6 +57,7 @@ export const getAllCrystals = async ({
     ...(sortBy ? { sortBy } : {}),
     ...(sortDirection ? { sortDirection } : {}),
     ...(inventory ? { inventory } : {}),
+    ...filters,
   }).toString()
   const endpoint = `/crystals?${query}`
   return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>({ endpoint, method: "GET" })

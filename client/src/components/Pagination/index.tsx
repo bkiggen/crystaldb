@@ -14,11 +14,13 @@ import useDebounce from "../../hooks/useDebounce"
 import type { PagingT } from "../../types/Paging"
 import { defaultPaging } from "../../types/Paging"
 import { useLocation } from "react-router-dom"
+import FilterMenu from "../SmartSelect/FilterMenu"
 
 type PaginationT = {
   paging: PagingT
   fetchData: (arg?: Record<string, unknown>) => void
   withoutSearch?: boolean
+  onCrystalFilterChange?: (arg: Record<string, string>) => null
   filterOptions?: { label: string; value: string | number }[]
 }
 
@@ -26,6 +28,7 @@ const Pagination = ({
   paging = defaultPaging,
   fetchData,
   withoutSearch = false,
+  onCrystalFilterChange,
   filterOptions = null,
 }: PaginationT) => {
   const theme = useTheme()
@@ -133,6 +136,7 @@ const Pagination = ({
             }}
           />
         ) : null}
+        {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
         {filterOptions ? (
           <TextField
             select

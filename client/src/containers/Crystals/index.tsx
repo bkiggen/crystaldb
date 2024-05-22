@@ -47,6 +47,10 @@ const Crystals = () => {
     })
   }
 
+  const onCrystalFilterChange = (filters: Record<string, string>) => {
+    getCrystals(filters)
+  }
+
   const columns: GridColDef[] = [
     {
       field: "name",
@@ -163,7 +167,11 @@ const Crystals = () => {
           refreshCrystals={() => getCrystals({})}
         />
       ) : null}
-      <Pagination fetchData={getCrystals} paging={paging} />
+      <Pagination
+        fetchData={getCrystals}
+        paging={paging}
+        onCrystalFilterChange={onCrystalFilterChange}
+      />
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
