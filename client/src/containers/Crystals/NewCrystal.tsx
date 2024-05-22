@@ -35,7 +35,8 @@ type NewCrystalT = {
 
 const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
-  const [colorModalOpen, setColorModalOpen] = useState<boolean | ColorT[]>(false)
+  const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
+  const [colorModalOpen, setColorModalOpen] = useState(false)
   const [crystals, setCrystals] = useState<CrystalT[]>([])
   const [crystalsVisible, setCrystalsVisible] = useState(false)
   const [rawSearch, setRawSearch] = useState(null)
@@ -131,7 +132,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
 
   const handleColorEdit = (e, colorToEdit) => {
     e.stopPropagation()
-    setColorModalOpen(colorToEdit)
+    setColorToEdit(colorToEdit)
+    setColorModalOpen(true)
   }
 
   // const indicatorOptions = (indicatorName, indicatorValues) => {
@@ -303,9 +305,10 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       </form>
       {colorModalOpen && (
         <NewColorModal
-          colorToEdit={colorModalOpen}
+          colorToEdit={colorToEdit}
           onClose={() => {
             setColorModalOpen(false)
+            setColorToEdit(null)
             setTimeout(() => {
               fetchColors()
             }, 1000)

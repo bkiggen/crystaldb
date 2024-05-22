@@ -14,8 +14,8 @@ import { createColor, updateColor, deleteColor } from "../../api/colors"
 const ColorCreationModal = ({ onClose, colorToEdit }) => {
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
   const initialValues = {
-    name: colorToEdit.name || "",
-    hex: colorToEdit.hex || "#000000",
+    name: colorToEdit?.name || "",
+    hex: colorToEdit?.hex || "#000000",
   }
 
   const validationSchema = Yup.object({
@@ -40,7 +40,7 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
   })
 
   const handleDeleteColor = () => {
-    deleteColor(colorToEdit.id)
+    deleteColor(colorToEdit?.id)
     onClose()
   }
 
