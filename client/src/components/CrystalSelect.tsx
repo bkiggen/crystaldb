@@ -10,6 +10,7 @@ import { getAllCrystals } from "../api/crystals"
 import type { CrystalT } from "../types/Crystal"
 
 import ColorIndicator from "./ColorIndicator"
+import colors from "../styles/colors"
 
 type CrystalSelectT = {
   formik: ReturnType<typeof useFormik>
@@ -36,6 +37,10 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       options={allCrystals?.map((c) => {
         return c.id
       })}
+      PaperComponent={({ children }) => {
+        return <Box sx={{ background: colors.slate }}>{children}</Box>
+      }}
+      sx={{ background: "red" }}
       getOptionLabel={(option) => {
         const crystal = allCrystals.find((c) => c.id === option)
         return crystal ? crystal.name : ""
