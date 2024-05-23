@@ -70,9 +70,11 @@ const Crystals = () => {
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ColorIndicator indicatorValue={params.row.color?.hex} />
-          </Box>
+          <Tooltip title={params.row.color?.name}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <ColorIndicator indicatorValue={params.row.color?.hex} />
+            </Box>
+          </Tooltip>
         )
       },
     },
