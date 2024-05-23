@@ -153,6 +153,16 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   if (!crystal) {
     return res.status(404).send("Crystal not found");
   }
+
+  if (req.body.colorId) {
+    const newColor = await Color.findOneBy({
+      id: req.body.colorId,
+    });
+    if (newColor) {
+      crystal.color = newColor;
+    }
+  }
+
   Crystal.merge(crystal, req.body);
   await Crystal.save(crystal);
   res.json(crystal);
