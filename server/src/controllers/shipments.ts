@@ -87,6 +87,14 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
     const crystals = await Crystal.findBy({ id: In(crystalIds) });
     shipment.crystals = crystals;
   }
+  if (req.body.subscriptionId) {
+    const subscription = await Subscription.findOneBy({
+      id: req.body.subscriptionId,
+    });
+    if (subscription) {
+      shipment.subscription = subscription;
+    }
+  }
   Shipment.merge(shipment, req.body);
   await Shipment.save(shipment);
   res.json(shipment);
