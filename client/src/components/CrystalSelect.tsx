@@ -78,7 +78,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
         return (
           <li {...props}>
             <ColorIndicator indicatorValue={crystal?.color?.hex} />
-            <ListItemText primary={crystal?.name} />
+            <ListItemText primary={crystal?.name} sx={{ textTransform: "capitalize" }} />
           </li>
         )
       }}

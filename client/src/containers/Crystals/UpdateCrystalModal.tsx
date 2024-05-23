@@ -99,7 +99,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
                 variant="outlined"
                 fullWidth
                 {...formik.getFieldProps("name")}
-                sx={textFieldStyles}
+                sx={{ ...textFieldStyles, "*": { textTransform: "capitalize" } }}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
               />
