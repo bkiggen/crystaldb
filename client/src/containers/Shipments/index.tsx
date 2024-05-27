@@ -127,7 +127,6 @@ const Shipments = () => {
         <UpdateShipmentModal
           selectedShipment={selectedShipment}
           setSelectedShipment={setSelectedShipment}
-          fetchShipments={fetchShipments}
         />
       ) : null}
       <Table

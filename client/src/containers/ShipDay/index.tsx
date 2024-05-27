@@ -11,7 +11,7 @@ import Shipment from "./Shipment"
 
 const ShipDay = () => {
   const { shipments, fetchShipments } = useShipmentStore()
-  console.log("🚀 ~ ShipDay ~ shipments:", shipments)
+
   const isFullScreen = useStore((state) => {
     return state.isFullScreen
   })

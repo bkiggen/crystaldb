@@ -10,50 +10,45 @@ import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
 import VisibilityIcon from "@mui/icons-material/Visibility"
+import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
 const Shipment = ({ shipment }) => {
-  const [shipmentToUpdate, setShipmentToUpdate] = useState(null)
+  const [selectedShipment, setSelectedShipment] = useState(null)
   const { updateShipment } = useShipmentStore()
 
   return (
-    <Box
-      key={shipment.id}
-      sx={{
-        padding: "12px",
-        margin: "12px",
-        background: colors.darkBlue,
-        minWidth: "20%",
-        borderRadius: "4px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Typography
+    <>
+      {selectedShipment && (
+        <UpdateShipmentModal
+          selectedShipment={selectedShipment}
+          setSelectedShipment={setSelectedShipment}
+        />
+      )}
+      <Box
+        key={shipment.id}
         sx={{
-          fontWeight: 600,
-          fontSize: "1.5em",
-          textAlign: "center",
-          textDecoration: "underline",
+          padding: "12px",
+          margin: "12px",
+          background: colors.darkBlue,
+          minWidth: "20%",
+          borderRadius: "4px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        {shipment.subscription.shortName} #{shipment.cycle}
-      </Typography>
-      {shipmentToUpdate?.id === shipment.id ? (
-        <TextField
-          type="number"
-          sx={{ ...textFieldStyles, marginBottom: "24px", width: "100px" }}
-          onBlur={(e) => {
-            const newData = {
-              ...shipmentToUpdate,
-              userCount: e.target.value || shipmentToUpdate.userCount,
-              userCountIsNew: true,
-            }
-            updateShipment(newData)
-            setShipmentToUpdate(null)
+        <Typography
+          sx={{
+            fontWeight: 600,
+            fontSize: "1.5em",
+            textAlign: "center",
+            textDecoration: "underline",
+            cursor: "pointer",
           }}
-        />
-      ) : (
+          onClick={() => setSelectedShipment(shipment)}
+        >
+          {shipment.subscription.shortName} #{shipment.cycle}
+        </Typography>
         <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center" }}>
           <Typography
             sx={{
@@ -61,7 +56,6 @@ const Shipment = ({ shipment }) => {
               color: shipment?.userCountIsNew ? "red" : "white",
               marginRight: "4px",
             }}
-            onClick={() => setShipmentToUpdate(shipment)}
           >
             ({shipment.userCount || 0})
           </Typography>
@@ -78,25 +72,25 @@ const Shipment = ({ shipment }) => {
             />
           )}
         </Box>
-      )}
-      <Box>
-        {shipment.crystals
-          .slice()
-          .sort((a, b) => a.name.localeCompare(b.name))
-          .map((crystal) => (
-            <Box
-              key={crystal.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <ColorIndicator indicatorValue={crystal.color?.hex} />
-              <Box sx={{ marginLeft: "4px" }}>{crystal.name}</Box>
-            </Box>
-          ))}
+        <Box>
+          {shipment.crystals
+            .slice()
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((crystal) => (
+              <Box
+                key={crystal.id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ColorIndicator indicatorValue={crystal.color?.hex} />
+                <Box sx={{ marginLeft: "4px" }}>{crystal.name}</Box>
+              </Box>
+            ))}
+        </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 

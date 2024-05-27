@@ -34,14 +34,9 @@ import ModalContainer from "../../components/Modals/ModalContainer"
 type UpdateShipmentModalT = {
   selectedShipment: ShipmentT
   setSelectedShipment: (shipment: ShipmentT) => void
-  fetchShipments: (args: Record<string, unknown>) => void
 }
 
-const UpdateShipmentModal = ({
-  selectedShipment,
-  setSelectedShipment,
-  fetchShipments,
-}: UpdateShipmentModalT) => {
+const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateShipmentModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
 
   const { updateShipment, deleteShipment } = useShipmentStore()
@@ -70,13 +65,13 @@ const UpdateShipmentModal = ({
       cycleRangeEnd: selectedShipment.cycleRangeEnd,
       crystalIds: selectedShipment.crystals.map((c) => c.id),
       subscriptionId: selectedShipment.subscription.id || 1,
+      userCount: selectedShipment.userCount,
     })
   }, [selectedShipment])
 
   const handleDelete = async () => {
-    await deleteShipment(selectedShipment.id)
+    deleteShipment(selectedShipment.id)
     setSelectedShipment(null)
-    fetchShipments({})
   }
 
   const initialValues: {
@@ -87,6 +82,7 @@ const UpdateShipmentModal = ({
     cycleRangeEnd: number
     crystalIds: number[]
     subscriptionId: number
+    userCount: number
   } = {
     month: currentMonth,
     year: currentYear,
@@ -95,6 +91,7 @@ const UpdateShipmentModal = ({
     cycleRangeEnd: selectedShipment.cycleRangeEnd,
     crystalIds: selectedShipment.crystals.map((c) => c.id),
     subscriptionId: selectedShipment.subscription.id || 1,
+    userCount: selectedShipment.userCount || 0,
   }
 
   useEffect(() => {
@@ -120,6 +117,7 @@ const UpdateShipmentModal = ({
     cycleRangeStart: Yup.number().nullable().integer().min(1),
     cycleRangeEnd: Yup.number().nullable().integer().min(1),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
+    userCount: Yup.number().integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   }).test(
     "cycle-or-cycleRange",
@@ -141,14 +139,13 @@ const UpdateShipmentModal = ({
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
+    const userCountIsNew = formData.userCount !== selectedShipment.userCount
     await updateShipment({
       ...formData,
       id: selectedShipment.id,
-      userCount: selectedShipment.userCount,
-      userCountIsNew: selectedShipment.userCountIsNew,
+      userCountIsNew: userCountIsNew,
     })
     setSelectedShipment(null)
-    fetchShipments({})
     formik.resetForm()
   }
 
@@ -176,7 +173,7 @@ const UpdateShipmentModal = ({
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={6} sx={{ position: "relative" }}>
+            <Grid item xs={4} sx={{ position: "relative" }}>
               <Typography
                 sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
               >
@@ -200,7 +197,7 @@ const UpdateShipmentModal = ({
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={6} sx={{ position: "relative" }}>
+            <Grid item xs={4} sx={{ position: "relative" }}>
               <Typography
                 sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
               >
@@ -216,6 +213,23 @@ const UpdateShipmentModal = ({
                 sx={textFieldStyles}
                 error={formik.touched.year && Boolean(formik.errors.year)}
                 helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
+              />
+            </Grid>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <Typography
+                sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
+              >
+                User Count
+              </Typography>
+              <TextField
+                id="userCount"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("userCount")}
+                sx={textFieldStyles}
+                error={formik.touched.userCount && Boolean(formik.errors.userCount)}
+                helperText={<>{formik.touched.userCount ? formik.errors.userCount : ""}</>}
               />
             </Grid>
           </Grid>
