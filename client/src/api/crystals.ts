@@ -30,7 +30,7 @@ export const deleteCrystalRequest = async (crystalId: number): Promise<void> => 
   return makeRestRequest<void>({ endpoint, method: "DELETE", successMessage: "Crystal Deleted!" })
 }
 
-export const getAllCrystalsRequest = async ({
+export const fetchCrystalsRequest = async ({
   searchTerm = "",
   page = 1,
   pageSize = 100,

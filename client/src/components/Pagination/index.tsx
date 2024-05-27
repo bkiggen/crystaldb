@@ -20,7 +20,7 @@ type PaginationT = {
   paging: PagingT
   fetchData: (arg?: Record<string, unknown>) => void
   withoutSearch?: boolean
-  onCrystalFilterChange?: (arg: Record<string, string>) => null
+  onCrystalFilterChange?: (filters: Record<string, string>) => void
   filterOptions?: { label: string; value: string | number }[]
 }
 

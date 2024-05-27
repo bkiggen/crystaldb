@@ -80,7 +80,7 @@ const getUpcomingPrebuildCrystalIds = async (
   return uniqueCrystalIds;
 };
 
-const addFilters = (query, allFilters) => {
+export const addFilters = (query, allFilters) => {
   Object.keys(allFilters).forEach((filterKey) => {
     const filterValue = allFilters[filterKey];
     if (typeof filterValue === "string" && filterValue.trim() !== "") {

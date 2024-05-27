@@ -4,7 +4,7 @@ import {
   createCrystalRequest,
   updateCrystalRequest,
   deleteCrystalRequest,
-  getAllCrystalsRequest,
+  fetchCrystalsRequest,
   getSuggestedCrystalsRequest,
 } from "../api/crystals"
 import { PagingT, defaultPaging } from "../types/Paging"
@@ -50,7 +50,7 @@ export const useCrystalStore = create<CrystalStoreT>((set) => ({
   crystals: [],
   crystalMatches: [],
   fetchCrystalMatches: async (params) => {
-    const { data } = await getAllCrystalsRequest(params)
+    const { data } = await fetchCrystalsRequest(params)
     set({ crystalMatches: data })
   },
   paging: defaultPaging,
@@ -74,7 +74,7 @@ export const useCrystalStore = create<CrystalStoreT>((set) => ({
     }))
   },
   fetchCrystals: async (params) => {
-    const { data, paging } = await getAllCrystalsRequest(params)
+    const { data, paging } = await fetchCrystalsRequest(params)
     set({ crystals: data, paging })
   },
   fetchSuggestedCrystals: async (params) => {

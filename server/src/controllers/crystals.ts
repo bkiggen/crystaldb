@@ -5,40 +5,62 @@ import { Color } from "../entity/Color";
 import { suggestCrystals } from "../services/crystalService";
 import { authenticateToken } from "./util/authenticateToken";
 import { escapeSpecialCharacters } from "./util/controllerHelpers";
+import { addFilters } from "../services/crystalService";
 
 const router = Router();
 
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
-  const { page = 1, pageSize = 1000, searchTerm, inventory } = req.query;
+  const {
+    page = 1,
+    pageSize = 1000,
+    searchTerm,
+    inventory,
+    findAge,
+    size,
+    category,
+    location,
+    colorId,
+    rarity,
+  } = req.query;
 
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);
 
-  const sortBy = req.query.sortBy || ("name" as string);
-  const sortDirection = req.query.sortDirection || ("asc" as string);
+  const sortBy = (req.query.sortBy || "name") as string;
+  const sortDirection = (
+    (req.query.sortDirection as string) || "asc"
+  ).toUpperCase() as "ASC" | "DESC";
 
-  const order = {
-    // @ts-ignore
-    [sortBy]: sortDirection,
-  };
-
-  const santizedSearchTerm = searchTerm
+  const sanitizedSearchTerm = searchTerm
     ? escapeSpecialCharacters(searchTerm as string)
     : "";
 
-  let whereCondition = {};
-  whereCondition = {
-    ...(santizedSearchTerm ? { name: ILike(`%${santizedSearchTerm}%`) } : {}),
-    ...(inventory ? { inventory: inventory } : {}),
+  let query = Crystal.createQueryBuilder("crystal");
+
+  if (sanitizedSearchTerm) {
+    query = query.where("crystal.name ILIKE :searchTerm", {
+      searchTerm: `%${sanitizedSearchTerm}%`,
+    });
+  }
+
+  const allFilters = {
+    ...(findAge && { findAge }),
+    ...(size && { size }),
+    ...(inventory && { inventory }),
+    ...(category && { category }),
+    ...(location && { location }),
+    ...(colorId && { colorId }),
+    ...(rarity && { rarity }),
   };
 
-  const [result, total] = await Crystal.findAndCount({
-    where: whereCondition,
-    skip: (pageNumber - 1) * pageSizeNumber,
-    take: pageSizeNumber,
-    order,
-    relations: ["color"],
-  });
+  query = addFilters(query, allFilters);
+
+  const [result, total] = await query
+    .skip((pageNumber - 1) * pageSizeNumber)
+    .take(pageSizeNumber)
+    .orderBy(`crystal.${sortBy}`, sortDirection)
+    .leftJoinAndSelect("crystal.color", "color")
+    .getManyAndCount();
 
   const paging = {
     totalCount: total,
