@@ -125,7 +125,7 @@ const Shipments = () => {
       />
       {selectedShipment ? (
         <UpdateShipmentModal
-          shipment={selectedShipment}
+          selectedShipment={selectedShipment}
           setSelectedShipment={setSelectedShipment}
           fetchShipments={fetchShipments}
         />

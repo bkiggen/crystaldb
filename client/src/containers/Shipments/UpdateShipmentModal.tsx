@@ -32,13 +32,13 @@ import type { SubscriptionT } from "../../types/Subscription"
 import ModalContainer from "../../components/Modals/ModalContainer"
 
 type UpdateShipmentModalT = {
-  shipment: ShipmentT
+  selectedShipment: ShipmentT
   setSelectedShipment: (shipment: ShipmentT) => void
   fetchShipments: (args: Record<string, unknown>) => void
 }
 
 const UpdateShipmentModal = ({
-  shipment,
+  selectedShipment,
   setSelectedShipment,
   fetchShipments,
 }: UpdateShipmentModalT) => {
@@ -60,8 +60,20 @@ const UpdateShipmentModal = ({
     fetchSubscriptionTypes()
   }, [])
 
+  useEffect(() => {
+    formik.setValues({
+      month: selectedShipment.month,
+      year: selectedShipment.year,
+      cycle: selectedShipment.cycle,
+      cycleRangeStart: selectedShipment.cycleRangeStart,
+      cycleRangeEnd: selectedShipment.cycleRangeEnd,
+      crystalIds: selectedShipment.crystals.map((c) => c.id),
+      subscriptionId: selectedShipment.subscription.id || 1,
+    })
+  }, [selectedShipment])
+
   const handleDelete = async () => {
-    await deleteShipment(shipment.id)
+    await deleteShipment(selectedShipment.id)
     setSelectedShipment(null)
     fetchShipments({})
   }
@@ -77,11 +89,11 @@ const UpdateShipmentModal = ({
   } = {
     month: currentMonth,
     year: currentYear,
-    cycle: shipment.cycle,
-    cycleRangeStart: shipment.cycleRangeStart,
-    cycleRangeEnd: shipment.cycleRangeEnd,
-    crystalIds: shipment.crystals.map((c) => c.id),
-    subscriptionId: shipment.subscription.id || 1,
+    cycle: selectedShipment.cycle,
+    cycleRangeStart: selectedShipment.cycleRangeStart,
+    cycleRangeEnd: selectedShipment.cycleRangeEnd,
+    crystalIds: selectedShipment.crystals.map((c) => c.id),
+    subscriptionId: selectedShipment.subscription.id || 1,
   }
 
   useEffect(() => {
@@ -93,15 +105,15 @@ const UpdateShipmentModal = ({
   }, [])
 
   useEffect(() => {
-    if (shipment.cycleRangeStart) {
+    if (selectedShipment.cycleRangeStart) {
       setCycleRangeMode(true)
-      formik.setFieldValue("cycleRangeStart", shipment.cycleRangeStart)
-      formik.setFieldValue("cycleRangeEnd", shipment.cycleRangeEnd)
+      formik.setFieldValue("cycleRangeStart", selectedShipment.cycleRangeStart)
+      formik.setFieldValue("cycleRangeEnd", selectedShipment.cycleRangeEnd)
     }
-  }, [shipment, shipment.cycleRangeEnd]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedShipment, selectedShipment.cycleRangeEnd]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
-    month: Yup.number().required("Month is required").integer().min(1).max(12),
+    month: Yup.number().required("Month is required").integer().min(0).max(11),
     year: Yup.number()
       .required("Year is required")
       .integer()
@@ -134,9 +146,9 @@ const UpdateShipmentModal = ({
     }
     await updateShipment({
       ...formData,
-      id: shipment.id,
-      userCount: shipment.userCount,
-      userCountIsNew: shipment.userCountIsNew,
+      id: selectedShipment.id,
+      userCount: selectedShipment.userCount,
+      userCountIsNew: selectedShipment.userCountIsNew,
     })
     setSelectedShipment(null)
     fetchShipments({})
@@ -181,6 +193,8 @@ const UpdateShipmentModal = ({
                 {...formik.getFieldProps("month")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
+                error={formik.touched.month && Boolean(formik.errors.month)}
+                helperText={<>{formik.touched.month ? formik.errors.month : ""}</>}
               >
                 {Object.keys(monthOptions).map((monthNumber) => (
                   <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
@@ -203,6 +217,8 @@ const UpdateShipmentModal = ({
                 {...formik.getFieldProps("year")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
+                error={formik.touched.year && Boolean(formik.errors.year)}
+                helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
               />
             </Grid>
           </Grid>
@@ -251,6 +267,12 @@ const UpdateShipmentModal = ({
                       {...formik.getFieldProps("cycleRangeStart")}
                       inputProps={{ style: { color: "white" } }}
                       sx={textFieldStyles}
+                      error={
+                        formik.touched.cycleRangeStart && Boolean(formik.errors.cycleRangeStart)
+                      }
+                      helperText={
+                        <>{formik.touched.cycleRangeStart ? formik.errors.cycleRangeStart : ""}</>
+                      }
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -262,6 +284,10 @@ const UpdateShipmentModal = ({
                       {...formik.getFieldProps("cycleRangeEnd")}
                       inputProps={{ style: { color: "white" } }}
                       sx={textFieldStyles}
+                      error={formik.touched.cycleRangeEnd && Boolean(formik.errors.cycleRangeEnd)}
+                      helperText={
+                        <>{formik.touched.cycleRangeEnd ? formik.errors.cycleRangeEnd : ""}</>
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -274,6 +300,8 @@ const UpdateShipmentModal = ({
                   {...formik.getFieldProps("cycle")}
                   inputProps={{ style: { color: "white" } }}
                   sx={textFieldStyles}
+                  error={formik.touched.cycle && Boolean(formik.errors.cycle)}
+                  helperText={<>{formik.touched.cycle ? formik.errors.cycle : ""}</>}
                 />
               )}
             </Grid>
@@ -293,6 +321,10 @@ const UpdateShipmentModal = ({
                   id="subscriptionId"
                   {...formik.getFieldProps("subscriptionId")}
                   sx={textFieldStyles}
+                  error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
+                  helperText={
+                    <>{formik.touched.subscriptionId ? formik.errors.subscriptionId : ""}</>
+                  }
                 >
                   {allSubscriptions.map((subscription) => (
                     <MenuItem key={subscription.id} value={subscription.id}>
