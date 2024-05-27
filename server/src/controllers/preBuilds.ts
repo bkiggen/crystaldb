@@ -62,25 +62,46 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       subscription,
     });
     await PreBuild.save(shipment);
-    res.status(201).json(shipment);
+    const savedPrebuild = await PreBuild.findOne({
+      where: { id: shipment.id },
+      relations: ["crystals", "subscription"],
+    });
+    res.status(201).json(savedPrebuild);
   } catch (error) {
     res.status(400).send(error.message);
   }
 });
 
 router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
-  let preBuild = await PreBuild.findOneBy({ id: parseInt(req.params.id) });
+  const preBuildId = parseInt(req.params.id);
+  let preBuild = await PreBuild.findOneBy({ id: preBuildId });
   const { crystalIds } = req.body;
+
   if (!preBuild) {
     return res.status(404).send("PreBuild not found");
   }
+
   if (crystalIds) {
     const crystals = await Crystal.findBy({ id: In(crystalIds) });
     preBuild.crystals = crystals;
   }
+
+  if (req.body.subscriptionId) {
+    const subscription = await Subscription.findOneBy({
+      id: req.body.subscriptionId,
+    });
+    preBuild.subscription = subscription;
+  }
+
   PreBuild.merge(preBuild, req.body);
   await PreBuild.save(preBuild);
-  res.json(preBuild);
+
+  const savedPrebuild = await PreBuild.findOne({
+    where: { id: preBuildId },
+    relations: ["crystals", "subscription"],
+  });
+
+  res.json(savedPrebuild);
 });
 
 router.delete(

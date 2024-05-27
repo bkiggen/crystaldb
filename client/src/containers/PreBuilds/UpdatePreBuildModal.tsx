@@ -69,10 +69,6 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     fetchCrystals({ noPaging: true })
   }, [])
 
-  useEffect(() => {
-    formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
-  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
-
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),
     cycleRangeStart: Yup.number().nullable().integer().min(1),
@@ -99,6 +95,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
+
     updatePreBuild({ ...formData, id: preBuild.id })
     setSelectedPreBuild(null)
     formik.resetForm()
@@ -109,6 +106,16 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     validationSchema,
     onSubmit: handleSubmit,
   })
+
+  useEffect(() => {
+    formik.setValues({
+      cycle: preBuild.cycle,
+      cycleRangeStart: preBuild.cycleRangeStart,
+      cycleRangeEnd: preBuild.cycleRangeEnd,
+      crystalIds: preBuild.crystals.map((c) => c.id),
+      subscriptionId: preBuild.subscription.id,
+    })
+  }, [preBuild]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Pre-Build">

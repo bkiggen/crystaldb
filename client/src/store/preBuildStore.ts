@@ -49,6 +49,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
   updatePreBuild: async (updatedPreBuild) => {
     try {
       const result = await updatePreBuildRequest(updatedPreBuild)
+      console.log("🚀 ~ updatePreBuild: ~ result:", result)
       set((state) => ({
         preBuilds: state.preBuilds.map((preBuild) =>
           preBuild.id === result.id ? result : preBuild,
