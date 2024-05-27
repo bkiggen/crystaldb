@@ -23,7 +23,8 @@ import { textFieldStyles } from "../../styles/vars"
 import { useCrystalStore } from "../../store/crystalStore"
 
 import { getAllSubscriptions } from "../../api/subscriptions"
-import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
+
+import { usePreBuildStore } from "../../store/preBuildStore"
 
 import { PreBuildT } from "../../types/PreBuild"
 import type { SubscriptionT } from "../../types/Subscription"
@@ -33,15 +34,11 @@ import ConfirmDialogue from "../../components/ConfirmDialogue"
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
   setSelectedPreBuild: (preBuild: PreBuildT) => void
-  fetchPreBuilds: (args: Record<string, unknown>) => void
 }
 
-const UpdatePreBuildModal = ({
-  preBuild,
-  setSelectedPreBuild,
-  fetchPreBuilds,
-}: UpdatePreBuildModalT) => {
+const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
+  const { updatePreBuild, deletePreBuild } = usePreBuildStore()
 
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
@@ -58,7 +55,7 @@ const UpdatePreBuildModal = ({
 
   const onDelete = async () => {
     await deletePreBuild(preBuild.id)
-    fetchPreBuilds({})
+
     setSelectedPreBuild(null)
   }
 
@@ -110,9 +107,8 @@ const UpdatePreBuildModal = ({
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    await updatePreBuild({ ...formData, id: preBuild.id })
+    updatePreBuild({ ...formData, id: preBuild.id })
     setSelectedPreBuild(null)
-    fetchPreBuilds({})
     formik.resetForm()
   }
 

@@ -2,14 +2,13 @@ import { useState, useEffect } from "react"
 import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
-import { getAllPreBuilds } from "../../api/preBuilds"
 import { getAllSubscriptions } from "../../api/subscriptions"
+
+import { usePreBuildStore } from "../../store/preBuildStore"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
-
-import usePaging from "../../hooks/usePaging"
 
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
@@ -17,16 +16,11 @@ import NewPreBuild from "./NewPreBuild"
 import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
-  const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
-  const [paging, setPaging] = usePaging()
+  const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
+  console.log("🚀 ~ PreBuilds ~ paging:", paging)
+
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
-
-  const fetchPreBuilds = async (args) => {
-    const response = await getAllPreBuilds(args)
-    setPreBuilds(response.data)
-    setPaging(response.paging)
-  }
 
   const fetchSubscriptionTypes = async () => {
     const response = await getAllSubscriptions()
@@ -37,15 +31,6 @@ const PreBuilds = () => {
     fetchPreBuilds({})
     fetchSubscriptionTypes()
   }, [])
-
-  const addPreBuild = (newPreBuild: PreBuildT) => {
-    setPreBuilds((prevPreBuilds) => {
-      if (prevPreBuilds) {
-        return [...prevPreBuilds, newPreBuild]
-      }
-      return null
-    })
-  }
 
   const columns: GridColDef[] = [
     {
@@ -110,12 +95,11 @@ const PreBuilds = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewPreBuild addPreBuild={addPreBuild} allSubscriptions={allSubscriptions} />
+      <NewPreBuild allSubscriptions={allSubscriptions} />
       {selectedPrebuild ? (
         <UpdatePreBuildModal
           preBuild={selectedPrebuild}
           setSelectedPreBuild={setSelectedPreBuild}
-          fetchPreBuilds={fetchPreBuilds}
         />
       ) : null}
       <Pagination

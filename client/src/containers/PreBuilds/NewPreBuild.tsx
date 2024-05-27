@@ -8,18 +8,17 @@ import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
-import type { PreBuildT } from "../../types/PreBuild"
 import type { SubscriptionT } from "../../types/Subscription"
 
-import { createPreBuild } from "../../api/preBuilds"
+import { usePreBuildStore } from "../../store/preBuildStore"
 import CrystalSelect from "../../components/CrystalSelect"
 
 type NewPreBuildT = {
-  addPreBuild: (arg: PreBuildT) => void
   allSubscriptions: SubscriptionT[]
 }
 
-const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
+const NewPreBuild = ({ allSubscriptions }: NewPreBuildT) => {
+  const { createPreBuild } = usePreBuildStore()
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const initialValues: {
@@ -66,8 +65,7 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newCycle = await createPreBuild(formData)
-    addPreBuild(newCycle)
+    createPreBuild(formData)
     formik.resetForm()
   }
 
