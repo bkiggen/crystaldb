@@ -36,18 +36,12 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
   const pagedCrystals = crystals.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const updatePage = (direction: "left" | "right") => {
+    const totalPages = Math.ceil(crystals.length / pageSize)
+
     if (direction === "left") {
-      if (currentPage === 1) {
-        setCurrentPage(crystals.length)
-      } else {
-        setCurrentPage(currentPage - 1)
-      }
+      setCurrentPage((prevPage) => (prevPage > 1 ? prevPage - 1 : totalPages))
     } else {
-      if (currentPage === crystals.length) {
-        setCurrentPage(1)
-      } else {
-        setCurrentPage(currentPage + 1)
-      }
+      setCurrentPage((prevPage) => (prevPage < totalPages ? prevPage + 1 : 1))
     }
   }
 
