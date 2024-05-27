@@ -17,27 +17,23 @@ import {
   locationOptions,
 } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
-import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+import type { RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+
+import { useCrystalStore } from "../../store/crystalStore"
 
 import useDebounce from "../../hooks/useDebounce"
 import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
 
-import { createCrystal } from "../../api/crystals"
 import { getAllColors } from "../../api/colors"
-import { getAllCrystals } from "../../api/crystals"
 
 import NewColorModal from "./NewColorModal"
-// import ColorIndicator from "../../components/ColorIndicator"
 
-type NewCrystalT = {
-  addCrystal: (arg: CrystalT) => void
-}
-
-const NewCrystal = ({ addCrystal }: NewCrystalT) => {
+const NewCrystal = () => {
+  const { createCrystal, crystalMatches, fetchCrystalMatches } = useCrystalStore()
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
   const [colorModalOpen, setColorModalOpen] = useState(false)
-  const [crystals, setCrystals] = useState<CrystalT[]>([])
+
   const [crystalsVisible, setCrystalsVisible] = useState(false)
   const [rawSearch, setRawSearch] = useState(null)
   const debouncedSearch = useDebounce(rawSearch, 300)
@@ -80,7 +76,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    const newCrystal = await createCrystal({
+    createCrystal({
       name: capitalizeFirstLetter(formData.name),
       colorId: formData.colorId,
       category: formData.category,
@@ -92,7 +88,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       inventory: formData.inventory,
       location: formData.location,
     })
-    addCrystal(newCrystal)
     formik.resetForm()
   }
   const formik = useFormik({
@@ -107,8 +102,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   }
 
   const getCrystals = async ({ searchTerm = "" }) => {
-    const response = await getAllCrystals({ searchTerm, noPaging: true })
-    setCrystals(response.data || [])
+    fetchCrystalMatches({ searchTerm, noPaging: true })
     setCrystalsVisible(true)
   }
 
@@ -172,7 +166,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 sx={textFieldStyles}
                 onBlur={() => setCrystalsVisible(false)}
               />
-              {crystalsVisible && crystals.length > 0 ? (
+              {crystalsVisible && crystalMatches.length > 0 ? (
                 <Box
                   sx={{
                     position: "absolute",
@@ -181,7 +175,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                     padding: "12px 24px",
                   }}
                 >
-                  {crystals.map((crystal) => {
+                  {crystalMatches.map((crystal) => {
                     return (
                       <Box key={crystal.id} sx={{ margin: "6px 0" }}>
                         {crystal.name}

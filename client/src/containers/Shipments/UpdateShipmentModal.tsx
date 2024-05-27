@@ -21,12 +21,12 @@ import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { monthOptions } from "../../lib/constants"
 
-import { getAllCrystals } from "../../api/crystals"
+import { useCrystalStore } from "../../store/crystalStore"
+
 import { getAllSubscriptions } from "../../api/subscriptions"
 import { useShipmentStore } from "../../store/shipmentStore"
 
 import { ShipmentT } from "../../types/Shipment"
-import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
@@ -42,8 +42,9 @@ const UpdateShipmentModal = ({
   setSelectedShipment,
   fetchShipments,
 }: UpdateShipmentModalT) => {
+  const { crystals, fetchCrystals } = useCrystalStore()
+
   const { updateShipment, deleteShipment } = useShipmentStore()
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
@@ -97,11 +98,7 @@ const UpdateShipmentModal = ({
   }
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({ noPaging: true })
   }, [])
 
   useEffect(() => {
@@ -349,11 +346,11 @@ const UpdateShipmentModal = ({
                   multiple
                   defaultValue={formik.values.crystalIds}
                   value={formik.values.crystalIds}
-                  options={allCrystals?.map((c) => {
+                  options={crystals?.map((c) => {
                     return c.id
                   })}
                   getOptionLabel={(option) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
+                    const crystal = crystals.find((c) => c.id === option)
                     return crystal ? crystal.name : ""
                   }}
                   onChange={(_, value) => {
@@ -363,7 +360,7 @@ const UpdateShipmentModal = ({
                     return value.map((option: number, index: number) => (
                       <Chip
                         variant="outlined"
-                        label={allCrystals.find((c) => c.id === option)?.name}
+                        label={crystals.find((c) => c.id === option)?.name}
                         {...getTagProps({ index })}
                         sx={{ color: "white" }}
                       />
@@ -382,12 +379,12 @@ const UpdateShipmentModal = ({
                   }}
                   renderOption={(props, option) => (
                     <li {...props}>
-                      <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
+                      <ListItemText primary={crystals.find((c) => c.id === option)?.name} />
                     </li>
                   )}
                   filterOptions={(options, params) => {
                     const filtered = options.filter((option) => {
-                      const crystal = allCrystals.find((c) => c.id === option)
+                      const crystal = crystals.find((c) => c.id === option)
                       if (!crystal) return
                       return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
                     })

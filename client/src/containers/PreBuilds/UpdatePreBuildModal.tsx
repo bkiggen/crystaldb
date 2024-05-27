@@ -20,12 +20,12 @@ import {
 
 import { textFieldStyles } from "../../styles/vars"
 
-import { getAllCrystals } from "../../api/crystals"
+import { useCrystalStore } from "../../store/crystalStore"
+
 import { getAllSubscriptions } from "../../api/subscriptions"
 import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
 
 import { PreBuildT } from "../../types/PreBuild"
-import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
@@ -41,7 +41,8 @@ const UpdatePreBuildModal = ({
   setSelectedPreBuild,
   fetchPreBuilds,
 }: UpdatePreBuildModalT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
+  const { crystals, fetchCrystals } = useCrystalStore()
+
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
@@ -76,11 +77,7 @@ const UpdatePreBuildModal = ({
   }
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({ noPaging: true })
   }, [])
 
   useEffect(() => {
@@ -245,11 +242,11 @@ const UpdatePreBuildModal = ({
                   multiple
                   defaultValue={formik.values.crystalIds}
                   value={formik.values.crystalIds}
-                  options={allCrystals?.map((c) => {
+                  options={crystals?.map((c) => {
                     return c.id
                   })}
                   getOptionLabel={(option) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
+                    const crystal = crystals.find((c) => c.id === option)
                     return crystal ? crystal.name : ""
                   }}
                   onChange={(_, value) => {
@@ -259,7 +256,7 @@ const UpdatePreBuildModal = ({
                     return value.map((option: number, index: number) => (
                       <Chip
                         variant="outlined"
-                        label={allCrystals.find((c) => c.id === option)?.name}
+                        label={crystals.find((c) => c.id === option)?.name}
                         {...getTagProps({ index })}
                         sx={{ color: "white" }}
                       />
@@ -278,7 +275,7 @@ const UpdatePreBuildModal = ({
                   }}
                   renderOption={(props, option) => (
                     <li {...props}>
-                      <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
+                      <ListItemText primary={crystals.find((c) => c.id === option)?.name} />
                     </li>
                   )}
                   // varies from other similar elements. Also, disablePortal is false here
@@ -287,7 +284,7 @@ const UpdatePreBuildModal = ({
                   )}
                   filterOptions={(options, params) => {
                     const filtered = options.filter((option) => {
-                      const crystal = allCrystals.find((c) => c.id === option)
+                      const crystal = crystals.find((c) => c.id === option)
                       if (!crystal) return
                       return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
                     })

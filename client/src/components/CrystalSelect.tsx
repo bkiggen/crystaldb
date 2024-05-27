@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 
 import { useFormik } from "formik"
 
 import { Box, TextField, Chip, ListItemText, Autocomplete } from "@mui/material"
 
 import { textFieldStyles } from "../styles/vars"
-import { getAllCrystals } from "../api/crystals"
+import { useCrystalStore } from "../store/crystalStore"
 
 import type { CrystalT } from "../types/Crystal"
 
@@ -17,13 +17,10 @@ type CrystalSelectT = {
 }
 
 const CrystalSelect = ({ formik }: CrystalSelectT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
+  const { fetchCrystals, crystals } = useCrystalStore()
+
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({ noPaging: true })
   }, [])
 
   return (
@@ -34,7 +31,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       multiple
       defaultValue={formik.values.crystalIds}
       value={formik.values.crystalIds}
-      options={allCrystals?.map((c) => {
+      options={crystals?.map((c) => {
         return c.id
       })}
       PaperComponent={({ children }) => {
@@ -42,7 +39,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       }}
       sx={{ background: "red" }}
       getOptionLabel={(option) => {
-        const crystal = allCrystals.find((c) => c.id === option)
+        const crystal = crystals.find((c) => c.id === option)
         return crystal ? crystal.name : ""
       }}
       onChange={(_, value) => {
@@ -50,7 +47,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       }}
       renderTags={(value: number[], getTagProps) => {
         return value.map((option: number, index: number) => {
-          const crystal = allCrystals.find((c) => c.id === option)
+          const crystal = crystals.find((c) => c.id === option)
 
           return (
             <Chip
@@ -79,7 +76,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
         )
       }}
       renderOption={(props, option) => {
-        const crystal: CrystalT = allCrystals.find((c) => c.id === option)
+        const crystal: CrystalT = crystals.find((c) => c.id === option)
         return (
           <li {...props}>
             <ColorIndicator indicatorValue={crystal?.color?.hex} />
@@ -89,7 +86,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       }}
       filterOptions={(options, params) => {
         const filtered = options.filter((option) => {
-          const crystal = allCrystals.find((c) => c.id === option)
+          const crystal = crystals.find((c) => c.id === option)
           if (!crystal) return
           return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
         })

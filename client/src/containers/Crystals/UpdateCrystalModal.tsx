@@ -6,7 +6,8 @@ import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/materi
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { getAllColors } from "../../api/colors"
-import { updateCrystal, deleteCrystal } from "../../api/crystals"
+
+import { useCrystalStore } from "../../store/crystalStore"
 
 import type { CrystalT } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
@@ -24,10 +25,11 @@ import ConfirmDialogue from "../../components/ConfirmDialogue"
 type UpdateCrystalModalT = {
   crystal: CrystalT
   onClose: () => void
-  refreshCrystals: () => void
 }
 
-const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystalModalT) => {
+const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
+  const { updateCrystal, deleteCrystal } = useCrystalStore()
+
   const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
@@ -62,15 +64,13 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      await updateCrystal(crystal.id, values)
-      refreshCrystals()
+      updateCrystal(crystal.id, values)
       onClose()
     },
   })
 
   const onDelete = async () => {
-    await deleteCrystal(crystal.id)
-    refreshCrystals()
+    deleteCrystal(crystal.id)
     onClose()
   }
 
