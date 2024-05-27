@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
-import { getAllSubscriptions } from "../../api/subscriptions"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import { usePreBuildStore } from "../../store/preBuildStore"
 
@@ -17,19 +17,13 @@ import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
-  console.log("🚀 ~ PreBuilds ~ paging:", paging)
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
-
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
 
   useEffect(() => {
     fetchPreBuilds({})
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   const columns: GridColDef[] = [
@@ -95,7 +89,7 @@ const PreBuilds = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewPreBuild allSubscriptions={allSubscriptions} />
+      <NewPreBuild />
       {selectedPrebuild ? (
         <UpdatePreBuildModal
           preBuild={selectedPrebuild}
@@ -105,7 +99,7 @@ const PreBuilds = () => {
       <Pagination
         fetchData={fetchPreBuilds}
         paging={paging}
-        filterOptions={allSubscriptions.map((s) => {
+        filterOptions={subscriptions.map((s) => {
           return {
             label: s.shortName,
             value: s.id,

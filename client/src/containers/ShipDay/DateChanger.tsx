@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 
 import { useFormik } from "formik"
 import dayjs from "dayjs"
@@ -6,9 +6,7 @@ import dayjs from "dayjs"
 import * as Yup from "yup"
 import { Box, TextField, FormControl, Grid, MenuItem } from "@mui/material"
 
-import { getAllSubscriptions } from "../../api/subscriptions"
-
-import type { SubscriptionT } from "../../types/Subscription"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import { monthOptions } from "../../lib/constants"
 
@@ -19,24 +17,19 @@ const DateChanger = ({ fetchShipments }) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
-
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
+  const { fetchSubscriptions, subscriptions } = useSubscriptionStore()
 
   const resetSubType = () => {
     formik.setFieldValue("subscriptionId", 0)
   }
 
   useEffect(() => {
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   useEffect(() => {
     resetSubType()
-  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const initialValues: {
     month: number
@@ -45,7 +38,7 @@ const DateChanger = ({ fetchShipments }) => {
   } = {
     month: currentMonth,
     year: currentYear,
-    subscriptionId: allSubscriptions[0]?.id || 0,
+    subscriptionId: subscriptions[0]?.id || 0,
   }
 
   const validationSchema = Yup.object({
@@ -126,7 +119,7 @@ const DateChanger = ({ fetchShipments }) => {
                 <MenuItem key="All" value={0}>
                   All
                 </MenuItem>
-                {allSubscriptions.map((subscription) => {
+                {subscriptions.map((subscription) => {
                   return (
                     <MenuItem key={subscription.id} value={subscription.id}>
                       {subscription.name}

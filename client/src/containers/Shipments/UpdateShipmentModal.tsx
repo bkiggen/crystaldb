@@ -23,11 +23,10 @@ import { monthOptions } from "../../lib/constants"
 
 import { useCrystalStore } from "../../store/crystalStore"
 
-import { getAllSubscriptions } from "../../api/subscriptions"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { useShipmentStore } from "../../store/shipmentStore"
 
 import { ShipmentT } from "../../types/Shipment"
-import type { SubscriptionT } from "../../types/Subscription"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
 
@@ -38,22 +37,17 @@ type UpdateShipmentModalT = {
 
 const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateShipmentModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
-
   const { updateShipment, deleteShipment } = useShipmentStore()
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
-
   useEffect(() => {
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   useEffect(() => {
@@ -337,7 +331,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
                     <>{formik.touched.subscriptionId ? formik.errors.subscriptionId : ""}</>
                   }
                 >
-                  {allSubscriptions.map((subscription) => (
+                  {subscriptions.map((subscription) => (
                     <MenuItem key={subscription.id} value={subscription.id}>
                       {subscription.name}
                     </MenuItem>

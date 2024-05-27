@@ -21,13 +21,10 @@ import {
 import { textFieldStyles } from "../../styles/vars"
 
 import { useCrystalStore } from "../../store/crystalStore"
-
-import { getAllSubscriptions } from "../../api/subscriptions"
-
 import { usePreBuildStore } from "../../store/preBuildStore"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import { PreBuildT } from "../../types/PreBuild"
-import type { SubscriptionT } from "../../types/Subscription"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
@@ -39,18 +36,13 @@ type UpdatePreBuildModalT = {
 const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
   const { updatePreBuild, deletePreBuild } = usePreBuildStore()
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
-
   useEffect(() => {
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   const onDelete = async () => {
@@ -78,8 +70,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [])
 
   useEffect(() => {
-    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
-  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+    formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
+  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),
@@ -216,7 +208,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                   {...formik.getFieldProps("subscriptionId")}
                   sx={textFieldStyles}
                 >
-                  {allSubscriptions.map((subscription) => (
+                  {subscriptions.map((subscription) => (
                     <MenuItem key={subscription.id} value={subscription.id}>
                       {subscription.name}
                     </MenuItem>

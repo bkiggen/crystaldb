@@ -5,11 +5,10 @@ import { useFormik } from "formik"
 import dayjs from "dayjs"
 import * as Yup from "yup"
 
-import { getAllSubscriptions } from "../../api/subscriptions"
 import { useShipmentStore } from "../../store/shipmentStore"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import type { ShipmentT } from "../../types/Shipment"
-import type { SubscriptionT } from "../../types/Subscription"
 import type { CrystalT } from "../../types/Crystal"
 
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
@@ -18,18 +17,13 @@ import Table from "./Table"
 
 const Shipments = () => {
   const { createShipment, fetchShipments, shipments, paging } = useShipmentStore()
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
-
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
 
   useEffect(() => {
     fetchShipments({})
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   const handleClone = (e, crystals: CrystalT[]) => {
@@ -60,7 +54,7 @@ const Shipments = () => {
     cycleRangeStart: 1,
     cycleRangeEnd: 5,
     crystalIds: [],
-    subscriptionId: allSubscriptions[0]?.id || 0,
+    subscriptionId: subscriptions[0]?.id || 0,
   }
 
   const validationSchema = Yup.object({
@@ -88,12 +82,12 @@ const Shipments = () => {
   )
 
   const resetSubType = () => {
-    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
+    formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
   }
 
   useEffect(() => {
     resetSubType()
-  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (formData: typeof initialValues) => {
     if (cycleRangeMode) {
@@ -118,7 +112,7 @@ const Shipments = () => {
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewShipment
-        allSubscriptions={allSubscriptions}
+        allSubscriptions={subscriptions}
         formik={formik}
         setCycleRangeMode={setCycleRangeMode}
         cycleRangeMode={cycleRangeMode}
@@ -132,7 +126,7 @@ const Shipments = () => {
       <Table
         shipments={shipments}
         paging={paging}
-        allSubscriptions={allSubscriptions}
+        allSubscriptions={subscriptions}
         fetchShipments={fetchShipments}
         setSelectedShipment={setSelectedShipment}
         handleClone={handleClone}
