@@ -9,9 +9,10 @@ import * as Yup from "yup"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
-import { createColor, updateColor, deleteColor } from "../../api/colors"
+import { useColorStore } from "../../store/colorStore"
 
 const ColorCreationModal = ({ onClose, colorToEdit }) => {
+  const { createColor, updateColor, deleteColor } = useColorStore()
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
   const initialValues = {
     name: colorToEdit?.name || "",

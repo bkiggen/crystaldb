@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useFormik } from "formik"
-import colors from "../../styles/colors"
+import systemColors from "../../styles/colors"
 
 import * as Yup from "yup"
 import { Box, TextField, Button, MenuItem, FormControl, Grid } from "@mui/material"
@@ -24,13 +24,13 @@ import { useCrystalStore } from "../../store/crystalStore"
 import useDebounce from "../../hooks/useDebounce"
 import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
 
-import { getAllColors } from "../../api/colors"
+import { useColorStore } from "../../store/colorStore"
 
 import NewColorModal from "./NewColorModal"
 
 const NewCrystal = () => {
+  const { colors, fetchColors } = useColorStore()
   const { createCrystal, crystalMatches, fetchCrystalMatches } = useCrystalStore()
-  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
   const [colorModalOpen, setColorModalOpen] = useState(false)
 
@@ -96,11 +96,6 @@ const NewCrystal = () => {
     onSubmit: handleSubmit,
   })
 
-  const fetchColors = async () => {
-    const colorResponse = await getAllColors()
-    setColorOptions(colorResponse)
-  }
-
   const getCrystals = async ({ searchTerm = "" }) => {
     fetchCrystalMatches({ searchTerm, noPaging: true })
     setCrystalsVisible(true)
@@ -146,7 +141,7 @@ const NewCrystal = () => {
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slateA4,
+            background: systemColors.slateA4,
             border: "1px solid #fff",
             padding: "24px",
             paddingTop: "48px",
@@ -171,7 +166,7 @@ const NewCrystal = () => {
                   sx={{
                     position: "absolute",
                     zIndex: 123,
-                    background: colors.slate,
+                    background: systemColors.slate,
                     padding: "12px 24px",
                   }}
                 >
@@ -201,7 +196,7 @@ const NewCrystal = () => {
                       Add New...
                     </Button>
                   </MenuItem>
-                  {colorOptions.map((colorOption) => {
+                  {colors.map((colorOption) => {
                     return (
                       <MenuItem key={colorOption.id} value={colorOption.id}>
                         <Box

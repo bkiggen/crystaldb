@@ -3,14 +3,14 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/material"
 
-import colors from "../../styles/colors"
+import systemColors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-import { getAllColors } from "../../api/colors"
 
+import { useColorStore } from "../../store/colorStore"
 import { useCrystalStore } from "../../store/crystalStore"
 
 import type { CrystalT } from "../../types/Crystal"
-import type { ColorT } from "../../types/Color"
+
 import {
   sizeOptions,
   inventoryOptions,
@@ -29,15 +29,10 @@ type UpdateCrystalModalT = {
 
 const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
   const { updateCrystal, deleteCrystal } = useCrystalStore()
+  const { colors, fetchColors } = useColorStore()
 
-  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
-
-  const fetchColors = async () => {
-    const response = await getAllColors()
-    setColorOptions(response || [])
-  }
 
   useEffect(() => {
     fetchColors()
@@ -84,7 +79,7 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slateA4,
+            background: systemColors.slateA4,
             padding: "24px",
             paddingTop: "48px",
             margin: "0 auto",
@@ -115,7 +110,7 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
                   error={formik.touched.colorId && Boolean(formik.errors.colorId)}
                   helperText={formik.touched.colorId && formik.errors.colorId}
                 >
-                  {colorOptions.map((color) => (
+                  {colors.map((color) => (
                     <MenuItem key={color.id} value={color.id}>
                       {color.name}
                     </MenuItem>

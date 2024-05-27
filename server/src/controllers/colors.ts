@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Color } from "../entity/Color";
 import { authenticateToken } from "./util/authenticateToken";
+import { Crystal } from "../entity/Crystal";
 
 const router = Router();
 
@@ -45,7 +46,9 @@ router.delete(
     if (!color) {
       return res.status(404).send("Color not found");
     }
+
     await Color.remove(color);
+
     res.status(204).send();
   }
 );
