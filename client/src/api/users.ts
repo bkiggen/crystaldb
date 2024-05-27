@@ -8,7 +8,6 @@ const logUserIn = (data) => {
   if (data.token) {
     localStorage.setItem("userToken", data.token)
     localStorage.setItem("userIsAdmin", data.user.isAdmin ? "true" : "false")
-    console.log("Login successful")
   } else {
     toast.error("Login failed")
   }
@@ -35,5 +34,4 @@ export const signInUser = async (
 export const handleLogout = () => {
   localStorage.removeItem("userToken")
   localStorage.removeItem("userIsAdmin")
-  console.log("Logout successful")
 }

@@ -21,7 +21,6 @@ const LoginPage = () => {
 
     if (signUpMode) {
       const newUser = await signUpUser(secret, { nickname, password })
-      console.log(newUser)
       if (newUser.token) {
         navigate("/")
       }

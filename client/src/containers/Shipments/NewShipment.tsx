@@ -91,6 +91,8 @@ const NewShipment = ({
               {...formik.getFieldProps("year")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
+              error={formik.touched.year && Boolean(formik.errors.year)}
+              helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
             />
           </Grid>
           <Grid item xs={4} sx={{ position: "relative" }}>

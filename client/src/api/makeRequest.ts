@@ -38,7 +38,6 @@ export const makeRestRequest = async <T>({
         window.location.href = "/login"
       }
     } else {
-      console.log("OK", successMessage)
       if (successMessage) {
         toast.success(successMessage)
       }

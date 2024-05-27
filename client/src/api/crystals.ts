@@ -18,7 +18,6 @@ export const updateCrystal = async (
   updatedCrystal: Omit<CrystalT, "id">,
 ): Promise<CrystalT> => {
   const endpoint = `/crystals/${crystalId}`
-  console.log(updatedCrystal)
   return makeRestRequest<CrystalT>({
     endpoint,
     method: "PUT",

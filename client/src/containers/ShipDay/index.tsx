@@ -1,9 +1,6 @@
-import { useState } from "react"
-
 import { Box } from "@mui/material"
 
-import type { ShipmentT } from "../../types/Shipment"
-import { getAllShipments } from "../../api/shipments"
+import { useShipmentStore } from "../../store/shipmentStore"
 import { useStore } from "../../store/utilityStore"
 
 import DateChanger from "./DateChanger"
@@ -13,31 +10,14 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit"
 import Shipment from "./Shipment"
 
 const ShipDay = () => {
-  const [shipments, setShipments] = useState<ShipmentT[]>([])
-
+  const { shipments, fetchShipments } = useShipmentStore()
+  console.log("🚀 ~ ShipDay ~ shipments:", shipments)
   const isFullScreen = useStore((state) => {
     return state.isFullScreen
   })
   const toggleFullscreen = useStore((state) => {
     return state.toggleFullscreen
   })
-
-  const fetchShipments = async (args) => {
-    const response = await getAllShipments(args)
-    setShipments(response.data)
-  }
-
-  const updateLocalState = (newData) => {
-    setTimeout(() => {
-      const newShipments = shipments.map((s) => {
-        if (s.id === newData.id) {
-          return newData
-        }
-        return s
-      })
-      setShipments(newShipments)
-    }, 100)
-  }
 
   return (
     <>
@@ -60,9 +40,7 @@ const ShipDay = () => {
         <DateChanger fetchShipments={fetchShipments} />
         <Box sx={{ display: "flex", flexWrap: "wrap" }}>
           {shipments.map((shipment) => {
-            return (
-              <Shipment key={shipment.id} shipment={shipment} updateLocalState={updateLocalState} />
-            )
+            return <Shipment key={shipment.id} shipment={shipment} />
           })}
         </Box>
       </Box>

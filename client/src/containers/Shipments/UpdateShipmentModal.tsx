@@ -23,7 +23,7 @@ import { monthOptions } from "../../lib/constants"
 
 import { getAllCrystals } from "../../api/crystals"
 import { getAllSubscriptions } from "../../api/subscriptions"
-import { updateShipment, deleteShipment } from "../../api/shipments"
+import { useShipmentStore } from "../../store/shipmentStore"
 
 import { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
@@ -42,6 +42,7 @@ const UpdateShipmentModal = ({
   setSelectedShipment,
   fetchShipments,
 }: UpdateShipmentModalT) => {
+  const { updateShipment, deleteShipment } = useShipmentStore()
   const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [cycleRangeMode, setCycleRangeMode] = useState(false)

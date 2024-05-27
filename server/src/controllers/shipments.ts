@@ -34,7 +34,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
     order: {
-      createdAt: "ASC",
+      year: "DESC",
+      month: "DESC",
     },
     relations: ["crystals", "subscription"],
   });

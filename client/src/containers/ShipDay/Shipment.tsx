@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { Box, Typography, TextField } from "@mui/material"
 
-import { updateShipment } from "../../api/shipments"
+import { useShipmentStore } from "../../store/shipmentStore"
 
 import ColorIndicator from "../../components/ColorIndicator"
 
@@ -11,8 +11,9 @@ import { textFieldStyles } from "../../styles/vars"
 
 import VisibilityIcon from "@mui/icons-material/Visibility"
 
-const ShipDay = ({ shipment, updateLocalState }) => {
+const Shipment = ({ shipment }) => {
   const [shipmentToUpdate, setShipmentToUpdate] = useState(null)
+  const { updateShipment } = useShipmentStore()
 
   return (
     <Box
@@ -50,7 +51,6 @@ const ShipDay = ({ shipment, updateLocalState }) => {
             }
             updateShipment(newData)
             setShipmentToUpdate(null)
-            updateLocalState(newData)
           }}
         />
       ) : (
@@ -74,7 +74,6 @@ const ShipDay = ({ shipment, updateLocalState }) => {
                   userCountIsNew: false,
                 }
                 updateShipment(newData)
-                updateLocalState(newData)
               }}
             />
           )}
@@ -101,4 +100,4 @@ const ShipDay = ({ shipment, updateLocalState }) => {
   )
 }
 
-export default ShipDay
+export default Shipment

@@ -5,31 +5,22 @@ import { useFormik } from "formik"
 import dayjs from "dayjs"
 import * as Yup from "yup"
 
-import { getAllShipments } from "../../api/shipments"
 import { getAllSubscriptions } from "../../api/subscriptions"
-import { createShipment } from "../../api/shipments"
+import { useShipmentStore } from "../../store/shipmentStore"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { SubscriptionT } from "../../types/Subscription"
 import type { CrystalT } from "../../types/Crystal"
-
-import usePaging from "../../hooks/usePaging"
 
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 import NewShipment from "./NewShipment"
 import Table from "./Table"
 
 const Shipments = () => {
-  const [shipments, setShipments] = useState<ShipmentT[] | null>(null)
-  const [paging, setPaging] = usePaging()
+  const { createShipment, fetchShipments, shipments, paging } = useShipmentStore()
+
   const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
-
-  const fetchShipments = async (args) => {
-    const response = await getAllShipments(args)
-    setShipments(response.data)
-    setPaging(response.paging)
-  }
 
   const fetchSubscriptionTypes = async () => {
     const response = await getAllSubscriptions()
@@ -47,15 +38,6 @@ const Shipments = () => {
     const out = [...selectedCrystalIds, ...formik.values.crystalIds]
     const uniqueIds = Array.from(new Set(out))
     formik.setFieldValue("crystalIds", uniqueIds)
-  }
-
-  const addShipment = (newShipment: ShipmentT) => {
-    setShipments((prevShipments) => {
-      if (prevShipments) {
-        return [...prevShipments, newShipment]
-      }
-      return null
-    })
   }
 
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
@@ -121,8 +103,8 @@ const Shipments = () => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newShipment = await createShipment({ ...formData, userCount: 0, userCountIsNew: false })
-    addShipment(newShipment)
+    createShipment({ ...formData, userCount: 0, userCountIsNew: false })
+
     await formik.resetForm()
     resetSubType()
   }

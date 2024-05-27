@@ -2,7 +2,9 @@ import type { ShipmentT } from "../types/Shipment"
 import { makeRestRequest } from "./makeRequest"
 import type { PagingT } from "../types/Paging"
 
-export const createShipment = async (newShipment: Omit<ShipmentT, "id">): Promise<ShipmentT> => {
+export const createShipmentRequest = async (
+  newShipment: Omit<ShipmentT, "id">,
+): Promise<ShipmentT> => {
   const endpoint = "/shipments"
   return makeRestRequest<ShipmentT>({
     endpoint,
@@ -43,7 +45,7 @@ export const getAllShipments = async ({
   })
 }
 
-export const updateShipment = async (updatedShipment: ShipmentT): Promise<ShipmentT> => {
+export const updateShipmentRequest = async (updatedShipment: ShipmentT): Promise<ShipmentT> => {
   const endpoint = `/shipments/${updatedShipment.id}`
   return makeRestRequest<ShipmentT>({
     endpoint,
@@ -53,9 +55,8 @@ export const updateShipment = async (updatedShipment: ShipmentT): Promise<Shipme
   })
 }
 
-export const deleteShipment = async (shipmentId: number): Promise<ShipmentT> => {
+export const deleteShipmentRequest = async (shipmentId: number): Promise<ShipmentT> => {
   const endpoint = `/shipments/${shipmentId}`
-  console.log("🚀 ~ deleteShipment ~ endpoint:", endpoint)
   return makeRestRequest<ShipmentT>({
     endpoint,
     method: "DELETE",
