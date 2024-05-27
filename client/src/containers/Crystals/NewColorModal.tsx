@@ -9,13 +9,14 @@ import * as Yup from "yup"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
-import { createColor, updateColor, deleteColor } from "../../api/colors"
+import { useColorStore } from "../../store/colorStore"
 
 const ColorCreationModal = ({ onClose, colorToEdit }) => {
+  const { createColor, updateColor, deleteColor } = useColorStore()
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
   const initialValues = {
-    name: colorToEdit.name || "",
-    hex: colorToEdit.hex || "#000000",
+    name: colorToEdit?.name || "",
+    hex: colorToEdit?.hex || "#000000",
   }
 
   const validationSchema = Yup.object({
@@ -40,7 +41,7 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
   })
 
   const handleDeleteColor = () => {
-    deleteColor(colorToEdit.id)
+    deleteColor(colorToEdit?.id)
     onClose()
   }
 

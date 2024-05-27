@@ -7,10 +7,6 @@ import LoopIcon from "@mui/icons-material/Loop"
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight"
 
-import { getSuggestedCrystals } from "../../api/crystals"
-
-// import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
-
 import { useCrystalStore } from "../../store/crystalStore"
 
 import CrystalChip from "./CrystalChip"
@@ -22,7 +18,7 @@ type SmartSelectT = {
 }
 
 const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
-  const { suggestedCrystals } = useCrystalStore()
+  const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
 
@@ -36,18 +32,12 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
   const pagedCrystals = crystals.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const updatePage = (direction: "left" | "right") => {
+    const totalPages = Math.ceil(crystals.length / pageSize)
+
     if (direction === "left") {
-      if (currentPage === 1) {
-        setCurrentPage(crystals.length)
-      } else {
-        setCurrentPage(currentPage - 1)
-      }
+      setCurrentPage((prevPage) => (prevPage > 1 ? prevPage - 1 : totalPages))
     } else {
-      if (currentPage === crystals.length) {
-        setCurrentPage(1)
-      } else {
-        setCurrentPage(currentPage + 1)
-      }
+      setCurrentPage((prevPage) => (prevPage < totalPages ? prevPage + 1 : 1))
     }
   }
 
@@ -56,7 +46,7 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
     setCurrentPage(1)
     setTimeout(() => setIsAnimating(false), 1500)
 
-    getSuggestedCrystals({
+    fetchSuggestedCrystals({
       excludedCrystalIds,
       selectedCrystalIds: formik.values.crystalIds,
       selectedSubscriptionType: formik.values.subscriptionId,

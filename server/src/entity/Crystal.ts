@@ -43,7 +43,7 @@ export class Crystal extends BaseEntity {
   @Column()
   name: string;
 
-  @ManyToOne(() => Color, { eager: true, nullable: true })
+  @ManyToOne(() => Color, { eager: true, nullable: true, onDelete: "SET NULL" })
   color: Color;
 
   @Column({ nullable: true })

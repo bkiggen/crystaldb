@@ -34,7 +34,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
     order: {
-      createdAt: "ASC",
+      year: "DESC",
+      month: "DESC",
     },
     relations: ["crystals", "subscription"],
   });
@@ -86,6 +87,14 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   if (crystalIds) {
     const crystals = await Crystal.findBy({ id: In(crystalIds) });
     shipment.crystals = crystals;
+  }
+  if (req.body.subscriptionId) {
+    const subscription = await Subscription.findOneBy({
+      id: req.body.subscriptionId,
+    });
+    if (subscription) {
+      shipment.subscription = subscription;
+    }
   }
   Shipment.merge(shipment, req.body);
   await Shipment.save(shipment);

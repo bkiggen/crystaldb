@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 
 import { useFormik } from "formik"
 import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from "@mui/material"
@@ -9,9 +9,8 @@ import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
 import type { SubscriptionT } from "../../types/Subscription"
-import type { PreBuildT } from "../../types/PreBuild"
 
-import { getAllPreBuilds } from "../../api/preBuilds"
+import { usePreBuildStore } from "../../store/preBuildStore"
 
 import CrystalSelect from "../../components/CrystalSelect"
 import SmartSelect from "../../components/SmartSelect"
@@ -30,12 +29,7 @@ const NewShipment = ({
   setCycleRangeMode,
   allSubscriptions,
 }: NewShipmentT) => {
-  const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
-
-  const fetchPreBuilds = async (args) => {
-    const response = await getAllPreBuilds(args)
-    setPreBuilds(response.data)
-  }
+  const { preBuilds, fetchPreBuilds } = usePreBuildStore()
 
   useEffect(() => {
     fetchPreBuilds({})
@@ -91,6 +85,8 @@ const NewShipment = ({
               {...formik.getFieldProps("year")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
+              error={formik.touched.year && Boolean(formik.errors.year)}
+              helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
             />
           </Grid>
           <Grid item xs={4} sx={{ position: "relative" }}>

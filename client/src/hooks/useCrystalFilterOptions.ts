@@ -1,27 +1,14 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
-import { getAllColors } from "../api/colors"
+import { useColorStore } from "../store/colorStore"
 
-import {
-  // rarityOptions,
-  // findAgeOptions,
-  // sizeOptions,
-  inventoryOptions,
-  categoryOptions,
-  locationOptions,
-} from "../types/Crystal"
-import { ColorT } from "../types/Color"
+import { inventoryOptions, categoryOptions, locationOptions } from "../types/Crystal"
 
 const useCrystalFilterOptions = () => {
-  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
+  const { colors, fetchColors } = useColorStore()
 
   useEffect(() => {
-    const fetchColorOptions = async () => {
-      const colorOptions = await getAllColors()
-      setColorOptions(colorOptions)
-    }
-
-    fetchColorOptions()
+    fetchColors()
   }, [])
 
   const crystalFilterOptions = {
@@ -64,7 +51,7 @@ const useCrystalFilterOptions = () => {
     color: {
       label: "Color",
       dbLabel: "colorId",
-      options: colorOptions.reduce((acc, color) => {
+      options: colors.reduce((acc, color) => {
         return { ...acc, [color.id]: { name: color.name, selected: true, value: color.id } }
       }, {}),
     },

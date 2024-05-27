@@ -20,44 +20,34 @@ import {
 
 import { textFieldStyles } from "../../styles/vars"
 
-import { getAllCrystals } from "../../api/crystals"
-import { getAllSubscriptions } from "../../api/subscriptions"
-import { updatePreBuild, deletePreBuild } from "../../api/preBuilds"
+import { useCrystalStore } from "../../store/crystalStore"
+import { usePreBuildStore } from "../../store/preBuildStore"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import { PreBuildT } from "../../types/PreBuild"
-import type { CrystalT } from "../../types/Crystal"
-import type { SubscriptionT } from "../../types/Subscription"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
   setSelectedPreBuild: (preBuild: PreBuildT) => void
-  fetchPreBuilds: (args: Record<string, unknown>) => void
 }
 
-const UpdatePreBuildModal = ({
-  preBuild,
-  setSelectedPreBuild,
-  fetchPreBuilds,
-}: UpdatePreBuildModalT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
+const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildModalT) => {
+  const { crystals, fetchCrystals } = useCrystalStore()
+  const { updatePreBuild, deletePreBuild } = usePreBuildStore()
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
-
   useEffect(() => {
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
   const onDelete = async () => {
     await deletePreBuild(preBuild.id)
-    fetchPreBuilds({})
+
     setSelectedPreBuild(null)
   }
 
@@ -76,16 +66,8 @@ const UpdatePreBuildModal = ({
   }
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({ noPaging: true })
   }, [])
-
-  useEffect(() => {
-    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
-  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),
@@ -113,9 +95,9 @@ const UpdatePreBuildModal = ({
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    await updatePreBuild({ ...formData, id: preBuild.id })
+
+    updatePreBuild({ ...formData, id: preBuild.id })
     setSelectedPreBuild(null)
-    fetchPreBuilds({})
     formik.resetForm()
   }
 
@@ -124,6 +106,16 @@ const UpdatePreBuildModal = ({
     validationSchema,
     onSubmit: handleSubmit,
   })
+
+  useEffect(() => {
+    formik.setValues({
+      cycle: preBuild.cycle,
+      cycleRangeStart: preBuild.cycleRangeStart,
+      cycleRangeEnd: preBuild.cycleRangeEnd,
+      crystalIds: preBuild.crystals.map((c) => c.id),
+      subscriptionId: preBuild.subscription.id,
+    })
+  }, [preBuild]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Pre-Build">
@@ -223,7 +215,7 @@ const UpdatePreBuildModal = ({
                   {...formik.getFieldProps("subscriptionId")}
                   sx={textFieldStyles}
                 >
-                  {allSubscriptions.map((subscription) => (
+                  {subscriptions.map((subscription) => (
                     <MenuItem key={subscription.id} value={subscription.id}>
                       {subscription.name}
                     </MenuItem>
@@ -245,11 +237,11 @@ const UpdatePreBuildModal = ({
                   multiple
                   defaultValue={formik.values.crystalIds}
                   value={formik.values.crystalIds}
-                  options={allCrystals?.map((c) => {
+                  options={crystals?.map((c) => {
                     return c.id
                   })}
                   getOptionLabel={(option) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
+                    const crystal = crystals.find((c) => c.id === option)
                     return crystal ? crystal.name : ""
                   }}
                   onChange={(_, value) => {
@@ -259,7 +251,7 @@ const UpdatePreBuildModal = ({
                     return value.map((option: number, index: number) => (
                       <Chip
                         variant="outlined"
-                        label={allCrystals.find((c) => c.id === option)?.name}
+                        label={crystals.find((c) => c.id === option)?.name}
                         {...getTagProps({ index })}
                         sx={{ color: "white" }}
                       />
@@ -278,7 +270,7 @@ const UpdatePreBuildModal = ({
                   }}
                   renderOption={(props, option) => (
                     <li {...props}>
-                      <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
+                      <ListItemText primary={crystals.find((c) => c.id === option)?.name} />
                     </li>
                   )}
                   // varies from other similar elements. Also, disablePortal is false here
@@ -287,7 +279,7 @@ const UpdatePreBuildModal = ({
                   )}
                   filterOptions={(options, params) => {
                     const filtered = options.filter((option) => {
-                      const crystal = allCrystals.find((c) => c.id === option)
+                      const crystal = crystals.find((c) => c.id === option)
                       if (!crystal) return
                       return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
                     })

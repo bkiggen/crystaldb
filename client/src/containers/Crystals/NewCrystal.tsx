@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useFormik } from "formik"
-import colors from "../../styles/colors"
+import systemColors from "../../styles/colors"
 
 import * as Yup from "yup"
 import { Box, TextField, Button, MenuItem, FormControl, Grid } from "@mui/material"
@@ -17,26 +17,23 @@ import {
   locationOptions,
 } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
-import type { CrystalT, RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+import type { RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
+
+import { useCrystalStore } from "../../store/crystalStore"
 
 import useDebounce from "../../hooks/useDebounce"
 import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
 
-import { createCrystal } from "../../api/crystals"
-import { getAllColors } from "../../api/colors"
-import { getAllCrystals } from "../../api/crystals"
+import { useColorStore } from "../../store/colorStore"
 
 import NewColorModal from "./NewColorModal"
-// import ColorIndicator from "../../components/ColorIndicator"
 
-type NewCrystalT = {
-  addCrystal: (arg: CrystalT) => void
-}
+const NewCrystal = () => {
+  const { colors, fetchColors } = useColorStore()
+  const { createCrystal, crystalMatches, fetchCrystalMatches } = useCrystalStore()
+  const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
+  const [colorModalOpen, setColorModalOpen] = useState(false)
 
-const NewCrystal = ({ addCrystal }: NewCrystalT) => {
-  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
-  const [colorModalOpen, setColorModalOpen] = useState<boolean | ColorT[]>(false)
-  const [crystals, setCrystals] = useState<CrystalT[]>([])
   const [crystalsVisible, setCrystalsVisible] = useState(false)
   const [rawSearch, setRawSearch] = useState(null)
   const debouncedSearch = useDebounce(rawSearch, 300)
@@ -79,7 +76,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    const newCrystal = await createCrystal({
+    createCrystal({
       name: capitalizeFirstLetter(formData.name),
       colorId: formData.colorId,
       category: formData.category,
@@ -91,7 +88,6 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       inventory: formData.inventory,
       location: formData.location,
     })
-    addCrystal(newCrystal)
     formik.resetForm()
   }
   const formik = useFormik({
@@ -100,14 +96,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
     onSubmit: handleSubmit,
   })
 
-  const fetchColors = async () => {
-    const colorResponse = await getAllColors()
-    setColorOptions(colorResponse)
-  }
-
   const getCrystals = async ({ searchTerm = "" }) => {
-    const response = await getAllCrystals({ searchTerm, noPaging: true })
-    setCrystals(response.data || [])
+    fetchCrystalMatches({ searchTerm, noPaging: true })
     setCrystalsVisible(true)
   }
 
@@ -131,7 +121,8 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
 
   const handleColorEdit = (e, colorToEdit) => {
     e.stopPropagation()
-    setColorModalOpen(colorToEdit)
+    setColorToEdit(colorToEdit)
+    setColorModalOpen(true)
   }
 
   // const indicatorOptions = (indicatorName, indicatorValues) => {
@@ -150,7 +141,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slateA4,
+            background: systemColors.slateA4,
             border: "1px solid #fff",
             padding: "24px",
             paddingTop: "48px",
@@ -170,16 +161,16 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                 sx={textFieldStyles}
                 onBlur={() => setCrystalsVisible(false)}
               />
-              {crystalsVisible && crystals.length > 0 ? (
+              {crystalsVisible && crystalMatches.length > 0 ? (
                 <Box
                   sx={{
                     position: "absolute",
                     zIndex: 123,
-                    background: colors.slate,
+                    background: systemColors.slate,
                     padding: "12px 24px",
                   }}
                 >
-                  {crystals.map((crystal) => {
+                  {crystalMatches.map((crystal) => {
                     return (
                       <Box key={crystal.id} sx={{ margin: "6px 0" }}>
                         {crystal.name}
@@ -205,7 +196,7 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
                       Add New...
                     </Button>
                   </MenuItem>
-                  {colorOptions.map((colorOption) => {
+                  {colors.map((colorOption) => {
                     return (
                       <MenuItem key={colorOption.id} value={colorOption.id}>
                         <Box
@@ -303,9 +294,10 @@ const NewCrystal = ({ addCrystal }: NewCrystalT) => {
       </form>
       {colorModalOpen && (
         <NewColorModal
-          colorToEdit={colorModalOpen}
+          colorToEdit={colorToEdit}
           onClose={() => {
             setColorModalOpen(false)
+            setColorToEdit(null)
             setTimeout(() => {
               fetchColors()
             }, 1000)

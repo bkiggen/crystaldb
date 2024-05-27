@@ -4,6 +4,7 @@ import { Crystal } from "../entity/Crystal";
 import { Color } from "../entity/Color";
 import { suggestCrystals } from "../services/crystalService";
 import { authenticateToken } from "./util/authenticateToken";
+import { escapeSpecialCharacters } from "./util/controllerHelpers";
 
 const router = Router();
 
@@ -21,9 +22,13 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     [sortBy]: sortDirection,
   };
 
+  const santizedSearchTerm = searchTerm
+    ? escapeSpecialCharacters(searchTerm as string)
+    : "";
+
   let whereCondition = {};
   whereCondition = {
-    ...(searchTerm ? { name: ILike(`%${searchTerm}%`) } : {}),
+    ...(santizedSearchTerm ? { name: ILike(`%${santizedSearchTerm}%`) } : {}),
     ...(inventory ? { inventory: inventory } : {}),
   };
 
@@ -153,6 +158,16 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   if (!crystal) {
     return res.status(404).send("Crystal not found");
   }
+
+  if (req.body.colorId) {
+    const newColor = await Color.findOneBy({
+      id: req.body.colorId,
+    });
+    if (newColor) {
+      crystal.color = newColor;
+    }
+  }
+
   Crystal.merge(crystal, req.body);
   await Crystal.save(crystal);
   res.json(crystal);

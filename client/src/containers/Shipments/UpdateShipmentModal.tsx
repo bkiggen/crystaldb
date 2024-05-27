@@ -21,48 +21,51 @@ import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { monthOptions } from "../../lib/constants"
 
-import { getAllCrystals } from "../../api/crystals"
-import { getAllSubscriptions } from "../../api/subscriptions"
-import { updateShipment, deleteShipment } from "../../api/shipments"
+import { useCrystalStore } from "../../store/crystalStore"
+
+import { useSubscriptionStore } from "../../store/subscriptionStore"
+import { useShipmentStore } from "../../store/shipmentStore"
 
 import { ShipmentT } from "../../types/Shipment"
-import type { CrystalT } from "../../types/Crystal"
-import type { SubscriptionT } from "../../types/Subscription"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
 
 type UpdateShipmentModalT = {
-  shipment: ShipmentT
+  selectedShipment: ShipmentT
   setSelectedShipment: (shipment: ShipmentT) => void
-  fetchShipments: (args: Record<string, unknown>) => void
 }
 
-const UpdateShipmentModal = ({
-  shipment,
-  setSelectedShipment,
-  fetchShipments,
-}: UpdateShipmentModalT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
+const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateShipmentModalT) => {
+  const { crystals, fetchCrystals } = useCrystalStore()
+  const { updateShipment, deleteShipment } = useShipmentStore()
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
-
   useEffect(() => {
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
 
+  useEffect(() => {
+    formik.setValues({
+      month: selectedShipment.month,
+      year: selectedShipment.year,
+      cycle: selectedShipment.cycle,
+      cycleRangeStart: selectedShipment.cycleRangeStart,
+      cycleRangeEnd: selectedShipment.cycleRangeEnd,
+      crystalIds: selectedShipment.crystals.map((c) => c.id),
+      subscriptionId: selectedShipment.subscription.id || 1,
+      userCount: selectedShipment.userCount,
+    })
+  }, [selectedShipment])
+
   const handleDelete = async () => {
-    await deleteShipment(shipment.id)
+    deleteShipment(selectedShipment.id)
     setSelectedShipment(null)
-    fetchShipments({})
   }
 
   const initialValues: {
@@ -73,34 +76,32 @@ const UpdateShipmentModal = ({
     cycleRangeEnd: number
     crystalIds: number[]
     subscriptionId: number
+    userCount: number
   } = {
     month: currentMonth,
     year: currentYear,
-    cycle: shipment.cycle,
-    cycleRangeStart: shipment.cycleRangeStart,
-    cycleRangeEnd: shipment.cycleRangeEnd,
-    crystalIds: shipment.crystals.map((c) => c.id),
-    subscriptionId: shipment.subscription.id || 1,
+    cycle: selectedShipment.cycle,
+    cycleRangeStart: selectedShipment.cycleRangeStart,
+    cycleRangeEnd: selectedShipment.cycleRangeEnd,
+    crystalIds: selectedShipment.crystals.map((c) => c.id),
+    subscriptionId: selectedShipment.subscription.id || 1,
+    userCount: selectedShipment.userCount || 0,
   }
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({ noPaging: true })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({ noPaging: true })
   }, [])
 
   useEffect(() => {
-    if (shipment.cycleRangeStart) {
+    if (selectedShipment.cycleRangeStart) {
       setCycleRangeMode(true)
-      formik.setFieldValue("cycleRangeStart", shipment.cycleRangeStart)
-      formik.setFieldValue("cycleRangeEnd", shipment.cycleRangeEnd)
+      formik.setFieldValue("cycleRangeStart", selectedShipment.cycleRangeStart)
+      formik.setFieldValue("cycleRangeEnd", selectedShipment.cycleRangeEnd)
     }
-  }, [shipment, shipment.cycleRangeEnd]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedShipment, selectedShipment.cycleRangeEnd]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
-    month: Yup.number().required("Month is required").integer().min(1).max(12),
+    month: Yup.number().required("Month is required").integer().min(0).max(11),
     year: Yup.number()
       .required("Year is required")
       .integer()
@@ -110,6 +111,7 @@ const UpdateShipmentModal = ({
     cycleRangeStart: Yup.number().nullable().integer().min(1),
     cycleRangeEnd: Yup.number().nullable().integer().min(1),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
+    userCount: Yup.number().integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   }).test(
     "cycle-or-cycleRange",
@@ -131,14 +133,13 @@ const UpdateShipmentModal = ({
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
+    const userCountIsNew = formData.userCount !== selectedShipment.userCount
     await updateShipment({
       ...formData,
-      id: shipment.id,
-      userCount: shipment.userCount,
-      userCountIsNew: shipment.userCountIsNew,
+      id: selectedShipment.id,
+      userCountIsNew: userCountIsNew,
     })
     setSelectedShipment(null)
-    fetchShipments({})
     formik.resetForm()
   }
 
@@ -166,7 +167,7 @@ const UpdateShipmentModal = ({
           }}
         >
           <Grid container spacing={2}>
-            <Grid item xs={6} sx={{ position: "relative" }}>
+            <Grid item xs={4} sx={{ position: "relative" }}>
               <Typography
                 sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
               >
@@ -180,6 +181,8 @@ const UpdateShipmentModal = ({
                 {...formik.getFieldProps("month")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
+                error={formik.touched.month && Boolean(formik.errors.month)}
+                helperText={<>{formik.touched.month ? formik.errors.month : ""}</>}
               >
                 {Object.keys(monthOptions).map((monthNumber) => (
                   <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
@@ -188,7 +191,7 @@ const UpdateShipmentModal = ({
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={6} sx={{ position: "relative" }}>
+            <Grid item xs={4} sx={{ position: "relative" }}>
               <Typography
                 sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
               >
@@ -202,6 +205,25 @@ const UpdateShipmentModal = ({
                 {...formik.getFieldProps("year")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
+                error={formik.touched.year && Boolean(formik.errors.year)}
+                helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
+              />
+            </Grid>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <Typography
+                sx={{ color: "white", fontSize: "14px", position: "absolute", top: "-8px" }}
+              >
+                User Count
+              </Typography>
+              <TextField
+                id="userCount"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("userCount")}
+                sx={textFieldStyles}
+                error={formik.touched.userCount && Boolean(formik.errors.userCount)}
+                helperText={<>{formik.touched.userCount ? formik.errors.userCount : ""}</>}
               />
             </Grid>
           </Grid>
@@ -250,6 +272,12 @@ const UpdateShipmentModal = ({
                       {...formik.getFieldProps("cycleRangeStart")}
                       inputProps={{ style: { color: "white" } }}
                       sx={textFieldStyles}
+                      error={
+                        formik.touched.cycleRangeStart && Boolean(formik.errors.cycleRangeStart)
+                      }
+                      helperText={
+                        <>{formik.touched.cycleRangeStart ? formik.errors.cycleRangeStart : ""}</>
+                      }
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -261,6 +289,10 @@ const UpdateShipmentModal = ({
                       {...formik.getFieldProps("cycleRangeEnd")}
                       inputProps={{ style: { color: "white" } }}
                       sx={textFieldStyles}
+                      error={formik.touched.cycleRangeEnd && Boolean(formik.errors.cycleRangeEnd)}
+                      helperText={
+                        <>{formik.touched.cycleRangeEnd ? formik.errors.cycleRangeEnd : ""}</>
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -273,6 +305,8 @@ const UpdateShipmentModal = ({
                   {...formik.getFieldProps("cycle")}
                   inputProps={{ style: { color: "white" } }}
                   sx={textFieldStyles}
+                  error={formik.touched.cycle && Boolean(formik.errors.cycle)}
+                  helperText={<>{formik.touched.cycle ? formik.errors.cycle : ""}</>}
                 />
               )}
             </Grid>
@@ -292,8 +326,12 @@ const UpdateShipmentModal = ({
                   id="subscriptionId"
                   {...formik.getFieldProps("subscriptionId")}
                   sx={textFieldStyles}
+                  error={formik.touched.subscriptionId && Boolean(formik.errors.subscriptionId)}
+                  helperText={
+                    <>{formik.touched.subscriptionId ? formik.errors.subscriptionId : ""}</>
+                  }
                 >
-                  {allSubscriptions.map((subscription) => (
+                  {subscriptions.map((subscription) => (
                     <MenuItem key={subscription.id} value={subscription.id}>
                       {subscription.name}
                     </MenuItem>
@@ -316,11 +354,11 @@ const UpdateShipmentModal = ({
                   multiple
                   defaultValue={formik.values.crystalIds}
                   value={formik.values.crystalIds}
-                  options={allCrystals?.map((c) => {
+                  options={crystals?.map((c) => {
                     return c.id
                   })}
                   getOptionLabel={(option) => {
-                    const crystal = allCrystals.find((c) => c.id === option)
+                    const crystal = crystals.find((c) => c.id === option)
                     return crystal ? crystal.name : ""
                   }}
                   onChange={(_, value) => {
@@ -330,7 +368,7 @@ const UpdateShipmentModal = ({
                     return value.map((option: number, index: number) => (
                       <Chip
                         variant="outlined"
-                        label={allCrystals.find((c) => c.id === option)?.name}
+                        label={crystals.find((c) => c.id === option)?.name}
                         {...getTagProps({ index })}
                         sx={{ color: "white" }}
                       />
@@ -349,12 +387,12 @@ const UpdateShipmentModal = ({
                   }}
                   renderOption={(props, option) => (
                     <li {...props}>
-                      <ListItemText primary={allCrystals.find((c) => c.id === option)?.name} />
+                      <ListItemText primary={crystals.find((c) => c.id === option)?.name} />
                     </li>
                   )}
                   filterOptions={(options, params) => {
                     const filtered = options.filter((option) => {
-                      const crystal = allCrystals.find((c) => c.id === option)
+                      const crystal = crystals.find((c) => c.id === option)
                       if (!crystal) return
                       return crystal.name.toLowerCase().includes(params.inputValue.toLowerCase())
                     })

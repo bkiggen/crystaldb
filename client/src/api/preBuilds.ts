@@ -2,7 +2,9 @@ import type { PreBuildT } from "../types/PreBuild"
 import { makeRestRequest } from "./makeRequest"
 import type { PagingT } from "../types/Paging"
 
-export const createPreBuild = async (newPreBuild: Omit<PreBuildT, "id">): Promise<PreBuildT> => {
+export const createPreBuildRequest = async (
+  newPreBuild: Omit<PreBuildT, "id">,
+): Promise<PreBuildT> => {
   const endpoint = "/preBuilds"
   return makeRestRequest<PreBuildT>({
     endpoint,
@@ -12,7 +14,7 @@ export const createPreBuild = async (newPreBuild: Omit<PreBuildT, "id">): Promis
   })
 }
 
-export const getAllPreBuilds = async ({
+export const getAllPreBuildsRequest = async ({
   searchTerm = "",
   page = 1,
   pageSize = 100,
@@ -37,7 +39,7 @@ export const getAllPreBuilds = async ({
   })
 }
 
-export const updatePreBuild = async (updatedPreBuild: PreBuildT): Promise<PreBuildT> => {
+export const updatePreBuildRequest = async (updatedPreBuild: PreBuildT): Promise<PreBuildT> => {
   const endpoint = `/preBuilds/${updatedPreBuild.id}`
   return makeRestRequest<PreBuildT>({
     endpoint,
@@ -47,7 +49,7 @@ export const updatePreBuild = async (updatedPreBuild: PreBuildT): Promise<PreBui
   })
 }
 
-export const deletePreBuild = async (id: number): Promise<void> => {
+export const deletePreBuildRequest = async (id: number): Promise<void> => {
   const endpoint = `/preBuilds/${id}`
   return makeRestRequest<void>({ endpoint, method: "DELETE", successMessage: "PreBuild Deleted!" })
 }

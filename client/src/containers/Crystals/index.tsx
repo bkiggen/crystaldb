@@ -4,10 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { Box, Container, Tooltip } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef, GridSortModel } from "@mui/x-data-grid"
 
-import { getAllCrystals } from "../../api/crystals"
+import { useCrystalStore } from "../../store/crystalStore"
 import type { CrystalT } from "../../types/Crystal"
-
-import usePaging from "../../hooks/usePaging"
 
 import Pagination from "../../components/Pagination"
 import ColorIndicator from "../../components/ColorIndicator"
@@ -18,8 +16,8 @@ const Crystals = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [paging, setPaging] = usePaging()
-  const [crystals, setCrystals] = useState<CrystalT[] | null>(null)
+  const { fetchCrystals, crystals, paging } = useCrystalStore()
+
   const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
   const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
 
@@ -29,23 +27,12 @@ const Crystals = () => {
     sortBy = null,
     sortDirection = null,
   }) => {
-    const response = await getAllCrystals({ searchTerm, page, sortBy, sortDirection })
-    setCrystals(response.data || [])
-    setPaging(response.paging)
+    fetchCrystals({ searchTerm, page, sortBy, sortDirection })
   }
 
   useEffect(() => {
     getCrystals({})
   }, [])
-
-  const addCrystal = (newCrystal: CrystalT) => {
-    setCrystals((prevCrystals) => {
-      if (prevCrystals) {
-        return [...prevCrystals, newCrystal]
-      }
-      return null
-    })
-  }
 
   const onCrystalFilterChange = (filters: Record<string, string>) => {
     getCrystals(filters)
@@ -74,9 +61,11 @@ const Crystals = () => {
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ColorIndicator indicatorValue={params.row.color?.hex} />
-          </Box>
+          <Tooltip title={params.row.color?.name}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <ColorIndicator indicatorValue={params.row.color?.hex} />
+            </Box>
+          </Tooltip>
         )
       },
     },
@@ -159,13 +148,9 @@ const Crystals = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewCrystal addCrystal={addCrystal} />
+      <NewCrystal />
       {crystalToUpdate ? (
-        <UpdateCrystalModal
-          crystal={crystalToUpdate}
-          onClose={() => setCrystalToUpdate(null)}
-          refreshCrystals={() => getCrystals({})}
-        />
+        <UpdateCrystalModal crystal={crystalToUpdate} onClose={() => setCrystalToUpdate(null)} />
       ) : null}
       <Pagination
         fetchData={getCrystals}

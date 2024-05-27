@@ -3,13 +3,14 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/material"
 
-import colors from "../../styles/colors"
+import systemColors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
-import { getAllColors } from "../../api/colors"
-import { updateCrystal, deleteCrystal } from "../../api/crystals"
+
+import { useColorStore } from "../../store/colorStore"
+import { useCrystalStore } from "../../store/crystalStore"
 
 import type { CrystalT } from "../../types/Crystal"
-import type { ColorT } from "../../types/Color"
+
 import {
   sizeOptions,
   inventoryOptions,
@@ -24,18 +25,14 @@ import ConfirmDialogue from "../../components/ConfirmDialogue"
 type UpdateCrystalModalT = {
   crystal: CrystalT
   onClose: () => void
-  refreshCrystals: () => void
 }
 
-const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystalModalT) => {
-  const [colorOptions, setColorOptions] = useState<ColorT[]>([])
+const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
+  const { updateCrystal, deleteCrystal } = useCrystalStore()
+  const { colors, fetchColors } = useColorStore()
+
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
-
-  const fetchColors = async () => {
-    const response = await getAllColors()
-    setColorOptions(response || [])
-  }
 
   useEffect(() => {
     fetchColors()
@@ -62,15 +59,13 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      await updateCrystal(crystal.id, values)
-      refreshCrystals()
+      updateCrystal(crystal.id, values)
       onClose()
     },
   })
 
   const onDelete = async () => {
-    await deleteCrystal(crystal.id)
-    refreshCrystals()
+    deleteCrystal(crystal.id)
     onClose()
   }
 
@@ -84,7 +79,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
-            background: colors.slateA4,
+            background: systemColors.slateA4,
             padding: "24px",
             paddingTop: "48px",
             margin: "0 auto",
@@ -99,7 +94,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
                 variant="outlined"
                 fullWidth
                 {...formik.getFieldProps("name")}
-                sx={textFieldStyles}
+                sx={{ ...textFieldStyles, "*": { textTransform: "capitalize" } }}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
               />
@@ -115,7 +110,7 @@ const UpdateCrystalModal = ({ crystal, onClose, refreshCrystals }: UpdateCrystal
                   error={formik.touched.colorId && Boolean(formik.errors.colorId)}
                   helperText={formik.touched.colorId && formik.errors.colorId}
                 >
-                  {colorOptions.map((color) => (
+                  {colors.map((color) => (
                     <MenuItem key={color.id} value={color.id}>
                       {color.name}
                     </MenuItem>

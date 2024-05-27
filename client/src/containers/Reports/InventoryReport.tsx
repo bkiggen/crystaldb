@@ -3,9 +3,7 @@ import { useState, useEffect } from "react"
 import { Box, Button, Typography } from "@mui/material"
 import DownloadIcon from "@mui/icons-material/Download"
 
-import { getAllCrystals } from "../../api/crystals"
-
-import type { CrystalT } from "../../types/Crystal"
+import { useCrystalStore } from "../../store/crystalStore"
 
 import createCSVFromArray from "../../util/createCSVFromArray"
 
@@ -18,17 +16,13 @@ type InventoryReportT = {
 }
 
 const InventoryReport = ({ type }: InventoryReportT) => {
-  const [allCrystals, setAllCrystals] = useState<CrystalT[]>([])
+  const { crystals, fetchCrystals } = useCrystalStore()
 
   useEffect(() => {
-    const fetchCrystals = async () => {
-      const response = await getAllCrystals({
-        noPaging: true,
-        inventory: type,
-      })
-      setAllCrystals(response.data || [])
-    }
-    fetchCrystals()
+    fetchCrystals({
+      noPaging: true,
+      inventory: type,
+    })
   }, [])
 
   const getBackground = (inventory: string) => {
@@ -42,7 +36,7 @@ const InventoryReport = ({ type }: InventoryReportT) => {
   }
 
   const handleCSVClick = () => {
-    const preparedList = allCrystals.map((c) => {
+    const preparedList = crystals.map((c) => {
       return {
         ...c,
         color: c.color?.name,
@@ -112,7 +106,7 @@ const InventoryReport = ({ type }: InventoryReportT) => {
           scrollbarColor: "transparent transparent",
         }}
       >
-        {allCrystals.map((c) => {
+        {crystals.map((c) => {
           return (
             <Box
               key={c.id}

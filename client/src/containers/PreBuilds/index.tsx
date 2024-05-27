@@ -2,14 +2,13 @@ import { useState, useEffect } from "react"
 import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
-import { getAllPreBuilds } from "../../api/preBuilds"
-import { getAllSubscriptions } from "../../api/subscriptions"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
+
+import { usePreBuildStore } from "../../store/preBuildStore"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import type { SubscriptionT } from "../../types/Subscription"
-
-import usePaging from "../../hooks/usePaging"
 
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
@@ -17,35 +16,15 @@ import NewPreBuild from "./NewPreBuild"
 import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
-  const [preBuilds, setPreBuilds] = useState<PreBuildT[] | null>(null)
-  const [paging, setPaging] = usePaging()
-  const [allSubscriptions, setAllSubscriptions] = useState<SubscriptionT[]>([])
+  const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
+  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+
   const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
-
-  const fetchPreBuilds = async (args) => {
-    const response = await getAllPreBuilds(args)
-    setPreBuilds(response.data)
-    setPaging(response.paging)
-  }
-
-  const fetchSubscriptionTypes = async () => {
-    const response = await getAllSubscriptions()
-    setAllSubscriptions(response || [])
-  }
 
   useEffect(() => {
     fetchPreBuilds({})
-    fetchSubscriptionTypes()
+    fetchSubscriptions()
   }, [])
-
-  const addPreBuild = (newPreBuild: PreBuildT) => {
-    setPreBuilds((prevPreBuilds) => {
-      if (prevPreBuilds) {
-        return [...prevPreBuilds, newPreBuild]
-      }
-      return null
-    })
-  }
 
   const columns: GridColDef[] = [
     {
@@ -110,18 +89,17 @@ const PreBuilds = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewPreBuild addPreBuild={addPreBuild} allSubscriptions={allSubscriptions} />
+      <NewPreBuild />
       {selectedPrebuild ? (
         <UpdatePreBuildModal
           preBuild={selectedPrebuild}
           setSelectedPreBuild={setSelectedPreBuild}
-          fetchPreBuilds={fetchPreBuilds}
         />
       ) : null}
       <Pagination
         fetchData={fetchPreBuilds}
         paging={paging}
-        filterOptions={allSubscriptions.map((s) => {
+        filterOptions={subscriptions.map((s) => {
           return {
             label: s.shortName,
             value: s.id,

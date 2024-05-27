@@ -8,18 +8,14 @@ import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 
-import type { PreBuildT } from "../../types/PreBuild"
-import type { SubscriptionT } from "../../types/Subscription"
+import { useSubscriptionStore } from "../../store/subscriptionStore"
+import { usePreBuildStore } from "../../store/preBuildStore"
 
-import { createPreBuild } from "../../api/preBuilds"
 import CrystalSelect from "../../components/CrystalSelect"
 
-type NewPreBuildT = {
-  addPreBuild: (arg: PreBuildT) => void
-  allSubscriptions: SubscriptionT[]
-}
-
-const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
+const NewPreBuild = () => {
+  const { createPreBuild } = usePreBuildStore()
+  const { subscriptions } = useSubscriptionStore()
   const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const initialValues: {
@@ -33,12 +29,12 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
     cycleRangeStart: 1,
     cycleRangeEnd: 5,
     crystalIds: [],
-    subscriptionId: allSubscriptions[0]?.id || 0,
+    subscriptionId: subscriptions[0]?.id || 0,
   }
 
   useEffect(() => {
-    formik.setFieldValue("subscriptionId", allSubscriptions[0]?.id)
-  }, [allSubscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+    formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
+  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),
@@ -66,8 +62,7 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
       formData.cycleRangeStart = null
       formData.cycleRangeEnd = null
     }
-    const newCycle = await createPreBuild(formData)
-    addPreBuild(newCycle)
+    createPreBuild(formData)
     formik.resetForm()
   }
 
@@ -176,7 +171,7 @@ const NewPreBuild = ({ addPreBuild, allSubscriptions }: NewPreBuildT) => {
                 {...formik.getFieldProps("subscriptionId")}
                 sx={textFieldStyles}
               >
-                {allSubscriptions.map((subscription) => (
+                {subscriptions.map((subscription) => (
                   <MenuItem key={subscription.id} value={subscription.id}>
                     {subscription.name}
                   </MenuItem>
