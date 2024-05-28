@@ -7,6 +7,8 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { Color } from "./Color";
+import { Category } from "./Category";
+import { Location } from "./Location";
 
 export enum Rarity {
   LOW = "LOW",
@@ -46,11 +48,19 @@ export class Crystal extends BaseEntity {
   @ManyToOne(() => Color, { eager: true, nullable: true, onDelete: "SET NULL" })
   color: Color;
 
-  @Column({ nullable: true })
-  category: string;
+  @ManyToOne(() => Category, (category) => category.crystals, {
+    eager: true,
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  category: Category;
 
-  @Column({ nullable: true })
-  location: string;
+  @ManyToOne(() => Location, (location) => location.crystals, {
+    eager: true,
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  location: Location;
 
   @Column({
     type: "enum",

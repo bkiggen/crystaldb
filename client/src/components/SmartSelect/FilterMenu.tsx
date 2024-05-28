@@ -8,6 +8,7 @@ import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
 
 const FilterMenu = ({ onFilterChange }) => {
   const { crystalFilterOptions } = useCrystalFilterOptions()
+
   const [activeFilters, setActiveFilters] = useState({})
   const [loaded, setLoaded] = useState(false)
 
@@ -83,6 +84,7 @@ const FilterMenu = ({ onFilterChange }) => {
   const optionElems = useMemo(() => {
     return Object.keys(activeFilters).map((categoryKey) => {
       const category = activeFilters[categoryKey]
+
       return (
         <Box key={category.label} sx={{ padding: "24px" }}>
           <Typography

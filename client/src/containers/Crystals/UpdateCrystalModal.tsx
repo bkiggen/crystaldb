@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/material"
@@ -8,15 +8,12 @@ import { textFieldStyles } from "../../styles/vars"
 
 import { useColorStore } from "../../store/colorStore"
 import { useCrystalStore } from "../../store/crystalStore"
+import { useCategoryStore } from "../../store/categoryStore"
+import { useLocationStore } from "../../store/locationStore"
 
 import type { CrystalT } from "../../types/Crystal"
 
-import {
-  sizeOptions,
-  inventoryOptions,
-  categoryOptions,
-  locationOptions,
-} from "../../types/Crystal"
+import { sizeOptions, inventoryOptions } from "../../types/Crystal"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
 import NewColorModal from "./NewColorModal"
@@ -30,28 +27,26 @@ type UpdateCrystalModalT = {
 const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
   const { updateCrystal, deleteCrystal } = useCrystalStore()
   const { colors, fetchColors } = useColorStore()
+  const { categories } = useCategoryStore()
+  const { locations } = useLocationStore()
 
   const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
-  useEffect(() => {
-    fetchColors()
-  }, [])
-
   const initialValues = {
     name: crystal.name,
     colorId: crystal.color?.id,
-    category: crystal.category,
-    location: crystal.location,
+    categoryId: crystal.category?.id,
+    locationId: crystal.location?.id,
     inventory: crystal.inventory,
   }
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer().nullable(),
-    category: Yup.string().nullable(),
+    categoryId: Yup.number().nullable(),
     size: Yup.mixed().oneOf(sizeOptions).nullable(),
-    location: Yup.mixed().oneOf(locationOptions).nullable(),
+    locationId: Yup.number().nullable(),
     inventory: Yup.mixed().oneOf(inventoryOptions),
   })
 
@@ -122,36 +117,36 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
           <Grid container spacing={2} sx={{ marginBottom: "16px" }}>
             <Grid item xs={6}>
               <TextField
-                id="category"
+                id="categoryId"
                 label="Category"
                 variant="outlined"
                 fullWidth
                 select
-                {...formik.getFieldProps("category")}
+                {...formik.getFieldProps("categoryId")}
                 sx={textFieldStyles}
-                error={formik.touched.category && Boolean(formik.errors.category)}
-                helperText={formik.touched.category && formik.errors.category}
+                error={formik.touched.categoryId && Boolean(formik.errors.categoryId)}
+                helperText={<>{formik.touched.categoryId && formik.errors.categoryId}</>}
               >
-                {categoryOptions.map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
+                {categories.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.name}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
             <Grid item xs={6}>
               <TextField
-                id="location"
+                id="locationId"
                 label="Location"
                 variant="outlined"
                 fullWidth
                 select
-                {...formik.getFieldProps("location")}
+                {...formik.getFieldProps("locationId")}
                 sx={textFieldStyles}
               >
-                {locationOptions.map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
+                {locations.map((location) => (
+                  <MenuItem key={location.id} value={location.id}>
+                    {location.name}
                   </MenuItem>
                 ))}
               </TextField>

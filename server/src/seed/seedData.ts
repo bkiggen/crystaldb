@@ -210,3 +210,23 @@ export const subscriptionData = [
   { name: "Crystal Variety Box", shortName: "CVB", cost: 128 },
   { name: "Kids' Box", shortName: "KB", cost: 44 },
 ];
+
+export const locationsData = [
+  { name: "Brazil" },
+  { name: "Madagascar" },
+  { name: "Mexico" },
+  { name: "Morocco" },
+  { name: "Pakistan" },
+  { name: "Peru" },
+  { name: "United States" },
+];
+
+export const categoryData = [
+  { name: "Tumbled" },
+  { name: "Tower" },
+  { name: "Palm Stone" },
+  { name: "Point" },
+  { name: "Cluster" },
+  { name: "Raw" },
+  { name: "Jewelry" },
+];

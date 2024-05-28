@@ -1,13 +1,12 @@
 import { useState } from "react"
 
-import { Box, Typography, TextField } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 
 import { useShipmentStore } from "../../store/shipmentStore"
 
 import ColorIndicator from "../../components/ColorIndicator"
 
 import colors from "../../styles/colors"
-import { textFieldStyles } from "../../styles/vars"
 
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"

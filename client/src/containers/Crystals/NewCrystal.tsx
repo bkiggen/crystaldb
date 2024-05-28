@@ -8,18 +8,13 @@ import EditIcon from "@mui/icons-material/Edit"
 
 import { textFieldStyles } from "../../styles/vars"
 
-import {
-  rarityOptions,
-  findAgeOptions,
-  sizeOptions,
-  inventoryOptions,
-  categoryOptions,
-  locationOptions,
-} from "../../types/Crystal"
+import { rarityOptions, findAgeOptions, sizeOptions, inventoryOptions } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
 import type { RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
 
 import { useCrystalStore } from "../../store/crystalStore"
+import { useCategoryStore } from "../../store/categoryStore"
+import { useLocationStore } from "../../store/locationStore"
 
 import useDebounce from "../../hooks/useDebounce"
 import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
@@ -27,22 +22,36 @@ import capitalizeFirstLetter from "../../util/capitalizeFirstLetter"
 import { useColorStore } from "../../store/colorStore"
 
 import NewColorModal from "./NewColorModal"
+import NewLocationModal from "./NewLocationModal"
+import NewCategoryModal from "./NewCategoryModal"
 
 const NewCrystal = () => {
   const { colors, fetchColors } = useColorStore()
+  const { categories, fetchCategories } = useCategoryStore()
+  const { locations, fetchLocations } = useLocationStore()
   const { createCrystal, crystalMatches, fetchCrystalMatches } = useCrystalStore()
   const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
   const [colorModalOpen, setColorModalOpen] = useState(false)
+  const [locationToEdit, setLocationToEdit] = useState<ColorT[]>(null)
+  const [locationModalOpen, setLocationModalOpen] = useState(false)
+  const [categoryToEdit, setCategoryToEdit] = useState<ColorT[]>(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
   const [crystalsVisible, setCrystalsVisible] = useState(false)
   const [rawSearch, setRawSearch] = useState(null)
   const debouncedSearch = useDebounce(rawSearch, 300)
 
+  useEffect(() => {
+    fetchColors()
+    fetchCategories()
+    fetchLocations()
+  }, [])
+
   const initialValues: {
     name?: string
     colorId?: number
-    category?: string
-    location?: string
+    categoryId?: number
+    locationId?: number
     rarity?: RarityT
     description?: string
     image?: string
@@ -52,8 +61,8 @@ const NewCrystal = () => {
   } = {
     name: "",
     colorId: undefined,
-    category: "",
-    location: "",
+    categoryId: undefined,
+    locationId: undefined,
     rarity: undefined,
     description: "",
     image: "",
@@ -65,8 +74,8 @@ const NewCrystal = () => {
   const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
     name: Yup.string().required("Name is required"),
     colorId: Yup.number().integer(),
-    category: Yup.string(),
-    location: Yup.string(),
+    categoryId: Yup.number(),
+    locationId: Yup.number(),
     rarity: Yup.string().oneOf(rarityOptions as RarityT[], "Invalid rarity value"),
     description: Yup.string(),
     image: Yup.string(),
@@ -79,14 +88,14 @@ const NewCrystal = () => {
     createCrystal({
       name: capitalizeFirstLetter(formData.name),
       colorId: formData.colorId,
-      category: formData.category,
+      categoryId: formData.categoryId || undefined,
       rarity: formData.rarity,
       description: formData.description,
       image: formData.image,
       findAge: formData.findAge,
       size: formData.size,
       inventory: formData.inventory,
-      location: formData.location,
+      locationId: formData.locationId || undefined,
     })
     formik.resetForm()
   }
@@ -123,6 +132,18 @@ const NewCrystal = () => {
     e.stopPropagation()
     setColorToEdit(colorToEdit)
     setColorModalOpen(true)
+  }
+
+  const handleCategoryEdit = (e, categoryToEdit) => {
+    e.stopPropagation()
+    setCategoryToEdit(categoryToEdit)
+    setCategoryModalOpen(true)
+  }
+
+  const handleLocationEdit = (e, locationToEdit) => {
+    e.stopPropagation()
+    setLocationToEdit(locationToEdit)
+    setLocationModalOpen(true)
   }
 
   // const indicatorOptions = (indicatorName, indicatorValues) => {
@@ -233,17 +254,36 @@ const NewCrystal = () => {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                id="category"
+                id="categoryId"
                 label="Category"
                 variant="outlined"
                 fullWidth
                 select
-                {...formik.getFieldProps("category")}
+                {...formik.getFieldProps("categoryId")}
                 sx={textFieldStyles}
               >
-                {categoryOptions.map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
+                <MenuItem>
+                  <Button onClick={() => setCategoryModalOpen(true)} sx={{ width: "100%" }}>
+                    Add New...
+                  </Button>
+                </MenuItem>
+                {categories.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        textTransform: "capitalize",
+                        width: "100%",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>{category.name}</Box>
+                      <EditIcon
+                        sx={{ color: "#708090", cursor: "pointer" }}
+                        onClick={(e) => handleCategoryEdit(e, category)}
+                      />
+                    </Box>
                   </MenuItem>
                 ))}
               </TextField>
@@ -252,17 +292,36 @@ const NewCrystal = () => {
           <Grid container spacing={2} sx={{ marginTop: "0px" }}>
             <Grid item xs={6}>
               <TextField
-                id="location"
+                id="locationId"
                 label="Location"
                 variant="outlined"
                 fullWidth
                 select
-                {...formik.getFieldProps("location")}
+                {...formik.getFieldProps("locationId")}
                 sx={textFieldStyles}
               >
-                {locationOptions.map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
+                <MenuItem>
+                  <Button onClick={() => setLocationModalOpen(true)} sx={{ width: "100%" }}>
+                    Add New...
+                  </Button>
+                </MenuItem>
+                {locations.map((location) => (
+                  <MenuItem key={location.id} value={location.id}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        textTransform: "capitalize",
+                        width: "100%",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>{location.name}</Box>
+                      <EditIcon
+                        sx={{ color: "#708090", cursor: "pointer" }}
+                        onClick={(e) => handleLocationEdit(e, location)}
+                      />
+                    </Box>
                   </MenuItem>
                 ))}
               </TextField>
@@ -301,6 +360,24 @@ const NewCrystal = () => {
             setTimeout(() => {
               fetchColors()
             }, 1000)
+          }}
+        />
+      )}
+      {locationModalOpen && (
+        <NewLocationModal
+          locationToEdit={locationToEdit}
+          onClose={() => {
+            setLocationModalOpen(false)
+            setLocationToEdit(null)
+          }}
+        />
+      )}
+      {categoryModalOpen && (
+        <NewCategoryModal
+          categoryToEdit={categoryToEdit}
+          onClose={() => {
+            setCategoryModalOpen(false)
+            setCategoryToEdit(null)
           }}
         />
       )}

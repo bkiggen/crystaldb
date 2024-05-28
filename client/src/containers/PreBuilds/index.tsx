@@ -8,7 +8,6 @@ import { usePreBuildStore } from "../../store/preBuildStore"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
-import type { SubscriptionT } from "../../types/Subscription"
 
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"

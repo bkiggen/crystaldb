@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import { Color } from "../entity/Color";
 import { authenticateToken } from "./util/authenticateToken";
-import { Crystal } from "../entity/Crystal";
 
 const router = Router();
 

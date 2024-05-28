@@ -1,4 +1,6 @@
 import { ColorT } from "./Color"
+import { LocationT } from "./Location"
+import { CategoryT } from "./Category"
 
 export const rarity = {
   LOW: "LOW",
@@ -35,36 +37,36 @@ export const inventory = {
 export type InventoryT = (typeof inventory)[keyof typeof inventory]
 export const inventoryOptions = Object.values(inventory)
 
-export const category = {
-  TUMBLED: "TUMBLED",
-  TOWER: "TOWER",
-  PALM_STONE: "PALM STONE",
-  POINT: "POINT",
-  CLUSTER: "CLUSTER",
-  RAW: "RAW",
-  JEWELRY: "JEWELRY",
-} as const
-export type CategoryType = (typeof category)[keyof typeof category]
-export const categoryOptions = Object.values(category)
+// export const category = {
+//   TUMBLED: "TUMBLED",
+//   TOWER: "TOWER",
+//   PALM_STONE: "PALM STONE",
+//   POINT: "POINT",
+//   CLUSTER: "CLUSTER",
+//   RAW: "RAW",
+//   JEWELRY: "JEWELRY",
+// } as const
+// export type CategoryType = (typeof category)[keyof typeof category]
+// export const categoryOptions = Object.values(category)
 
-export const location = {
-  brazil: "Brazil",
-  madagascar: "Madagascar",
-  morocco: "Morocco",
-  china: "China",
-  mexico: "Mexico",
-  afghanistan: "Afghanistan",
-  peru: "Peru",
-} as const
-export type LocationType = (typeof location)[keyof typeof location]
-export const locationOptions = Object.values(location)
+// export const location = {
+//   brazil: "Brazil",
+//   madagascar: "Madagascar",
+//   morocco: "Morocco",
+//   china: "China",
+//   mexico: "Mexico",
+//   afghanistan: "Afghanistan",
+//   peru: "Peru",
+// } as const
+// export type LocationType = (typeof location)[keyof typeof location]
+// export const locationOptions = Object.values(location)
 
 export type CrystalT = {
   id: number
   name: string
   color?: ColorT
   colorId?: number
-  category?: string
+  categoryId?: number
   rarity?: RarityT
   description?: string
   image?: string
@@ -73,5 +75,7 @@ export type CrystalT = {
   inventory?: InventoryT
   updatedAt?: string
   size?: SizeT
-  location?: string
+  locationId?: number
+  location?: LocationT
+  category?: CategoryT
 }

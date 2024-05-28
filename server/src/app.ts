@@ -8,6 +8,8 @@ import colorRoutes from "./controllers/colors";
 import shipmentRoutes from "./controllers/shipments";
 import preBuildRoutes from "./controllers/preBuilds";
 import subscriptionRoutes from "./controllers/subscriptions";
+import locationsRoutes from "./controllers/locations";
+import categoriesRoutes from "./controllers/categories";
 import userRoutes from "./controllers/users";
 
 const app = express();
@@ -25,6 +27,8 @@ const main = async () => {
     app.use("/subscriptions", subscriptionRoutes);
     app.use("/users", userRoutes);
     app.use("/preBuilds", preBuildRoutes);
+    app.use("/locations", locationsRoutes);
+    app.use("/categories", categoriesRoutes);
 
     app.listen(4000, () => {
       console.log("REST API server running at http://localhost:4000/");

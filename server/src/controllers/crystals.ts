@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
-import { ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
+import { Location } from "../entity/Location";
+import { Category } from "../entity/Category";
 import { Color } from "../entity/Color";
 import { suggestCrystals } from "../services/crystalService";
 import { authenticateToken } from "./util/authenticateToken";
@@ -60,6 +61,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     .take(pageSizeNumber)
     .orderBy(`crystal.${sortBy}`, sortDirection)
     .leftJoinAndSelect("crystal.color", "color")
+    .leftJoinAndSelect("crystal.category", "category")
+    .leftJoinAndSelect("crystal.location", "location")
     .getManyAndCount();
 
   const paging = {
@@ -162,12 +165,39 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const color = await Color.findOneBy({ id: req.body.colorId });
-    if (!color) {
-      return res.status(404).send("Color not found");
+    const { colorId, locationId, categoryId, ...crystalData } = req.body;
+
+    let color = null;
+    let location = null;
+    let category = null;
+
+    if (colorId) {
+      color = await Color.findOneBy({ id: colorId });
+      if (!color) {
+        return res.status(404).send("Color not found");
+      }
     }
 
-    const crystal = Crystal.create({ ...req.body, color });
+    if (locationId) {
+      location = await Location.findOneBy({ id: locationId });
+      if (!location) {
+        return res.status(404).send("Location not found");
+      }
+    }
+
+    if (categoryId) {
+      category = await Category.findOneBy({ id: categoryId });
+      if (!category) {
+        return res.status(404).send("Category not found");
+      }
+    }
+
+    const crystal = Crystal.create({
+      ...crystalData,
+      color,
+      location,
+      category,
+    });
     await Crystal.save(crystal);
     res.status(201).json(crystal);
   } catch (error) {
@@ -187,6 +217,24 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
     });
     if (newColor) {
       crystal.color = newColor;
+    }
+  }
+
+  if (req.body.locationId) {
+    const newLocation = await Location.findOneBy({
+      id: req.body.locationId,
+    });
+    if (newLocation) {
+      crystal.location = newLocation;
+    }
+  }
+
+  if (req.body.categoryId) {
+    const newCategory = await Category.findOneBy({
+      id: req.body.categoryId,
+    });
+    if (newCategory) {
+      crystal.category = newCategory;
     }
   }
 

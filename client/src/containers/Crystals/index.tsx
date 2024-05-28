@@ -134,7 +134,7 @@ const Crystals = () => {
       headerName: "Category",
       width: 150,
       renderCell: (params: GridCellParams) => {
-        return <Box sx={{ textTransform: "capitalize" }}>{params.row.category}</Box>
+        return <Box sx={{ textTransform: "capitalize" }}>{params.row.category?.name}</Box>
       },
     },
     {
@@ -142,7 +142,7 @@ const Crystals = () => {
       headerName: "Location",
       width: 150,
       renderCell: (params: GridCellParams) => {
-        return <Box sx={{ textTransform: "capitalize" }}>{params.row.location}</Box>
+        return <Box sx={{ textTransform: "capitalize" }}>{params.row.location?.name}</Box>
       },
     },
   ]
