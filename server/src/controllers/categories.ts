@@ -6,6 +6,7 @@ const router = Router();
 
 router.get("/", authenticateToken, async (_req: Request, res: Response) => {
   const categories = await Category.find();
+  categories.sort((a, b) => a.name.localeCompare(b.name));
   res.json(categories);
 });
 
