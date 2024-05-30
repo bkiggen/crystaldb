@@ -20,7 +20,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
   const pageNumber = parseInt(page as string);
   const pageSizeNumber = parseInt(pageSize as string);
 
-  let whereCondition = {};
+  let whereCondition: any = {};
 
   whereCondition = {
     ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
@@ -34,8 +34,10 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
     order: {
-      year: "DESC",
-      month: "DESC",
+      subscription: { id: "ASC" }, // order by subscriptionId
+      cycle: "ASC", // Then by cycle in ascending order
+      year: "DESC", // Then by year in descending order
+      month: "DESC", // Then by month in descending order
     },
     relations: ["crystals", "subscription"],
   });
