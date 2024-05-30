@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react"
 import { Box, Typography, Menu, MenuItem, IconButton, Checkbox } from "@mui/material"
 import FilterListIcon from "@mui/icons-material/FilterList"
+import { isEmpty } from "lodash"
 
 import colors from "../../styles/colors"
 
@@ -13,7 +14,7 @@ const FilterMenu = ({ onFilterChange }) => {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(crystalFilterOptions.color.options).length > 0 && !loaded) {
+    if (!isEmpty(crystalFilterOptions) && !loaded) {
       setActiveFilters(crystalFilterOptions)
       setLoaded(true)
     }
