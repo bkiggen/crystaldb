@@ -51,6 +51,14 @@ const useCrystalFilterOptions = () => {
     },
   }
 
+  const noColors = Object.keys(crystalFilterOptions.color.options).length === 0
+  const noLocations = Object.keys(crystalFilterOptions.location.options).length === 0
+  const noCategories = Object.keys(crystalFilterOptions.category.options).length === 0
+
+  if (noColors || noLocations || noCategories) {
+    return { crystalFilterOptions: {} }
+  }
+
   return {
     ...crystalFilterOptions,
     crystalFilterOptions,
