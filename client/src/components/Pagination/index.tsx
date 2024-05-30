@@ -57,7 +57,7 @@ const Pagination = ({
   const firstPage = 1
   const lastPage = paging.totalPages
 
-  const startBase = paging.currentPage * paging.pageSize
+  const startBase = paging.currentPage * paging.pageSize - paging.pageSize + 2
   const startItem = startBase - 1
 
   const adjustedCurrent = paging.currentPage
