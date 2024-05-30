@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/material"
+import EditIcon from "@mui/icons-material/Edit"
 
 import systemColors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
@@ -11,13 +12,18 @@ import { useCrystalStore } from "../../store/crystalStore"
 import { useCategoryStore } from "../../store/categoryStore"
 import { useLocationStore } from "../../store/locationStore"
 
+import type { ColorT } from "../../types/Color"
+import type { CategoryT } from "../../types/Category"
+import type { LocationT } from "../../types/Location"
 import type { CrystalT } from "../../types/Crystal"
 
 import { sizeOptions, inventoryOptions } from "../../types/Crystal"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
-import NewColorModal from "./NewColorModal"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
+import NewColorModal from "./NewColorModal"
+import NewLocationModal from "./NewLocationModal"
+import NewCategoryModal from "./NewCategoryModal"
 
 type UpdateCrystalModalT = {
   crystal: CrystalT
@@ -30,7 +36,12 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
   const { categories } = useCategoryStore()
   const { locations } = useLocationStore()
 
-  const [colorModalOpen, setColorModalOpen] = useState<boolean>(false)
+  const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
+  const [colorModalOpen, setColorModalOpen] = useState(false)
+  const [locationToEdit, setLocationToEdit] = useState<LocationT[]>(null)
+  const [locationModalOpen, setLocationModalOpen] = useState(false)
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryT[]>(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
   const initialValues = {
@@ -62,6 +73,24 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
   const onDelete = async () => {
     deleteCrystal(crystal.id)
     onClose()
+  }
+
+  const handleColorEdit = (e, colorToEdit) => {
+    e.stopPropagation()
+    setColorToEdit(colorToEdit)
+    setColorModalOpen(true)
+  }
+
+  const handleCategoryEdit = (e, categoryToEdit) => {
+    e.stopPropagation()
+    setCategoryToEdit(categoryToEdit)
+    setCategoryModalOpen(true)
+  }
+
+  const handleLocationEdit = (e, locationToEdit) => {
+    e.stopPropagation()
+    setLocationToEdit(locationToEdit)
+    setLocationModalOpen(true)
   }
 
   return (
@@ -105,11 +134,43 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
                   error={formik.touched.colorId && Boolean(formik.errors.colorId)}
                   helperText={formik.touched.colorId && formik.errors.colorId}
                 >
-                  {colors.map((color) => (
-                    <MenuItem key={color.id} value={color.id}>
-                      {color.name}
-                    </MenuItem>
-                  ))}
+                  <MenuItem>
+                    <Button onClick={() => setColorModalOpen(true)} sx={{ width: "100%" }}>
+                      Add New...
+                    </Button>
+                  </MenuItem>
+                  {colors.map((colorOption) => {
+                    return (
+                      <MenuItem key={colorOption.id} value={colorOption.id}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            textTransform: "capitalize",
+                            width: "100%",
+                          }}
+                        >
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Box
+                              sx={{
+                                width: "12px",
+                                height: "12px",
+                                borderRadius: "50%",
+                                backgroundColor: colorOption.hex,
+                                marginRight: "8px",
+                              }}
+                            />
+                            {colorOption.name}
+                          </Box>
+                          <EditIcon
+                            sx={{ color: "#708090", cursor: "pointer" }}
+                            onClick={(e) => handleColorEdit(e, colorOption)}
+                          />
+                        </Box>
+                      </MenuItem>
+                    )
+                  })}
                 </TextField>
               </FormControl>
             </Grid>
@@ -127,9 +188,28 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
                 error={formik.touched.categoryId && Boolean(formik.errors.categoryId)}
                 helperText={<>{formik.touched.categoryId && formik.errors.categoryId}</>}
               >
+                <MenuItem>
+                  <Button onClick={() => setCategoryModalOpen(true)} sx={{ width: "100%" }}>
+                    Add New...
+                  </Button>
+                </MenuItem>
                 {categories.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
-                    {category.name}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        textTransform: "capitalize",
+                        width: "100%",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>{category.name}</Box>
+                      <EditIcon
+                        sx={{ color: "#708090", cursor: "pointer" }}
+                        onClick={(e) => handleCategoryEdit(e, category)}
+                      />
+                    </Box>
                   </MenuItem>
                 ))}
               </TextField>
@@ -144,9 +224,28 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
                 {...formik.getFieldProps("locationId")}
                 sx={textFieldStyles}
               >
+                <MenuItem>
+                  <Button onClick={() => setLocationModalOpen(true)} sx={{ width: "100%" }}>
+                    Add New...
+                  </Button>
+                </MenuItem>
                 {locations.map((location) => (
                   <MenuItem key={location.id} value={location.id}>
-                    {location.name}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        textTransform: "capitalize",
+                        width: "100%",
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center" }}>{location.name}</Box>
+                      <EditIcon
+                        sx={{ color: "#708090", cursor: "pointer" }}
+                        onClick={(e) => handleLocationEdit(e, location)}
+                      />
+                    </Box>
                   </MenuItem>
                 ))}
               </TextField>
@@ -190,10 +289,28 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
       </form>
       {colorModalOpen && (
         <NewColorModal
-          colorToEdit={null}
+          colorToEdit={colorToEdit}
           onClose={() => {
             setColorModalOpen(false)
             setTimeout(fetchColors, 500)
+          }}
+        />
+      )}
+      {locationModalOpen && (
+        <NewLocationModal
+          locationToEdit={locationToEdit}
+          onClose={() => {
+            setLocationModalOpen(false)
+            setLocationToEdit(null)
+          }}
+        />
+      )}
+      {categoryModalOpen && (
+        <NewCategoryModal
+          categoryToEdit={categoryToEdit}
+          onClose={() => {
+            setCategoryModalOpen(false)
+            setCategoryToEdit(null)
           }}
         />
       )}

@@ -10,6 +10,8 @@ import { textFieldStyles } from "../../styles/vars"
 
 import { rarityOptions, findAgeOptions, sizeOptions, inventoryOptions } from "../../types/Crystal"
 import type { ColorT } from "../../types/Color"
+import type { CategoryT } from "../../types/Category"
+import type { LocationT } from "../../types/Location"
 import type { RarityT, FindAgeT, SizeT, InventoryT } from "../../types/Crystal"
 
 import { useCrystalStore } from "../../store/crystalStore"
@@ -32,9 +34,9 @@ const NewCrystal = () => {
   const { createCrystal, crystalMatches, fetchCrystalMatches } = useCrystalStore()
   const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
   const [colorModalOpen, setColorModalOpen] = useState(false)
-  const [locationToEdit, setLocationToEdit] = useState<ColorT[]>(null)
+  const [locationToEdit, setLocationToEdit] = useState<LocationT[]>(null)
   const [locationModalOpen, setLocationModalOpen] = useState(false)
-  const [categoryToEdit, setCategoryToEdit] = useState<ColorT[]>(null)
+  const [categoryToEdit, setCategoryToEdit] = useState<CategoryT[]>(null)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
   const [crystalsVisible, setCrystalsVisible] = useState(false)
