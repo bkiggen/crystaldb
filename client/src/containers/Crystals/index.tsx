@@ -28,7 +28,7 @@ const Crystals = () => {
     sortDirection = null,
     filters = {},
   }) => {
-    fetchCrystals({ searchTerm, page, sortBy, sortDirection, ...filters })
+    fetchCrystals({ searchTerm, page, sortBy, sortDirection, filters })
   }
 
   useEffect(() => {

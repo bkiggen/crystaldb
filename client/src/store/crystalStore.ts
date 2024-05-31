@@ -28,6 +28,7 @@ type CrystalStoreT = {
     sortBy?: string
     sortDirection?: string
     inventory?: string
+    filters?: Record<string, string>
   }) => Promise<void>
   fetchSuggestedCrystals: (params: {
     searchTerm?: string
