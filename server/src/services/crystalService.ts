@@ -1,7 +1,7 @@
 import { Crystal, Inventory } from "../entity/Crystal";
 import { Shipment } from "../entity/Shipment";
 import { PreBuild } from "../entity/PreBuild";
-import { In, Not, MoreThan } from "typeorm";
+import { In, Not, MoreThan, SelectQueryBuilder } from "typeorm";
 
 // TODO: handle cycle range
 
@@ -80,16 +80,37 @@ const getUpcomingPrebuildCrystalIds = async (
   return uniqueCrystalIds;
 };
 
-export const addFilters = (query, allFilters) => {
+export const addFilters = (query: SelectQueryBuilder<any>, allFilters: any) => {
   Object.keys(allFilters).forEach((filterKey) => {
     const filterValue = allFilters[filterKey];
     if (typeof filterValue === "string" && filterValue.trim() !== "") {
       const filterArray = filterValue.split(",").map((item) => item.trim());
       if (filterArray.length > 0) {
-        query = query.andWhere(
-          `(crystal.${filterKey} NOT IN (:...${filterKey}) OR crystal.${filterKey} IS NULL)`,
-          { [filterKey]: filterArray }
-        );
+        if (filterKey === "location") {
+          query = query
+            .leftJoinAndSelect("crystal.location", "location")
+            .andWhere("location.id NOT IN (:...locationIds)", {
+              locationIds: filterArray,
+            });
+        } else if (filterKey === "category") {
+          query = query
+            .leftJoinAndSelect("crystal.category", "category")
+            .andWhere("category.id NOT IN (:...categoryIds)", {
+              categoryIds: filterArray,
+            });
+        } else if (filterKey === "colorId") {
+          query = query
+            .leftJoinAndSelect("crystal.color", "color")
+            .andWhere("color.id NOT IN (:...colorIds)", {
+              colorIds: filterArray,
+            });
+        } else {
+          // Default filtering
+          query = query.andWhere(
+            `(crystal.${filterKey} NOT IN (:...${filterKey}) OR crystal.${filterKey} IS NULL)`,
+            { [filterKey]: filterArray }
+          );
+        }
       }
     }
   });
@@ -103,13 +124,13 @@ export const suggestCrystals = async ({
   month,
   year,
   cycle,
-  findAge,
-  size,
+  // findAge,
+  // size,
   inventory,
   category,
   location,
   colorId,
-  rarity,
+  // rarity,
 }) => {
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
     month,
@@ -134,13 +155,13 @@ export const suggestCrystals = async ({
   });
 
   const allFilters = {
-    ...(findAge && { findAge }),
-    ...(size && { size }),
+    // ...(findAge && { findAge }),
+    // ...(size && { size }),
     ...(inventory && { inventory }),
     ...(category && { category }),
     ...(location && { location }),
     ...(colorId && { colorId }),
-    ...(rarity && { rarity }),
+    // ...(rarity && { rarity }),
   };
 
   query = addFilters(query, allFilters);
@@ -158,6 +179,7 @@ export const suggestCrystals = async ({
     `,
       "ASC"
     )
+    .addOrderBy("crystal.name", "ASC")
     .getMany();
 
   // TODO:

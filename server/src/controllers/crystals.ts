@@ -16,12 +16,9 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     pageSize = 1000,
     searchTerm,
     inventory,
-    findAge,
-    size,
     category,
     location,
     colorId,
-    rarity,
   } = req.query;
 
   const pageNumber = parseInt(page as string);
@@ -45,13 +42,13 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
   }
 
   const allFilters = {
-    ...(findAge && { findAge }),
-    ...(size && { size }),
+    // ...(findAge && { findAge }),
+    // ...(size && { size }),
     ...(inventory && { inventory }),
     ...(category && { category }),
     ...(location && { location }),
     ...(colorId && { colorId }),
-    ...(rarity && { rarity }),
+    // ...(rarity && { rarity }),
   };
 
   query = addFilters(query, allFilters);
@@ -131,9 +128,9 @@ router.get(
       month: parseInt(month as string),
       year: parseInt(year as string),
       cycle: parseInt(cycle as string),
-      rarity: rarity ? rarity.split(",").map((item) => item.trim()) : [],
-      findAge: findAge as string,
-      size: size as string,
+      // rarity: rarity ? rarity.split(",").map((item) => item.trim()) : [],
+      // findAge: findAge as string,
+      // size: size as string,
       inventory: inventory as string,
       category: category as string,
       location: location as string,
