@@ -39,7 +39,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     try {
       const createdPreBuild = await createPreBuildRequest(newPreBuild)
       set((state) => ({
-        preBuilds: [...state.preBuilds, createdPreBuild],
+        preBuilds: [createdPreBuild, ...state.preBuilds],
       }))
     } catch (error) {
       console.error("Failed to create pre-build", error)

@@ -27,7 +27,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
     formik.setFieldValue("cycle", tempFormValues.cycle)
     formik.setFieldValue("cycleRangeStart", tempFormValues.cycleRangeStart)
     formik.setFieldValue("cycleRangeEnd", tempFormValues.cycleRangeEnd)
-    formik.setFieldValue("subscriptionId", tempFormValues.subscription.id)
+    formik.setFieldValue("subscriptionId", tempFormValues.subscription?.id)
     const existingCrystalIds = formik.values.crystalIds
     formik.setFieldValue(
       "crystalIds",
@@ -51,7 +51,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
           id="prebuild-autocomplete"
           options={preBuilds}
           getOptionLabel={(option) =>
-            option.subscription.shortName +
+            (option.subscription?.shortName || "Box") +
             (option.cycle
               ? `: ${option.cycle}`
               : `: ${option.cycleRangeStart} - ${option.cycleRangeEnd}`)
@@ -78,11 +78,12 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
             <li {...props}>
               {option.cycle ? (
                 <Typography>
-                  {option.subscription.shortName}: {option.cycle}
+                  {option.subscription?.shortName || "Box"}: {option.cycle}
                 </Typography>
               ) : (
                 <Typography>
-                  {option.subscription.shortName}: {option.cycleRangeStart} - {option.cycleRangeEnd}
+                  {option.subscription?.shortName || "Box"}: {option.cycleRangeStart} -{" "}
+                  {option.cycleRangeEnd}
                 </Typography>
               )}
             </li>
