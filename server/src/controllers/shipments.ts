@@ -34,8 +34,9 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
     order: {
-      subscription: { id: "ASC" }, // order by subscriptionId
+      subscription: { id: "ASC" }, // Correctly order by subscriptionId
       cycle: "ASC", // Then by cycle in ascending order
+      cycleRangeStart: "ASC", // Then by cycleRangeStart in ascending order
       year: "DESC", // Then by year in descending order
       month: "DESC", // Then by month in descending order
     },
