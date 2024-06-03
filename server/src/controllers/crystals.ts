@@ -57,9 +57,9 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     .skip((pageNumber - 1) * pageSizeNumber)
     .take(pageSizeNumber)
     .orderBy(`crystal.${sortBy}`, sortDirection)
-    // .leftJoinAndSelect("crystal.color", "color")
-    // .leftJoinAndSelect("crystal.category", "category")
-    // .leftJoinAndSelect("crystal.location", "location")
+    .leftJoinAndSelect("crystal.color", "color")
+    .leftJoinAndSelect("crystal.category", "category")
+    .leftJoinAndSelect("crystal.location", "location")
     .getManyAndCount();
 
   const paging = {

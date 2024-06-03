@@ -87,23 +87,17 @@ export const addFilters = (query: SelectQueryBuilder<any>, allFilters: any) => {
       const filterArray = filterValue.split(",").map((item) => item.trim());
       if (filterArray.length > 0) {
         if (filterKey === "location") {
-          query = query
-            .leftJoinAndSelect("crystal.location", "location")
-            .andWhere("location.id NOT IN (:...locationIds)", {
-              locationIds: filterArray,
-            });
+          query = query.andWhere("location.id NOT IN (:...locationIds)", {
+            locationIds: filterArray,
+          });
         } else if (filterKey === "category") {
-          query = query
-            .leftJoinAndSelect("crystal.category", "category")
-            .andWhere("category.id NOT IN (:...categoryIds)", {
-              categoryIds: filterArray,
-            });
+          query = query.andWhere("category.id NOT IN (:...categoryIds)", {
+            categoryIds: filterArray,
+          });
         } else if (filterKey === "colorId") {
-          query = query
-            .leftJoinAndSelect("crystal.color", "color")
-            .andWhere("color.id NOT IN (:...colorIds)", {
-              colorIds: filterArray,
-            });
+          query = query.andWhere("color.id NOT IN (:...colorIds)", {
+            colorIds: filterArray,
+          });
         } else {
           // Default filtering
           query = query.andWhere(
@@ -180,6 +174,9 @@ export const suggestCrystals = async ({
       "ASC"
     )
     .addOrderBy("crystal.name", "ASC")
+    .leftJoinAndSelect("crystal.color", "color")
+    .leftJoinAndSelect("crystal.category", "category")
+    .leftJoinAndSelect("crystal.location", "location")
     .getMany();
 
   // TODO:
