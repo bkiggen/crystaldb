@@ -7,6 +7,7 @@ import * as Yup from "yup"
 
 import { useShipmentStore } from "../../store/shipmentStore"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
+import { useCrystalStore } from "../../store/crystalStore"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
@@ -18,6 +19,7 @@ import Table from "./Table"
 const Shipments = () => {
   const { createShipment, fetchShipments, shipments, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+  const { suggestedCrystals, setSuggestedCrystals } = useCrystalStore()
 
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
 
@@ -108,6 +110,19 @@ const Shipments = () => {
     validationSchema,
     onSubmit: handleSubmit,
   })
+
+  useEffect(() => {
+    if (suggestedCrystals.length) {
+      setSuggestedCrystals([])
+    }
+  }, [
+    formik.values.cycle,
+    formik.values.cycleRangeStart,
+    formik.values.cycleRangeEnd,
+    formik.values.month,
+    formik.values.year,
+    formik.values.subscriptionId,
+  ]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
