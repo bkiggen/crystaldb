@@ -66,16 +66,52 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const { crystalIds, subscriptionId, ...shipmentData } = req.body;
+    const {
+      crystalIds,
+      subscriptionId,
+      cycle,
+      cycleRangeStart,
+      cycleRangeEnd,
+      ...shipmentData
+    } = req.body;
     const subscription = await Subscription.findOneBy({ id: subscriptionId });
     const crystals = await Crystal.findBy({ id: In(crystalIds) });
-    const shipment = Shipment.create({
-      ...shipmentData,
-      crystals,
-      subscription,
-    });
-    await Shipment.save(shipment);
-    res.status(201).json(shipment);
+
+    if (!subscription) {
+      return res.status(400).send("Subscription not found");
+    }
+
+    // Helper function to create and save a shipment
+    const createAndSaveShipment = async (cycle: number) => {
+      const shipment = Shipment.create({
+        ...shipmentData,
+        cycle,
+        crystals,
+        subscription,
+      });
+      await Shipment.save(shipment);
+      return shipment;
+    };
+
+    let shipments = [];
+
+    if (cycleRangeStart !== null && cycleRangeEnd !== null) {
+      for (let c = cycleRangeStart; c <= cycleRangeEnd; c++) {
+        const shipment = await createAndSaveShipment(c);
+        shipments.push(shipment);
+      }
+    } else if (cycle !== null) {
+      const shipment = await createAndSaveShipment(cycle);
+      shipments.push(shipment);
+    } else {
+      return res
+        .status(400)
+        .send(
+          "Either cycle or cycleRangeStart and cycleRangeEnd must be provided"
+        );
+    }
+
+    res.json(shipments);
   } catch (error) {
     res.status(400).send(error.message);
   }
