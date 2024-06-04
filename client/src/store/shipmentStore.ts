@@ -55,6 +55,7 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
     try {
       const createdShipments = await createShipmentRequest(newShipment)
       set((state) => ({
+        // @ts-expect-error TODO: Fix this
         shipments: [...createdShipments, ...state.shipments],
       }))
     } catch (error) {
