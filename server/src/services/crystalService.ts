@@ -1,9 +1,14 @@
 import { Crystal, Inventory } from "../entity/Crystal";
 import { Shipment } from "../entity/Shipment";
 import { PreBuild } from "../entity/PreBuild";
-import { In, Not, MoreThan, SelectQueryBuilder } from "typeorm";
-
-// TODO: handle cycle range
+import {
+  In,
+  Not,
+  MoreThan,
+  SelectQueryBuilder,
+  MoreThanOrEqual,
+  LessThanOrEqual,
+} from "typeorm";
 
 const getPreviousShipmentCrystalIds = async (
   month: number,
@@ -20,6 +25,7 @@ const getPreviousShipmentCrystalIds = async (
   while (currentCycle > 1) {
     currentCycle--;
 
+    // Adjust month and year as needed
     if (currentMonth === 0) {
       currentMonth = 11;
       currentYear--;
@@ -27,7 +33,8 @@ const getPreviousShipmentCrystalIds = async (
       currentMonth--;
     }
 
-    const shipment = await Shipment.findOne({
+    // Fetch shipments for the previous cycle
+    const specificCycleShipment = await Shipment.findOne({
       where: {
         month: currentMonth,
         year: currentYear,
@@ -36,18 +43,38 @@ const getPreviousShipmentCrystalIds = async (
           id: subscriptionId,
         },
       },
-      relations: {
-        crystals: true,
-      },
+      relations: ["crystals"],
     });
 
-    if (shipment) {
-      const crystalIds = shipment?.crystals.map((crystal) => crystal.id) || [];
+    if (specificCycleShipment) {
+      const crystalIds = specificCycleShipment.crystals.map(
+        (crystal) => crystal.id
+      );
+      previouslySentCrystals.push(...crystalIds);
+    }
 
+    // Fetch shipments where the current cycle falls within the range of cycleRangeStart and cycleRangeEnd
+    const rangeShipments = await Shipment.find({
+      where: {
+        month: currentMonth,
+        year: currentYear,
+        cycleRangeStart: LessThanOrEqual(currentCycle),
+        cycleRangeEnd: MoreThanOrEqual(currentCycle),
+        subscription: {
+          id: subscriptionId,
+        },
+      },
+      relations: ["crystals"],
+    });
+
+    // Collect crystal IDs from shipments in the range
+    for (const shipment of rangeShipments) {
+      const crystalIds = shipment.crystals.map((crystal) => crystal.id);
       previouslySentCrystals.push(...crystalIds);
     }
   }
 
+  // Ensure unique crystal IDs
   const uniqueCrystals = [...new Set(previouslySentCrystals)];
 
   return uniqueCrystals;
