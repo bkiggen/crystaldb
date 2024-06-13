@@ -1,6 +1,6 @@
-import { Crystal, Inventory } from "../entity/Crystal";
-import { Shipment } from "../entity/Shipment";
-import { PreBuild } from "../entity/PreBuild";
+import { Crystal, Inventory } from '../entity/Crystal'
+import { Shipment } from '../entity/Shipment'
+import { PreBuild } from '../entity/PreBuild'
 import {
   In,
   Not,
@@ -8,7 +8,7 @@ import {
   SelectQueryBuilder,
   MoreThanOrEqual,
   LessThanOrEqual,
-} from "typeorm";
+} from 'typeorm'
 
 const getPreviousShipmentCrystalIds = async (
   month: number,
@@ -16,21 +16,21 @@ const getPreviousShipmentCrystalIds = async (
   cycle: number,
   subscriptionId: number
 ) => {
-  const previouslySentCrystals = [];
+  const previouslySentCrystals = []
 
-  let currentCycle = cycle;
-  let currentMonth = month;
-  let currentYear = year;
+  let currentCycle = cycle
+  let currentMonth = month
+  let currentYear = year
 
   while (currentCycle > 1) {
-    currentCycle--;
+    currentCycle--
 
     // Adjust month and year as needed
     if (currentMonth === 0) {
-      currentMonth = 11;
-      currentYear--;
+      currentMonth = 11
+      currentYear--
     } else {
-      currentMonth--;
+      currentMonth--
     }
 
     // Fetch shipments for the previous cycle
@@ -43,14 +43,14 @@ const getPreviousShipmentCrystalIds = async (
           id: subscriptionId,
         },
       },
-      relations: ["crystals"],
-    });
+      relations: ['crystals'],
+    })
 
     if (specificCycleShipment) {
       const crystalIds = specificCycleShipment.crystals.map(
-        (crystal) => crystal.id
-      );
-      previouslySentCrystals.push(...crystalIds);
+        crystal => crystal.id
+      )
+      previouslySentCrystals.push(...crystalIds)
     }
 
     // Fetch shipments where the current cycle falls within the range of cycleRangeStart and cycleRangeEnd
@@ -64,21 +64,21 @@ const getPreviousShipmentCrystalIds = async (
           id: subscriptionId,
         },
       },
-      relations: ["crystals"],
-    });
+      relations: ['crystals'],
+    })
 
     // Collect crystal IDs from shipments in the range
     for (const shipment of rangeShipments) {
-      const crystalIds = shipment.crystals.map((crystal) => crystal.id);
-      previouslySentCrystals.push(...crystalIds);
+      const crystalIds = shipment.crystals.map(crystal => crystal.id)
+      previouslySentCrystals.push(...crystalIds)
     }
   }
 
   // Ensure unique crystal IDs
-  const uniqueCrystals = [...new Set(previouslySentCrystals)];
+  const uniqueCrystals = [...new Set(previouslySentCrystals)]
 
-  return uniqueCrystals;
-};
+  return uniqueCrystals
+}
 
 const getUpcomingPrebuildCrystalIds = async (
   cycle: number,
@@ -94,49 +94,56 @@ const getUpcomingPrebuildCrystalIds = async (
     relations: {
       crystals: true,
     },
-  });
+  })
 
   const crystalIds = new Set(
-    preBuilds.flatMap((preBuild) =>
-      preBuild.crystals.map((crystal) => crystal.id)
-    )
-  );
+    preBuilds.flatMap(preBuild => preBuild.crystals.map(crystal => crystal.id))
+  )
 
-  const uniqueCrystalIds = Array.from(crystalIds);
+  const uniqueCrystalIds = Array.from(crystalIds)
 
-  return uniqueCrystalIds;
-};
+  return uniqueCrystalIds
+}
 
 export const addFilters = (query: SelectQueryBuilder<any>, allFilters: any) => {
-  Object.keys(allFilters).forEach((filterKey) => {
-    const filterValue = allFilters[filterKey];
-    if (typeof filterValue === "string" && filterValue.trim() !== "") {
-      const filterArray = filterValue.split(",").map((item) => item.trim());
+  Object.keys(allFilters).forEach(filterKey => {
+    const filterValue = allFilters[filterKey]
+    if (typeof filterValue === 'string' && filterValue.trim() !== '') {
+      const filterArray = filterValue.split(',').map(item => item.trim())
       if (filterArray.length > 0) {
-        if (filterKey === "location") {
-          query = query.andWhere("location.id NOT IN (:...locationIds)", {
-            locationIds: filterArray,
-          });
-        } else if (filterKey === "category") {
-          query = query.andWhere("category.id NOT IN (:...categoryIds)", {
-            categoryIds: filterArray,
-          });
-        } else if (filterKey === "colorId") {
-          query = query.andWhere("color.id NOT IN (:...colorIds)", {
-            colorIds: filterArray,
-          });
+        if (filterKey === 'location') {
+          query = query.andWhere(
+            'location.id NOT IN (:...locationIds) OR location.id IS NULL',
+            {
+              locationIds: filterArray,
+            }
+          )
+        } else if (filterKey === 'category') {
+          query = query.andWhere(
+            'category.id NOT IN (:...categoryIds) OR category.id IS NULL',
+            {
+              categoryIds: filterArray,
+            }
+          )
+        } else if (filterKey === 'colorId') {
+          query = query.andWhere(
+            'color.id NOT IN (:...colorIds) OR color.id IS NULL',
+            {
+              colorIds: filterArray,
+            }
+          )
         } else {
           // Default filtering
           query = query.andWhere(
             `(crystal.${filterKey} NOT IN (:...${filterKey}) OR crystal.${filterKey} IS NULL)`,
             { [filterKey]: filterArray }
-          );
+          )
         }
       }
     }
-  });
-  return query;
-};
+  })
+  return query
+}
 
 export const suggestCrystals = async ({
   selectedCrystalIds = [],
@@ -158,22 +165,22 @@ export const suggestCrystals = async ({
     year,
     cycle,
     subscriptionId
-  );
+  )
   const upcomingPrebuildCrystalIds = await getUpcomingPrebuildCrystalIds(
     cycle,
     subscriptionId
-  );
+  )
 
   const barredCrystalIds = [
     ...previousShipmentCrystalIds,
     ...upcomingPrebuildCrystalIds,
     ...excludedCrystalIds,
     ...selectedCrystalIds,
-  ];
+  ]
 
-  let query = Crystal.createQueryBuilder("crystal").where({
+  let query = Crystal.createQueryBuilder('crystal').where({
     id: Not(In(barredCrystalIds)),
-  });
+  })
 
   const allFilters = {
     // ...(findAge && { findAge }),
@@ -183,9 +190,9 @@ export const suggestCrystals = async ({
     ...(location && { location }),
     ...(colorId && { colorId }),
     // ...(rarity && { rarity }),
-  };
+  }
 
-  query = addFilters(query, allFilters);
+  query = addFilters(query, allFilters)
 
   const crystalsNotInIds = await query
     .orderBy(
@@ -198,13 +205,13 @@ export const suggestCrystals = async ({
       ELSE 5
     END
     `,
-      "ASC"
+      'ASC'
     )
-    .addOrderBy("crystal.name", "ASC")
-    .leftJoinAndSelect("crystal.color", "color")
-    .leftJoinAndSelect("crystal.category", "category")
-    .leftJoinAndSelect("crystal.location", "location")
-    .getMany();
+    .addOrderBy('crystal.name', 'ASC')
+    .leftJoinAndSelect('crystal.color', 'color')
+    .leftJoinAndSelect('crystal.category', 'category')
+    .leftJoinAndSelect('crystal.location', 'location')
+    .getMany()
 
   // TODO:
   // Handle suggesting crystals they've gotten once or twice or whatever
@@ -213,5 +220,5 @@ export const suggestCrystals = async ({
   //
   // get all sizes in existing shipment, prioritize crystals with sizes that are not in the existing shipment
 
-  return crystalsNotInIds;
-};
+  return crystalsNotInIds
+}
