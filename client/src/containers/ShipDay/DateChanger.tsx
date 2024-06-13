@@ -63,6 +63,7 @@ const DateChanger = ({ fetchShipments }) => {
         month: formik.values.month,
         year: formik.values.year,
         subscriptionId: formik.values.subscriptionId === 0 ? null : formik.values.subscriptionId,
+        pageSize: 2000,
       })
     }
   }, [formik.values.month, formik.values.year, formik.values.subscriptionId])

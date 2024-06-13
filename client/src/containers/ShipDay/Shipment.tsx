@@ -38,6 +38,7 @@ const Shipment = ({ shipment }) => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          flexGrow: 1,
         }}
       >
         <Typography
