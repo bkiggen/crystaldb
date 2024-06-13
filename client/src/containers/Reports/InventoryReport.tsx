@@ -54,17 +54,17 @@ const InventoryReport = ({ type }: InventoryReportT) => {
         backgroundColor: colors.slateA4,
         border: `1px solid white`,
         borderRadius: "4px",
-        padding: "12px",
-        paddingTop: "24px",
+        padding: "32px 12px",
         margin: "12px",
         position: "relative",
+        flexGrow: 1,
       }}
     >
       <Button
         style={{
           position: "absolute",
-          bottom: "12px",
-          right: "12px",
+          bottom: "24px",
+          right: "24px",
         }}
         variant="outlined"
         onClick={handleCSVClick}
@@ -72,7 +72,7 @@ const InventoryReport = ({ type }: InventoryReportT) => {
         <DownloadIcon />
       </Button>
       <Typography
-        sx={{ fontSize: "32px", textAlign: "center", marginBottom: "12px", color: "white" }}
+        sx={{ fontSize: "32px", textAlign: "center", marginBottom: "24px", color: "white" }}
       >
         Inventory:{" "}
         <Typography sx={{ fontSize: "32px", display: "inline", color: getBackground(type) }}>
@@ -83,27 +83,8 @@ const InventoryReport = ({ type }: InventoryReportT) => {
         sx={{
           overflowY: "auto",
           height: "calc(100% - 124px)",
-          padding: "24px",
-          "&::-webkit-scrollbar": {
-            width: "5px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "transparent",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "transparent",
-            border: "none",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#A0A0A0",
-          },
-          "&:hover": {
-            "&::-webkit-scrollbar-thumb": {
-              background: "#C0C0C0",
-            },
-          },
-          scrollbarWidth: "thin", // For Firefox
-          scrollbarColor: "transparent transparent",
+          padding: "0px 12px",
+          margin: "12px",
         }}
       >
         {crystals.map((c) => {

@@ -17,7 +17,7 @@ import NewShipment from "./NewShipment"
 import Table from "./Table"
 
 const Shipments = () => {
-  const { createShipment, fetchShipments, shipments, paging } = useShipmentStore()
+  const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const { suggestedCrystals, setSuggestedCrystals } = useCrystalStore()
 
@@ -139,6 +139,7 @@ const Shipments = () => {
         />
       ) : null}
       <Table
+        loading={loading}
         shipments={shipments}
         paging={paging}
         allSubscriptions={subscriptions}

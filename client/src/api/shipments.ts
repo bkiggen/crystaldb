@@ -17,7 +17,7 @@ export const createShipmentRequest = async (
 export const getAllShipments = async ({
   searchTerm = "",
   page = 1,
-  pageSize = 100,
+  pageSize = 50,
   subscriptionId,
   month,
   year,

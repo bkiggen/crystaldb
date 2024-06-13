@@ -11,6 +11,7 @@ import ColorIndicator from "../../components/ColorIndicator"
 
 const Shipments = ({
   shipments,
+  loading,
   paging,
   allSubscriptions,
   setSelectedShipment,
@@ -132,6 +133,7 @@ const Shipments = ({
           setSelectedShipment(params.row as ShipmentT)
         }}
         columns={columns}
+        loading={loading}
         disableColumnMenu
         disableColumnFilter
         hideFooter

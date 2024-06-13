@@ -25,12 +25,14 @@ type ShipmentStoreT = {
   createShipment: (newShipment: Omit<ShipmentT, "id">) => Promise<void>
   updateShipment: (updatedShipment: ShipmentT) => Promise<void>
   deleteShipment: (shipmentId: number) => Promise<void>
+  loading: boolean
+  setLoading: (loading: boolean) => void
 }
 
 export const useShipmentStore = create<ShipmentStoreT>((set) => ({
   shipments: [],
-
   paging: defaultPaging,
+  loading: false,
 
   setPaging: (paging) => {
     set({ paging })
@@ -42,21 +44,27 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
     set({ shipment })
   },
 
+  setLoading: (loading) => {
+    set({ loading })
+  },
+
   fetchShipments: async (params) => {
+    set({ loading: true })
     try {
       const { data, paging } = await getAllShipments(params)
       set({ shipments: data, paging })
     } catch (error) {
       console.error("Failed to fetch shipments", error)
+    } finally {
+      set({ loading: false })
     }
   },
 
   createShipment: async (newShipment) => {
     try {
-      const createdShipments = await createShipmentRequest(newShipment)
+      const createdShipment = await createShipmentRequest(newShipment)
       set((state) => ({
-        // @ts-expect-error TODO: Fix this
-        shipments: [...createdShipments, ...state.shipments],
+        shipments: [createdShipment, ...state.shipments],
       }))
     } catch (error) {
       console.error("Failed to create shipment", error)

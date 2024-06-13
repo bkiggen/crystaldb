@@ -9,7 +9,6 @@ const Dashboard = () => {
         width: "100%",
         display: "flex",
         flexWrap: "wrap",
-        justifyContent: "space-between",
       }}
     >
       <InventoryReport type="LOW" />
