@@ -30,14 +30,14 @@ const Shipment = ({ shipment }) => {
       <Box
         key={shipment.id}
         sx={{
-          padding: "12px",
+          padding: "24px",
           margin: "12px",
-          background: colors.darkBlue,
+          background: colors.slateA4,
           minWidth: "20%",
-          borderRadius: "4px",
+          borderRadius: "8px",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: "flex-start",
           flexGrow: 1,
         }}
       >
@@ -48,17 +48,19 @@ const Shipment = ({ shipment }) => {
             textAlign: "center",
             textDecoration: "underline",
             cursor: "pointer",
+            width: "100%",
           }}
           onClick={() => setSelectedShipment(shipment)}
         >
           {shipment.subscription.shortName} #{shipDayNumber}
         </Typography>
-        <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center" }}>
+        <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center", width: "100%" }}>
           <Typography
             sx={{
               textAlign: "center",
               color: shipment?.userCountIsNew ? "red" : "white",
               marginRight: "4px",
+              width: "100%",
             }}
           >
             ({shipment.userCount || 0})
