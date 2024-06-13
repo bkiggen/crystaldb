@@ -165,19 +165,22 @@ const Crystals = () => {
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 800,
           },
+          "& .MuiDataGrid-iconButtonContainer": {
+            display: "none",
+          },
         }}
-        sortingMode="server"
-        sortModel={sortModel}
-        onSortModelChange={(model) => {
-          if (model.length !== 0) {
-            const sortArgs = { sortBy: model[0]?.field, sortDirection: model[0]?.sort }
-            setSortModel(model)
-            getCrystals(sortArgs)
-            navigate(
-              `${location.pathname}?sortBy=${model[0]?.field}&sortDirection=${model[0]?.sort}`,
-            )
-          }
-        }}
+        // sortingMode="server"
+        // sortModel={sortModel}
+        // onSortModelChange={(model) => {
+        //   if (model.length !== 0) {
+        //     const sortArgs = { sortBy: model[0]?.field, sortDirection: model[0]?.sort }
+        //     setSortModel(model)
+        //     getCrystals(sortArgs)
+        //     navigate(
+        //       `${location.pathname}?sortBy=${model[0]?.field}&sortDirection=${model[0]?.sort}`,
+        //     )
+        //   }
+        // }}
         onRowClick={(item) => setCrystalToUpdate(item.row)}
         rows={crystals || []}
         columns={columns}
