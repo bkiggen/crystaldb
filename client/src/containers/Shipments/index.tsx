@@ -89,7 +89,7 @@ const Shipments = () => {
 
   useEffect(() => {
     resetSubType()
-  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscriptions])
 
   const handleSubmit = async (formData: typeof initialValues) => {
     if (cycleRangeMode) {
@@ -122,7 +122,7 @@ const Shipments = () => {
     formik.values.month,
     formik.values.year,
     formik.values.subscriptionId,
-  ]) // eslint-disable-line react-hooks/exhaustive-deps
+  ])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>

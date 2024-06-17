@@ -44,7 +44,7 @@ const Pagination = ({
 
   useEffect(() => {
     fetchData({ page: 1, searchTerm, sortBy, sortDirection })
-  }, [searchTerm]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchTerm])
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {

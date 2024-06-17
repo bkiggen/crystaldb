@@ -29,7 +29,7 @@ const DateChanger = ({ fetchShipments }) => {
 
   useEffect(() => {
     resetSubType()
-  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscriptions])
 
   const initialValues: {
     month: number

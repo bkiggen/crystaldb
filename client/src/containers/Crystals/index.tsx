@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+// import { useNavigate, useLocation } from "react-router-dom"
 
 import { Box, Container, Tooltip } from "@mui/material"
-import { DataGrid, GridCellParams, GridColDef, GridSortModel } from "@mui/x-data-grid"
+import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
 import { useCrystalStore } from "../../store/crystalStore"
 import type { CrystalT } from "../../types/Crystal"
@@ -13,13 +13,13 @@ import NewCrystal from "./NewCrystal"
 import UpdateCrystalModal from "./UpdateCrystalModal"
 
 const Crystals = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
+  // const navigate = useNavigate()
+  // const location = useLocation()
 
   const { fetchCrystals, crystals, paging } = useCrystalStore()
 
   const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
-  const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
+  // const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
 
   const getCrystals = async ({
     searchTerm = "",

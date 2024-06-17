@@ -98,7 +98,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
       formik.setFieldValue("cycleRangeStart", selectedShipment.cycleRangeStart)
       formik.setFieldValue("cycleRangeEnd", selectedShipment.cycleRangeEnd)
     }
-  }, [selectedShipment, selectedShipment.cycleRangeEnd]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedShipment, selectedShipment.cycleRangeEnd])
 
   const validationSchema = Yup.object({
     month: Yup.number().required("Month is required").integer().min(0).max(11),

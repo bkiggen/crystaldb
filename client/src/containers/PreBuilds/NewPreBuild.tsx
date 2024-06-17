@@ -34,7 +34,7 @@ const NewPreBuild = () => {
 
   useEffect(() => {
     formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
-  }, [subscriptions]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscriptions])
 
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),

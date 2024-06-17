@@ -115,7 +115,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
       crystalIds: preBuild.crystals.map((c) => c.id),
       subscriptionId: preBuild.subscription.id,
     })
-  }, [preBuild]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [preBuild])
 
   return (
     <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Pre-Build">
