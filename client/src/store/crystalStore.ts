@@ -40,8 +40,6 @@ type CrystalStoreT = {
     selectedMonth?: number
     selectedYear?: number
     selectedCycle?: number
-    selectedCycleRangeStart?: number
-    selectedCycleRangeEnd?: number
     filters?: Record<string, string>
   }) => Promise<void>
 }

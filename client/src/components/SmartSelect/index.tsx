@@ -14,10 +14,9 @@ import FilterMenu from "./FilterMenu"
 
 type SmartSelectT = {
   formik: ReturnType<typeof useFormik>
-  cycleRangeMode: boolean
 }
 
-const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
+const SmartSelect = ({ formik }: SmartSelectT) => {
   const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
@@ -52,9 +51,7 @@ const SmartSelect = ({ formik, cycleRangeMode }: SmartSelectT) => {
       selectedSubscriptionType: formik.values.subscriptionId,
       selectedMonth: formik.values.month,
       selectedYear: formik.values.year,
-      ...(cycleRangeMode ? {} : { selectedCycle: formik.values.cycle }),
-      ...(cycleRangeMode ? {} : { selectedCycleRangeStart: formik.values.cycleRangeStart }),
-      ...(cycleRangeMode ? {} : { selectedCycleRangeEnd: formik.values.cycleRangeEnd }),
+      selectedCycle: formik.values.cycle,
       filters,
     })
   }

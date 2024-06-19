@@ -58,8 +58,6 @@ const getPreviousShipmentCrystalIds = async (
       where: {
         month: currentMonth,
         year: currentYear,
-        cycleRangeStart: LessThanOrEqual(currentCycle),
-        cycleRangeEnd: MoreThanOrEqual(currentCycle),
         subscription: {
           id: subscriptionId,
         },

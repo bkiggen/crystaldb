@@ -8,47 +8,41 @@ import {
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm'
 
-import { Subscription } from "./Subscription";
-import { Crystal } from "./Crystal";
+import { Subscription } from './Subscription'
+import { Crystal } from './Crystal'
 
 @Entity()
 export class Shipment extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
-  @Column({ type: "int" })
-  month: number;
+  @Column({ type: 'int' })
+  month: number
 
-  @Column({ type: "int" })
-  year: number;
+  @Column({ type: 'int' })
+  year: number
 
-  @Column({ type: "int", nullable: true })
-  cycle: number;
+  @Column({ type: 'int', nullable: true })
+  cycle: number
 
-  @Column({ type: "int", nullable: true })
-  cycleRangeStart: number;
+  @Column({ type: 'int', nullable: true })
+  userCount: number
 
-  @Column({ type: "int", nullable: true })
-  cycleRangeEnd: number;
-
-  @Column({ type: "int", nullable: true })
-  userCount: number;
-
-  @Column({ type: "boolean", nullable: true })
-  userCountIsNew: number;
+  @Column({ type: 'boolean', nullable: true })
+  userCountIsNew: number
 
   @ManyToMany(() => Crystal)
   @JoinTable()
-  crystals: Crystal[];
+  crystals: Crystal[]
 
-  @ManyToOne(() => Subscription, (subscription) => subscription.shipments)
-  subscription: Subscription;
+  @ManyToOne(() => Subscription, subscription => subscription.shipments)
+  subscription: Subscription
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 }

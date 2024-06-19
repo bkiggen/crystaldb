@@ -15,10 +15,6 @@ const Shipment = ({ shipment }) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
   const { updateShipment } = useShipmentStore()
 
-  const shipDayNumber = shipment.cycle
-    ? shipment.cycle
-    : `${shipment.cycleRangeStart}-${shipment.cycleRangeEnd}`
-
   return (
     <>
       {selectedShipment && (
@@ -52,7 +48,7 @@ const Shipment = ({ shipment }) => {
           }}
           onClick={() => setSelectedShipment(shipment)}
         >
-          {shipment.subscription.shortName} #{shipDayNumber}
+          {shipment.subscription.shortName} #{shipment.cycle}
         </Typography>
         <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center", width: "100%" }}>
           <Typography

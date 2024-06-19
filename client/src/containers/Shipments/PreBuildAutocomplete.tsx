@@ -15,18 +15,14 @@ import CrystalChip from "../../components/SmartSelect/CrystalChip"
 type PreBuildAutocompleteT = {
   preBuilds: PreBuildT[]
   formik: ReturnType<typeof useFormik>
-  setCycleRangeMode: (arg: boolean) => void
 }
 
-const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuildAutocompleteT) => {
+const PreBuildAutocomplete = ({ preBuilds, formik }: PreBuildAutocompleteT) => {
   const [selectedPreBuildCrystals, setSelectedPreBuildCrystals] = useState<CrystalT[]>([])
   const [tempFormValues, setTempFormValues] = useState<PreBuildT | null>()
 
   const setFormWithTempValues = () => {
-    setCycleRangeMode(!tempFormValues.cycle)
     formik.setFieldValue("cycle", tempFormValues.cycle)
-    formik.setFieldValue("cycleRangeStart", tempFormValues.cycleRangeStart)
-    formik.setFieldValue("cycleRangeEnd", tempFormValues.cycleRangeEnd)
     formik.setFieldValue("subscriptionId", tempFormValues.subscription?.id)
     const existingCrystalIds = formik.values.crystalIds
     formik.setFieldValue(
@@ -50,12 +46,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
         <Autocomplete
           id="prebuild-autocomplete"
           options={preBuilds}
-          getOptionLabel={(option) =>
-            (option.subscription?.shortName || "Box") +
-            (option.cycle
-              ? `: ${option.cycle}`
-              : `: ${option.cycleRangeStart} - ${option.cycleRangeEnd}`)
-          }
+          getOptionLabel={(option) => (option.subscription?.shortName || "Box") + option.cycle}
           onChange={(_, newValue) => {
             if (!newValue) {
               setSelectedPreBuildCrystals([])
@@ -76,16 +67,9 @@ const PreBuildAutocomplete = ({ preBuilds, formik, setCycleRangeMode }: PreBuild
           )}
           renderOption={(props, option) => (
             <li {...props}>
-              {option.cycle ? (
-                <Typography>
-                  {option.subscription?.shortName || "Box"}: {option.cycle}
-                </Typography>
-              ) : (
-                <Typography>
-                  {option.subscription?.shortName || "Box"}: {option.cycleRangeStart} -{" "}
-                  {option.cycleRangeEnd}
-                </Typography>
-              )}
+              <Typography>
+                {option.subscription?.shortName || "Box"}: {option.cycle}
+              </Typography>
             </li>
           )}
           isOptionEqualToValue={(option, value) => option.id === value.id}

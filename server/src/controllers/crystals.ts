@@ -85,8 +85,6 @@ router.get(
       month,
       year,
       cycle,
-      cycleRangeStart,
-      cycleRangeEnd,
       // rarity,
       // findAge,
       // size,
@@ -98,28 +96,12 @@ router.get(
       [key: string]: string
     }
 
-    const cycleRangeStartInt = parseInt(cycleRangeStart as string)
-    const cycleRangeEndInt = parseInt(cycleRangeEnd as string)
-
     const selectedCrystalIdsArray = selectedCrystalIds.length
       ? (selectedCrystalIds as string).split(',')
       : []
     const excludedCrystalIdsArray = excludedCrystalIds.length
       ? (excludedCrystalIds as string).split(',')
       : []
-
-    let arrayOfRangeNumbers = []
-
-    // TODO: FINISH RANGE FUNCTIONALITY
-
-    if (cycleRangeStartInt && cycleRangeEndInt) {
-      arrayOfRangeNumbers = Array.from(
-        { length: cycleRangeEndInt - cycleRangeStartInt + 1 },
-        (_, i) => cycleRangeStartInt + i
-      )
-    } else {
-      arrayOfRangeNumbers = [cycle]
-    }
 
     const suggestions = await suggestCrystals({
       selectedCrystalIds: selectedCrystalIdsArray,

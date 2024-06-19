@@ -18,17 +18,10 @@ import PreBuildAutocomplete from "./PreBuildAutocomplete"
 
 type NewShipmentT = {
   allSubscriptions: SubscriptionT[]
-  cycleRangeMode: boolean
-  setCycleRangeMode: (arg: boolean) => void
   formik: ReturnType<typeof useFormik>
 }
 
-const NewShipment = ({
-  formik,
-  cycleRangeMode,
-  setCycleRangeMode,
-  allSubscriptions,
-}: NewShipmentT) => {
+const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
   const { preBuilds, fetchPreBuilds } = usePreBuildStore()
 
   useEffect(() => {
@@ -103,60 +96,19 @@ const NewShipment = ({
                   fontSize: "14px",
                 }}
               >
-                {cycleRangeMode ? "Cycle Range" : "Cycle"}
+                Cycle
               </Typography>
-              <Button
-                onClick={() => setCycleRangeMode(!cycleRangeMode)}
-                sx={{
-                  margin: 0,
-                  height: "14px",
-                  marginLeft: "6px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  color: "grey",
-                  border: "none !important",
-                  outline: "none !important",
-                }}
-              >
-                ({cycleRangeMode ? "Change to Single" : "Change to Range"})
-              </Button>
             </Box>
-            {cycleRangeMode ? (
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <TextField
-                    id="cycleRangeStart"
-                    variant="outlined"
-                    fullWidth
-                    type="number"
-                    {...formik.getFieldProps("cycleRangeStart")}
-                    inputProps={{ style: { color: "white" } }}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    id="cycleRangeEnd"
-                    variant="outlined"
-                    fullWidth
-                    type="number"
-                    {...formik.getFieldProps("cycleRangeEnd")}
-                    inputProps={{ style: { color: "white" } }}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-              </Grid>
-            ) : (
-              <TextField
-                id="month"
-                variant="outlined"
-                fullWidth
-                type="number"
-                {...formik.getFieldProps("cycle")}
-                inputProps={{ style: { color: "white" } }}
-                sx={textFieldStyles}
-              />
-            )}
+
+            <TextField
+              id="month"
+              variant="outlined"
+              fullWidth
+              type="number"
+              {...formik.getFieldProps("cycle")}
+              inputProps={{ style: { color: "white" } }}
+              sx={textFieldStyles}
+            />
           </Grid>
         </Grid>
         <Grid
@@ -192,15 +144,11 @@ const NewShipment = ({
         <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
         <Grid container>
           <Grid item xs={6}>
-            <PreBuildAutocomplete
-              preBuilds={preBuilds}
-              formik={formik}
-              setCycleRangeMode={setCycleRangeMode}
-            />
+            <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth variant="outlined">
-              <SmartSelect formik={formik} cycleRangeMode={cycleRangeMode} />
+              <SmartSelect formik={formik} />
             </FormControl>
           </Grid>
         </Grid>
