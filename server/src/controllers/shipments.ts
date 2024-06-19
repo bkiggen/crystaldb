@@ -69,6 +69,8 @@ router.post('/', authenticateToken, async (req: Request, res: Response) => {
     const subscription = await Subscription.findOneBy({ id: subscriptionId })
     const crystals = await Crystal.findBy({ id: In(crystalIds) })
 
+    // TODO KIGGEN: parse shipments from csv and create all
+
     if (!subscription) {
       return res.status(400).send('Subscription not found')
     }
@@ -87,16 +89,7 @@ router.post('/', authenticateToken, async (req: Request, res: Response) => {
 
     let shipments = []
 
-    // TODO KIGGEN: need to parse out cycles to create here
-    const cycleRangeStart = 0
-    const cycleRangeEnd = 1
-
-    if (cycleRangeStart !== null && cycleRangeEnd !== null) {
-      for (let c = cycleRangeStart; c <= cycleRangeEnd; c++) {
-        const shipment = await createAndSaveShipment(c)
-        shipments.push(shipment)
-      }
-    } else if (cycle !== null) {
+    if (cycle !== null) {
       const shipment = await createAndSaveShipment(cycle)
       shipments.push(shipment)
     } else {

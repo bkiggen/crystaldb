@@ -62,9 +62,9 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
 
   createShipment: async (newShipment) => {
     try {
-      const createdShipment = await createShipmentRequest(newShipment)
+      const createdShipments = await createShipmentRequest(newShipment)
       set((state) => ({
-        shipments: [createdShipment, ...state.shipments],
+        shipments: [...createdShipments, ...state.shipments],
       }))
     } catch (error) {
       console.error("Failed to create shipment", error)
