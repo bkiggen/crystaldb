@@ -38,7 +38,6 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   const { updatePreBuild, deletePreBuild } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
   useEffect(() => {
@@ -53,14 +52,10 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
 
   const initialValues: {
     cycle: number
-    cycleRangeStart: number
-    cycleRangeEnd: number
     crystalIds: number[]
     subscriptionId: number
   } = {
     cycle: preBuild.cycle,
-    cycleRangeStart: preBuild.cycleRangeStart,
-    cycleRangeEnd: preBuild.cycleRangeEnd,
     crystalIds: preBuild.crystals.map((c) => c.id),
     subscriptionId: preBuild.subscription.id,
   }
@@ -70,32 +65,12 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [])
 
   const validationSchema = Yup.object({
-    cycle: Yup.number().nullable().integer().min(1),
-    cycleRangeStart: Yup.number().nullable().integer().min(1),
-    cycleRangeEnd: Yup.number().nullable().integer().min(1),
+    cycle: Yup.number().nullable().integer().min(1).required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
-  }).test(
-    "cycle-or-cycleRange",
-    "Either cycle or cycle range (start and end) must be provided",
-    (values) => {
-      const { cycle, cycleRangeStart, cycleRangeEnd } = values
-      const isCycleValid = cycle !== null
-      const isCycleRangeValid = cycleRangeStart !== null && cycleRangeEnd !== null
-
-      return isCycleValid || isCycleRangeValid
-    },
-  )
+  })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    if (cycleRangeMode) {
-      formData.cycle = null
-    }
-    if (!cycleRangeMode) {
-      formData.cycleRangeStart = null
-      formData.cycleRangeEnd = null
-    }
-
     updatePreBuild({ ...formData, id: preBuild.id })
     setSelectedPreBuild(null)
     formik.resetForm()
@@ -110,8 +85,6 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   useEffect(() => {
     formik.setValues({
       cycle: preBuild.cycle,
-      cycleRangeStart: preBuild.cycleRangeStart,
-      cycleRangeEnd: preBuild.cycleRangeEnd,
       crystalIds: preBuild.crystals.map((c) => c.id),
       subscriptionId: preBuild.subscription.id,
     })
@@ -143,60 +116,18 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                     color: "white",
                   }}
                 >
-                  {cycleRangeMode ? "Cycle Range" : "Cycle"}
+                  Cycle
                 </Typography>
-                <Button
-                  onClick={() => setCycleRangeMode((prev) => !prev)}
-                  sx={{
-                    margin: 0,
-                    height: "14px",
-                    marginLeft: "6px",
-                    fontSize: "12px",
-                    cursor: "pointer",
-                    color: "whitesmoke",
-                    border: "none !important",
-                    outline: "none !important",
-                  }}
-                >
-                  ({cycleRangeMode ? "Change to Single" : "Change to Range"})
-                </Button>
               </Box>
-              {cycleRangeMode ? (
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="cycleRangeStart"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
-                      {...formik.getFieldProps("cycleRangeStart")}
-                      inputProps={{ style: { color: "white" } }}
-                      sx={textFieldStyles}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="cycleRangeEnd"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
-                      {...formik.getFieldProps("cycleRangeEnd")}
-                      inputProps={{ style: { color: "white" } }}
-                      sx={textFieldStyles}
-                    />
-                  </Grid>
-                </Grid>
-              ) : (
-                <TextField
-                  id="month"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  {...formik.getFieldProps("cycle")}
-                  inputProps={{ style: { color: "white" } }}
-                  sx={textFieldStyles}
-                />
-              )}
+              <TextField
+                id="month"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("cycle")}
+                inputProps={{ style: { color: "white" } }}
+                sx={textFieldStyles}
+              />
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth variant="outlined">

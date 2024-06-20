@@ -40,7 +40,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
   const { updateShipment, deleteShipment } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [cycleRangeMode, setCycleRangeMode] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
   const currentYear = dayjs().year()
@@ -55,8 +54,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
       month: selectedShipment.month,
       year: selectedShipment.year,
       cycle: selectedShipment.cycle,
-      cycleRangeStart: selectedShipment.cycleRangeStart,
-      cycleRangeEnd: selectedShipment.cycleRangeEnd,
       crystalIds: selectedShipment.crystals.map((c) => c.id),
       subscriptionId: selectedShipment.subscription.id || 1,
       userCount: selectedShipment.userCount,
@@ -72,8 +69,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     month: number
     year: number
     cycle: number
-    cycleRangeStart: number
-    cycleRangeEnd: number
     crystalIds: number[]
     subscriptionId: number
     userCount: number
@@ -81,8 +76,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     month: currentMonth,
     year: currentYear,
     cycle: selectedShipment.cycle,
-    cycleRangeStart: selectedShipment.cycleRangeStart,
-    cycleRangeEnd: selectedShipment.cycleRangeEnd,
     crystalIds: selectedShipment.crystals.map((c) => c.id),
     subscriptionId: selectedShipment.subscription.id || 1,
     userCount: selectedShipment.userCount || 0,
@@ -92,14 +85,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     fetchCrystals({ noPaging: true })
   }, [])
 
-  useEffect(() => {
-    if (selectedShipment.cycleRangeStart) {
-      setCycleRangeMode(true)
-      formik.setFieldValue("cycleRangeStart", selectedShipment.cycleRangeStart)
-      formik.setFieldValue("cycleRangeEnd", selectedShipment.cycleRangeEnd)
-    }
-  }, [selectedShipment, selectedShipment.cycleRangeEnd])
-
   const validationSchema = Yup.object({
     month: Yup.number().required("Month is required").integer().min(0).max(11),
     year: Yup.number()
@@ -107,32 +92,13 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
       .integer()
       .min(2016)
       .max(currentYear + 1),
-    cycle: Yup.number().nullable().integer().min(1),
-    cycleRangeStart: Yup.number().nullable().integer().min(1),
-    cycleRangeEnd: Yup.number().nullable().integer().min(1),
+    cycle: Yup.number().nullable().integer().min(1).required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     userCount: Yup.number().integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
-  }).test(
-    "cycle-or-cycleRange",
-    "Either cycle or cycle range (start and end) must be provided",
-    (values) => {
-      const { cycle, cycleRangeStart, cycleRangeEnd } = values
-      const isCycleValid = cycle !== null
-      const isCycleRangeValid = cycleRangeStart !== null && cycleRangeEnd !== null
-
-      return isCycleValid || isCycleRangeValid
-    },
-  )
+  })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    if (cycleRangeMode) {
-      formData.cycle = null
-    }
-    if (!cycleRangeMode) {
-      formData.cycleRangeStart = null
-      formData.cycleRangeEnd = null
-    }
     const userCountIsNew = formData.userCount !== selectedShipment.userCount
     await updateShipment({
       ...formData,
@@ -243,72 +209,20 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
                     color: "white",
                   }}
                 >
-                  {cycleRangeMode ? "Cycle Range" : "Cycle"}
+                  Cycle
                 </Typography>
-                <Button
-                  onClick={() => setCycleRangeMode((prev) => !prev)}
-                  sx={{
-                    margin: 0,
-                    height: "14px",
-                    marginLeft: "6px",
-                    fontSize: "12px",
-                    cursor: "pointer",
-                    color: "whitesmoke",
-                    border: "none !important",
-                    outline: "none !important",
-                  }}
-                >
-                  ({cycleRangeMode ? "Change to Single" : "Change to Range"})
-                </Button>
               </Box>
-              {cycleRangeMode ? (
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="cycleRangeStart"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
-                      {...formik.getFieldProps("cycleRangeStart")}
-                      inputProps={{ style: { color: "white" } }}
-                      sx={textFieldStyles}
-                      error={
-                        formik.touched.cycleRangeStart && Boolean(formik.errors.cycleRangeStart)
-                      }
-                      helperText={
-                        <>{formik.touched.cycleRangeStart ? formik.errors.cycleRangeStart : ""}</>
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      id="cycleRangeEnd"
-                      variant="outlined"
-                      fullWidth
-                      type="number"
-                      {...formik.getFieldProps("cycleRangeEnd")}
-                      inputProps={{ style: { color: "white" } }}
-                      sx={textFieldStyles}
-                      error={formik.touched.cycleRangeEnd && Boolean(formik.errors.cycleRangeEnd)}
-                      helperText={
-                        <>{formik.touched.cycleRangeEnd ? formik.errors.cycleRangeEnd : ""}</>
-                      }
-                    />
-                  </Grid>
-                </Grid>
-              ) : (
-                <TextField
-                  id="month"
-                  variant="outlined"
-                  fullWidth
-                  type="number"
-                  {...formik.getFieldProps("cycle")}
-                  inputProps={{ style: { color: "white" } }}
-                  sx={textFieldStyles}
-                  error={formik.touched.cycle && Boolean(formik.errors.cycle)}
-                  helperText={<>{formik.touched.cycle ? formik.errors.cycle : ""}</>}
-                />
-              )}
+              <TextField
+                id="month"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("cycle")}
+                inputProps={{ style: { color: "white" } }}
+                sx={textFieldStyles}
+                error={formik.touched.cycle && Boolean(formik.errors.cycle)}
+                helperText={<>{formik.touched.cycle ? formik.errors.cycle : ""}</>}
+              />
             </Grid>
             <Grid item xs={6}>
               <FormControl fullWidth variant="outlined">

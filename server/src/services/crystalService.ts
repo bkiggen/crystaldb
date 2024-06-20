@@ -1,14 +1,7 @@
 import { Crystal, Inventory } from '../entity/Crystal'
 import { Shipment } from '../entity/Shipment'
 import { PreBuild } from '../entity/PreBuild'
-import {
-  In,
-  Not,
-  MoreThan,
-  SelectQueryBuilder,
-  MoreThanOrEqual,
-  LessThanOrEqual,
-} from 'typeorm'
+import { In, Not, MoreThan, SelectQueryBuilder } from 'typeorm'
 
 const getPreviousShipmentCrystalIds = async (
   month: number,
@@ -58,8 +51,6 @@ const getPreviousShipmentCrystalIds = async (
       where: {
         month: currentMonth,
         year: currentYear,
-        cycleRangeStart: LessThanOrEqual(currentCycle),
-        cycleRangeEnd: MoreThanOrEqual(currentCycle),
         subscription: {
           id: subscriptionId,
         },

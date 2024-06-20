@@ -4,6 +4,7 @@ import { Subscription } from '../entity/Subscription'
 import { In, ILike } from 'typeorm'
 import { Crystal } from '../entity/Crystal'
 import { authenticateToken } from './util/authenticateToken'
+import { parseCycleCSVToNumbersArray } from './util/parseStringToNumbersArray'
 
 const router = Router()
 
@@ -36,7 +37,6 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
     order: {
       subscription: { id: 'ASC' }, // Correctly order by subscriptionId
       cycle: 'ASC', // Then by cycle in ascending order
-      cycleRangeStart: 'ASC', // Then by cycleRangeStart in ascending order
       year: 'DESC', // Then by year in descending order
       month: 'DESC', // Then by month in descending order
     },
@@ -64,16 +64,27 @@ router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
   res.json(shipment)
 })
 
+// Helper function to create and save a shipment
+const createAndSaveShipment = async (
+  cycle: number,
+  shipmentData,
+  crystals,
+  subscription
+) => {
+  const shipment = Shipment.create({
+    ...shipmentData,
+    cycle,
+    crystals,
+    subscription,
+  })
+  await Shipment.save(shipment)
+  return shipment
+}
+
 router.post('/', authenticateToken, async (req: Request, res: Response) => {
   try {
-    const {
-      crystalIds,
-      subscriptionId,
-      cycle,
-      cycleRangeStart,
-      cycleRangeEnd,
-      ...shipmentData
-    } = req.body
+    const { crystalIds, subscriptionId, cycleString, ...shipmentData } =
+      req.body
     const subscription = await Subscription.findOneBy({ id: subscriptionId })
     const crystals = await Crystal.findBy({ id: In(crystalIds) })
 
@@ -81,37 +92,26 @@ router.post('/', authenticateToken, async (req: Request, res: Response) => {
       return res.status(400).send('Subscription not found')
     }
 
-    // Helper function to create and save a shipment
-    const createAndSaveShipment = async (cycle: number) => {
-      const shipment = Shipment.create({
-        ...shipmentData,
-        cycle,
-        crystals,
-        subscription,
-      })
-      await Shipment.save(shipment)
-      return shipment
-    }
+    // parse out all the cycles from the cycleString
+    const cyclesArray = parseCycleCSVToNumbersArray(cycleString)
 
-    let shipments = []
+    let newShipments = []
 
-    if (cycleRangeStart !== null && cycleRangeEnd !== null) {
-      for (let c = cycleRangeStart; c <= cycleRangeEnd; c++) {
-        const shipment = await createAndSaveShipment(c)
-        shipments.push(shipment)
-      }
-    } else if (cycle !== null) {
-      const shipment = await createAndSaveShipment(cycle)
-      shipments.push(shipment)
-    } else {
-      return res
-        .status(400)
-        .send(
-          'Either cycle or cycleRangeStart and cycleRangeEnd must be provided'
+    if (cyclesArray.length > 0) {
+      for (const cycle of cyclesArray) {
+        const shipment = await createAndSaveShipment(
+          cycle,
+          shipmentData,
+          crystals,
+          subscription
         )
+        newShipments.push(shipment)
+      }
+    } else {
+      return res.status(400).send('Cycle must be provided')
     }
 
-    res.json(shipments)
+    res.json(newShipments)
   } catch (error) {
     res.status(400).send(error.message)
   }

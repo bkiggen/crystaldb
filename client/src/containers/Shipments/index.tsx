@@ -36,25 +36,19 @@ const Shipments = () => {
     formik.setFieldValue("crystalIds", uniqueIds)
   }
 
-  const [cycleRangeMode, setCycleRangeMode] = useState(false)
-
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
   const initialValues: {
     month: number
     year: number
-    cycle: number
-    cycleRangeStart: number
-    cycleRangeEnd: number
+    cycleString: string
     crystalIds: number[]
     subscriptionId: number
   } = {
     month: currentMonth,
     year: currentYear,
-    cycle: 1,
-    cycleRangeStart: 1,
-    cycleRangeEnd: 5,
+    cycleString: "1",
     crystalIds: [],
     subscriptionId: subscriptions[0]?.id || 0,
   }
@@ -66,22 +60,10 @@ const Shipments = () => {
       .integer()
       .min(2016)
       .max(currentYear + 1),
-    cycle: Yup.number().nullable().integer().min(1),
-    cycleRangeStart: Yup.number().nullable().integer().min(1),
-    cycleRangeEnd: Yup.number().nullable().integer().min(1),
+    cycleString: Yup.string().nullable().required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
-  }).test(
-    "cycle-or-cycleRange",
-    "Either cycle or cycle range (start and end) must be provided",
-    (values) => {
-      const { cycle, cycleRangeStart, cycleRangeEnd } = values
-      const isCycleValid = cycle !== null
-      const isCycleRangeValid = cycleRangeStart !== null && cycleRangeEnd !== null
-
-      return isCycleValid || isCycleRangeValid
-    },
-  )
+  })
 
   const resetSubType = () => {
     formik.setFieldValue("subscriptionId", subscriptions[0]?.id)
@@ -92,13 +74,6 @@ const Shipments = () => {
   }, [subscriptions])
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    if (cycleRangeMode) {
-      formData.cycle = null
-    }
-    if (!cycleRangeMode) {
-      formData.cycleRangeStart = null
-      formData.cycleRangeEnd = null
-    }
     createShipment({ ...formData, userCount: 0, userCountIsNew: false })
 
     await formik.resetForm()
@@ -116,9 +91,7 @@ const Shipments = () => {
       setSuggestedCrystals([])
     }
   }, [
-    formik.values.cycle,
-    formik.values.cycleRangeStart,
-    formik.values.cycleRangeEnd,
+    formik.values.cycleString,
     formik.values.month,
     formik.values.year,
     formik.values.subscriptionId,
@@ -126,12 +99,7 @@ const Shipments = () => {
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewShipment
-        allSubscriptions={subscriptions}
-        formik={formik}
-        setCycleRangeMode={setCycleRangeMode}
-        cycleRangeMode={cycleRangeMode}
-      />
+      <NewShipment allSubscriptions={subscriptions} formik={formik} />
       {selectedShipment ? (
         <UpdateShipmentModal
           selectedShipment={selectedShipment}

@@ -22,7 +22,11 @@ type ShipmentStoreT = {
     month?: number
     year?: number
   }) => Promise<void>
-  createShipment: (newShipment: Omit<ShipmentT, "id">) => Promise<void>
+  createShipment: (
+    newShipment: Omit<ShipmentT, "id" | "cycle"> & {
+      cycleString: string
+    },
+  ) => Promise<void>
   updateShipment: (updatedShipment: ShipmentT) => Promise<void>
   deleteShipment: (shipmentId: number) => Promise<void>
   loading: boolean
@@ -62,9 +66,9 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
 
   createShipment: async (newShipment) => {
     try {
-      const createdShipment = await createShipmentRequest(newShipment)
+      const createdShipments = await createShipmentRequest(newShipment)
       set((state) => ({
-        shipments: [createdShipment, ...state.shipments],
+        shipments: [...createdShipments, ...state.shipments],
       }))
     } catch (error) {
       console.error("Failed to create shipment", error)

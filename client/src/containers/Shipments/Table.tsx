@@ -56,11 +56,7 @@ const Shipments = ({
       align: "center",
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return (
-          <div>
-            {params.row.cycle || `${params.row.cycleRangeStart} - ${params.row.cycleRangeEnd}`}
-          </div>
-        )
+        return <div>{params.row.cycle}</div>
       },
     },
     {

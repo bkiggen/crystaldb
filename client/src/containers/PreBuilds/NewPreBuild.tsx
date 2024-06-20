@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 
 import { useFormik } from "formik"
 
@@ -16,18 +16,13 @@ import CrystalSelect from "../../components/CrystalSelect"
 const NewPreBuild = () => {
   const { createPreBuild } = usePreBuildStore()
   const { subscriptions } = useSubscriptionStore()
-  const [cycleRangeMode, setCycleRangeMode] = useState(false)
 
   const initialValues: {
     cycle: number
-    cycleRangeStart: number
-    cycleRangeEnd: number
     crystalIds: number[]
     subscriptionId: number
   } = {
     cycle: 1,
-    cycleRangeStart: 1,
-    cycleRangeEnd: 5,
     crystalIds: [],
     subscriptionId: subscriptions[0]?.id || 0,
   }
@@ -38,30 +33,20 @@ const NewPreBuild = () => {
 
   const validationSchema = Yup.object({
     cycle: Yup.number().nullable().integer().min(1),
-    cycleRangeStart: Yup.number().nullable().integer().min(1),
-    cycleRangeEnd: Yup.number().nullable().integer().min(1),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   }).test(
     "cycle-or-cycleRange",
     "Either cycle or cycle range (start and end) must be provided",
     (values) => {
-      const { cycle, cycleRangeStart, cycleRangeEnd } = values
+      const { cycle } = values
       const isCycleValid = cycle !== null
-      const isCycleRangeValid = cycleRangeStart !== null && cycleRangeEnd !== null
 
-      return isCycleValid || isCycleRangeValid
+      return isCycleValid
     },
   )
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    if (cycleRangeMode) {
-      formData.cycle = null
-    }
-    if (!cycleRangeMode) {
-      formData.cycleRangeStart = null
-      formData.cycleRangeEnd = null
-    }
     createPreBuild(formData)
     formik.resetForm()
   }
@@ -100,60 +85,18 @@ const NewPreBuild = () => {
                   fontSize: "14px",
                 }}
               >
-                {cycleRangeMode ? "Cycle Range" : "Cycle"}
+                Cycle
               </Typography>
-              <Button
-                onClick={() => setCycleRangeMode((prev) => !prev)}
-                sx={{
-                  margin: 0,
-                  height: "14px",
-                  marginLeft: "6px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  color: "grey",
-                  border: "none !important",
-                  outline: "none !important",
-                }}
-              >
-                ({cycleRangeMode ? "Change to Single" : "Change to Range"})
-              </Button>
             </Box>
-            {cycleRangeMode ? (
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <TextField
-                    id="cycleRangeStart"
-                    variant="outlined"
-                    fullWidth
-                    type="number"
-                    {...formik.getFieldProps("cycleRangeStart")}
-                    inputProps={{ style: { color: "white" } }}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    id="cycleRangeEnd"
-                    variant="outlined"
-                    fullWidth
-                    type="number"
-                    {...formik.getFieldProps("cycleRangeEnd")}
-                    inputProps={{ style: { color: "white" } }}
-                    sx={textFieldStyles}
-                  />
-                </Grid>
-              </Grid>
-            ) : (
-              <TextField
-                id="cycle"
-                variant="outlined"
-                fullWidth
-                type="number"
-                {...formik.getFieldProps("cycle")}
-                inputProps={{ style: { color: "white" } }}
-                sx={textFieldStyles}
-              />
-            )}
+            <TextField
+              id="cycle"
+              variant="outlined"
+              fullWidth
+              type="number"
+              {...formik.getFieldProps("cycle")}
+              inputProps={{ style: { color: "white" } }}
+              sx={textFieldStyles}
+            />
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth variant="outlined">

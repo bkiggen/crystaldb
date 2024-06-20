@@ -6,8 +6,6 @@ export type ShipmentT = {
   month: number
   year: number
   cycle: number
-  cycleRangeStart: number
-  cycleRangeEnd: number
   crystalIds: number[]
   crystals?: CrystalT[]
   createdAt?: string
