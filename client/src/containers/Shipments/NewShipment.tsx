@@ -96,16 +96,15 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
                   fontSize: "14px",
                 }}
               >
-                Cycle
+                Cycle (ex: 1, 4-5, 23, 56-76)
               </Typography>
             </Box>
 
             <TextField
-              id="month"
+              id="cycleString"
               variant="outlined"
               fullWidth
-              type="number"
-              {...formik.getFieldProps("cycle")}
+              {...formik.getFieldProps("cycleString")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
             />

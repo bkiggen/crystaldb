@@ -22,7 +22,11 @@ type ShipmentStoreT = {
     month?: number
     year?: number
   }) => Promise<void>
-  createShipment: (newShipment: Omit<ShipmentT, "id">) => Promise<void>
+  createShipment: (
+    newShipment: Omit<ShipmentT, "id" | "cycle"> & {
+      cycleString: string
+    },
+  ) => Promise<void>
   updateShipment: (updatedShipment: ShipmentT) => Promise<void>
   deleteShipment: (shipmentId: number) => Promise<void>
   loading: boolean

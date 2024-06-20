@@ -4,6 +4,7 @@ import { Subscription } from '../entity/Subscription'
 import { In, ILike } from 'typeorm'
 import { Crystal } from '../entity/Crystal'
 import { authenticateToken } from './util/authenticateToken'
+import { parseCycleCSVToNumbersArray } from './util/parseStringToNumbersArray'
 
 const router = Router()
 
@@ -63,40 +64,54 @@ router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
   res.json(shipment)
 })
 
+// Helper function to create and save a shipment
+const createAndSaveShipment = async (
+  cycle: number,
+  shipmentData,
+  crystals,
+  subscription
+) => {
+  const shipment = Shipment.create({
+    ...shipmentData,
+    cycle,
+    crystals,
+    subscription,
+  })
+  await Shipment.save(shipment)
+  return shipment
+}
+
 router.post('/', authenticateToken, async (req: Request, res: Response) => {
   try {
-    const { crystalIds, subscriptionId, cycle, ...shipmentData } = req.body
+    const { crystalIds, subscriptionId, cycleString, ...shipmentData } =
+      req.body
     const subscription = await Subscription.findOneBy({ id: subscriptionId })
     const crystals = await Crystal.findBy({ id: In(crystalIds) })
-
-    // TODO KIGGEN: parse shipments from csv and create all
 
     if (!subscription) {
       return res.status(400).send('Subscription not found')
     }
 
-    // Helper function to create and save a shipment
-    const createAndSaveShipment = async (cycle: number) => {
-      const shipment = Shipment.create({
-        ...shipmentData,
-        cycle,
-        crystals,
-        subscription,
-      })
-      await Shipment.save(shipment)
-      return shipment
-    }
+    // parse out all the cycles from the cycleString
+    const cyclesArray = parseCycleCSVToNumbersArray(cycleString)
 
-    let shipments = []
+    let newShipments = []
 
-    if (cycle !== null) {
-      const shipment = await createAndSaveShipment(cycle)
-      shipments.push(shipment)
+    if (cyclesArray.length > 0) {
+      for (const cycle of cyclesArray) {
+        const shipment = await createAndSaveShipment(
+          cycle,
+          shipmentData,
+          crystals,
+          subscription
+        )
+        newShipments.push(shipment)
+      }
     } else {
       return res.status(400).send('Cycle must be provided')
     }
 
-    res.json(shipments)
+    res.json(newShipments)
   } catch (error) {
     res.status(400).send(error.message)
   }

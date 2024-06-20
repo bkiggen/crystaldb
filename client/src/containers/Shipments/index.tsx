@@ -42,13 +42,13 @@ const Shipments = () => {
   const initialValues: {
     month: number
     year: number
-    cycle: number
+    cycleString: string
     crystalIds: number[]
     subscriptionId: number
   } = {
     month: currentMonth,
     year: currentYear,
-    cycle: 1,
+    cycleString: "1",
     crystalIds: [],
     subscriptionId: subscriptions[0]?.id || 0,
   }
@@ -60,7 +60,7 @@ const Shipments = () => {
       .integer()
       .min(2016)
       .max(currentYear + 1),
-    cycle: Yup.number().nullable().integer().min(1).required("Cycle is required"),
+    cycleString: Yup.string().nullable().required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   })
@@ -90,7 +90,12 @@ const Shipments = () => {
     if (suggestedCrystals.length) {
       setSuggestedCrystals([])
     }
-  }, [formik.values.cycle, formik.values.month, formik.values.year, formik.values.subscriptionId])
+  }, [
+    formik.values.cycleString,
+    formik.values.month,
+    formik.values.year,
+    formik.values.subscriptionId,
+  ])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>

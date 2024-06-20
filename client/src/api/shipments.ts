@@ -3,7 +3,9 @@ import { makeRestRequest } from "./makeRequest"
 import type { PagingT } from "../types/Paging"
 
 export const createShipmentRequest = async (
-  newShipment: Omit<ShipmentT, "id">,
+  newShipment: Omit<ShipmentT, "id" | "cycle"> & {
+    cycleString: string
+  },
 ): Promise<ShipmentT[]> => {
   const endpoint = "/shipments"
   return makeRestRequest<ShipmentT[]>({
