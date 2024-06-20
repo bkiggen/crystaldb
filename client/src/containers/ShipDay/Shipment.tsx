@@ -8,12 +8,12 @@ import ColorIndicator from "../../components/ColorIndicator"
 
 import colors from "../../styles/colors"
 
-import VisibilityIcon from "@mui/icons-material/Visibility"
+// import VisibilityIcon from "@mui/icons-material/Visibility"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
-const Shipment = ({ shipment }) => {
+const Shipment = ({ shipmentGroup }) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
-  const { updateShipment } = useShipmentStore()
+  // const { updateShipment } = useShipmentStore()
 
   return (
     <>
@@ -24,7 +24,7 @@ const Shipment = ({ shipment }) => {
         />
       )}
       <Box
-        key={shipment.id}
+        key={shipmentGroup.id}
         sx={{
           padding: "24px",
           margin: "12px",
@@ -46,22 +46,23 @@ const Shipment = ({ shipment }) => {
             cursor: "pointer",
             width: "100%",
           }}
-          onClick={() => setSelectedShipment(shipment)}
+          // onClick={() => setSelectedShipment(shipment)}
         >
-          {shipment.subscription.shortName} #{shipment.cycle}
+          {shipmentGroup.subscription.shortName}: {shipmentGroup.shipmentRange}
         </Typography>
         <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center", width: "100%" }}>
-          <Typography
+          {/* <Typography
             sx={{
               textAlign: "center",
-              color: shipment?.userCountIsNew ? "red" : "white",
+              // color: shipment?.userCountIsNew ? "red" : "white",
+              color: "white",
               marginRight: "4px",
               width: "100%",
             }}
           >
             ({shipment.userCount || 0})
-          </Typography>
-          {shipment?.userCountIsNew && (
+          </Typography> */}
+          {/* {shipment?.userCountIsNew && (
             <VisibilityIcon
               sx={{ color: "red", cursor: "pointer" }}
               onClick={() => {
@@ -72,10 +73,10 @@ const Shipment = ({ shipment }) => {
                 updateShipment(newData)
               }}
             />
-          )}
+          )} */}
         </Box>
         <Box>
-          {shipment.crystals
+          {shipmentGroup.crystals
             .slice()
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((crystal) => (
