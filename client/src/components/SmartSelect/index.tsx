@@ -51,7 +51,7 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
       selectedSubscriptionType: formik.values.subscriptionId,
       selectedMonth: formik.values.month,
       selectedYear: formik.values.year,
-      selectedCycle: formik.values.cycle,
+      selectedCyclesString: formik.values.cycleString,
       filters,
     })
   }

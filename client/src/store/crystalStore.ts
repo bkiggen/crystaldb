@@ -39,7 +39,7 @@ type CrystalStoreT = {
     selectedSubscriptionType?: string
     selectedMonth?: number
     selectedYear?: number
-    selectedCycle?: number
+    selectedCyclesString?: number
     filters?: Record<string, string>
   }) => Promise<void>
 }

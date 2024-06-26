@@ -7,6 +7,7 @@ import { suggestCrystals } from '../services/crystalService'
 import { authenticateToken } from './util/authenticateToken'
 import { escapeSpecialCharacters } from './util/controllerHelpers'
 import { addFilters } from '../services/crystalService'
+import { parseCycleCSVToNumbersArray } from './util/parseStringToNumbersArray'
 
 const router = Router()
 
@@ -84,7 +85,7 @@ router.get(
       subscriptionId,
       month,
       year,
-      cycle,
+      cycleString,
       // rarity,
       // findAge,
       // size,
@@ -95,6 +96,8 @@ router.get(
     } = req.query as {
       [key: string]: string
     }
+
+    const cyclesArray = parseCycleCSVToNumbersArray(cycleString)
 
     const selectedCrystalIdsArray = selectedCrystalIds.length
       ? (selectedCrystalIds as string).split(',')
@@ -109,7 +112,7 @@ router.get(
       subscriptionId: parseInt((subscriptionId || 1) as string),
       month: parseInt(month as string),
       year: parseInt(year as string),
-      cycle: parseInt(cycle as string),
+      cyclesArray: cyclesArray,
       // rarity: rarity ? rarity.split(",").map((item) => item.trim()) : [],
       // findAge: findAge as string,
       // size: size as string,
