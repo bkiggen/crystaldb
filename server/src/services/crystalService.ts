@@ -130,7 +130,7 @@ export const suggestCrystals = async ({
   subscriptionId,
   month,
   year,
-  cyclesArray,
+  cyclesArray = [],
   inventory,
   category,
   location,
