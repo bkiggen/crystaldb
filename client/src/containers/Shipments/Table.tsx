@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Button, Checkbox, Modal } from "@mui/material"
+import { Box, Button, Checkbox } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
 import { monthOptions } from "../../lib/constants"
