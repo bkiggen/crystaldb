@@ -37,7 +37,7 @@ type UpdateShipmentModalT = {
 
 const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateShipmentModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
-  const { updateShipment, deleteShipment } = useShipmentStore()
+  const { updateShipment, deleteShipments } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
   const [deleteConfirm, setDeleteConfirm] = useState(false)
@@ -61,7 +61,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
   }, [selectedShipment])
 
   const handleDelete = async () => {
-    deleteShipment(selectedShipment.id)
+    deleteShipments([selectedShipment.id])
     setSelectedShipment(null)
   }
 

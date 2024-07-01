@@ -57,8 +57,8 @@ export const updateShipmentRequest = async (updatedShipment: ShipmentT): Promise
   })
 }
 
-export const deleteShipmentRequest = async (shipmentId: number): Promise<ShipmentT> => {
-  const endpoint = `/shipments/${shipmentId}`
+export const deleteShipmentsRequest = async (shipmentIdArr: number[]): Promise<ShipmentT> => {
+  const endpoint = `/shipments/${shipmentIdArr.join(",")}`
   return makeRestRequest<ShipmentT>({
     endpoint,
     method: "DELETE",

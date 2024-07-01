@@ -4,7 +4,7 @@ import {
   getAllShipments,
   createShipmentRequest,
   updateShipmentRequest,
-  deleteShipmentRequest,
+  deleteShipmentsRequest,
 } from "../api/shipments"
 import { PagingT, defaultPaging } from "../types/Paging"
 
@@ -28,7 +28,7 @@ type ShipmentStoreT = {
     },
   ) => Promise<void>
   updateShipment: (updatedShipment: ShipmentT) => Promise<void>
-  deleteShipment: (shipmentId: number) => Promise<void>
+  deleteShipments: (shipmentId: number[]) => Promise<void>
   loading: boolean
   setLoading: (loading: boolean) => void
 }
@@ -86,11 +86,11 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
     }
   },
 
-  deleteShipment: async (shipmentId) => {
+  deleteShipments: async (shipmentIdArr) => {
     try {
-      await deleteShipmentRequest(shipmentId)
+      await deleteShipmentsRequest(shipmentIdArr)
       set((state) => ({
-        shipments: state.shipments.filter((s) => s.id !== shipmentId),
+        shipments: state.shipments.filter((s) => !shipmentIdArr.includes(s.id)),
       }))
     } catch (error) {
       console.error("Failed to delete shipment", error)

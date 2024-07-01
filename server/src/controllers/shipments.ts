@@ -144,12 +144,15 @@ router.delete(
   '/:id',
   authenticateToken,
   async (req: Request, res: Response) => {
-    const shipment = await Shipment.findOneBy({ id: parseInt(req.params.id) })
-    if (!shipment) {
+    // id param will be comma separated ids. I need to delete all
+
+    const ids = req.params.id.split(',').map(id => parseInt(id))
+    const shipments = await Shipment.findBy({ id: In(ids) })
+    if (shipments.length === 0) {
       return res.status(404).send('Shipment not found')
     }
-    await Shipment.remove(shipment)
-    res.json(shipment)
+    await Shipment.remove(shipments)
+    res.json(shipments)
   }
 )
 
