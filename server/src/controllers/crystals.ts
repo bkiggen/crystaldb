@@ -74,6 +74,28 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 })
 
 router.get(
+  '/unused-crystals',
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const crystalsNotInShipments = await Crystal.createQueryBuilder('crystal')
+        .leftJoin(
+          'shipment_crystals_crystal',
+          'scc',
+          'scc.crystalId = crystal.id'
+        )
+        .where('scc.crystalId IS NULL')
+        .getMany()
+
+      res.json({ data: crystalsNotInShipments })
+    } catch (error) {
+      console.error('Error fetching unused crystals:', error)
+      res.status(500).send('Internal Server Error')
+    }
+  }
+)
+
+router.get(
   '/suggested',
   authenticateToken,
   async (req: Request, res: Response) => {
@@ -138,13 +160,51 @@ router.get(
 )
 
 router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
-  const crystal = await Crystal.findOneBy({ id: parseInt(req.params.id) })
-  if (!crystal) {
-    return res.status(404).send('Crystal not found')
+  const id = parseInt(req.params.id)
+  if (isNaN(id)) {
+    return res.status(400).send('Invalid crystal ID')
   }
-  res.json(crystal)
-})
 
+  try {
+    // Find the crystal and its associated shipments along with subscriptions
+    const crystal = await Crystal.createQueryBuilder('crystal')
+      .leftJoinAndSelect('crystal.shipments', 'shipment')
+      .leftJoinAndSelect('shipment.subscription', 'subscription')
+      .where('crystal.id = :id', { id })
+      .getOne()
+
+    if (!crystal) {
+      return res.status(404).send('Crystal not found')
+    }
+
+    // Extract shipment details with subscription
+    const shipments = crystal.shipments.map(shipment => ({
+      id: shipment.id,
+      month: shipment.month,
+      year: shipment.year,
+      cycle: shipment.cycle,
+      createdAt: shipment.createdAt,
+      updatedAt: shipment.updatedAt,
+      subscription: shipment.subscription
+        ? {
+            id: shipment.subscription.id,
+            shortName: shipment.subscription.shortName,
+          }
+        : null,
+    }))
+
+    // Structure the response
+    const response = {
+      ...crystal,
+      shipments,
+    }
+
+    res.json({ data: response })
+  } catch (error) {
+    console.error('Error fetching crystal details:', error)
+    res.status(500).send('Internal Server Error')
+  }
+})
 router.post('/', authenticateToken, async (req: Request, res: Response) => {
   try {
     const { colorId, locationId, categoryId, ...crystalData } = req.body

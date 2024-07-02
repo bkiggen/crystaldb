@@ -9,7 +9,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm'
-
 import { Subscription } from './Subscription'
 import { Crystal } from './Crystal'
 
@@ -31,10 +30,10 @@ export class Shipment extends BaseEntity {
   userCount: number
 
   @Column({ type: 'boolean', nullable: true })
-  userCountIsNew: number
+  userCountIsNew: boolean
 
-  @ManyToMany(() => Crystal)
-  @JoinTable()
+  @ManyToMany(() => Crystal, crystal => crystal.shipments)
+  @JoinTable() // JoinTable only on the owning side
   crystals: Crystal[]
 
   @ManyToOne(() => Subscription, subscription => subscription.shipments)

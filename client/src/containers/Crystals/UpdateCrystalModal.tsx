@@ -1,11 +1,21 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
-import { Box, TextField, Button, FormControl, Grid, MenuItem } from "@mui/material"
+import {
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  CircularProgress,
+  Grid,
+  MenuItem,
+  Typography,
+} from "@mui/material"
 import EditIcon from "@mui/icons-material/Edit"
 
 import systemColors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
+import { monthOptions } from "../../lib/constants"
 
 import { useColorStore } from "../../store/colorStore"
 import { useCrystalStore } from "../../store/crystalStore"
@@ -26,15 +36,30 @@ import NewLocationModal from "./NewLocationModal"
 import NewCategoryModal from "./NewCategoryModal"
 
 type UpdateCrystalModalT = {
-  crystal: CrystalT
+  listCrystal: CrystalT
   onClose: () => void
 }
 
-const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
-  const { updateCrystal, deleteCrystal } = useCrystalStore()
+const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
+  const [crystal, setCrystal] = useState(listCrystal)
+  const { updateCrystal, deleteCrystal, fetchCrystalById, setSelectedCrystal, selectedCrystal } =
+    useCrystalStore()
   const { colors, fetchColors } = useColorStore()
   const { categories } = useCategoryStore()
   const { locations } = useLocationStore()
+
+  useEffect(() => {
+    if (!selectedCrystal) {
+      fetchCrystalById(crystal.id)
+    }
+    return () => setSelectedCrystal(null)
+  }, [crystal?.id])
+
+  useEffect(() => {
+    if (selectedCrystal) {
+      setCrystal(selectedCrystal)
+    }
+  }, [selectedCrystal])
 
   const [colorToEdit, setColorToEdit] = useState<ColorT[]>(null)
   const [colorModalOpen, setColorModalOpen] = useState(false)
@@ -284,6 +309,37 @@ const UpdateCrystalModal = ({ crystal, onClose }: UpdateCrystalModalT) => {
             <Button type="submit" variant="contained" color="primary">
               Update Crystal
             </Button>
+          </Box>
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{ color: "white", marginBottom: "12px", marginTop: "48px" }}
+            >
+              Shipments:
+            </Typography>
+            {crystal.shipments === undefined ? (
+              <CircularProgress sx={{ color: "white" }} />
+            ) : (
+              crystal.shipments?.map((shipment) => {
+                return (
+                  <Box
+                    key={shipment.id}
+                    sx={{
+                      display: "flex",
+                      border: "1px solid white",
+                      padding: "12px",
+                      borderRadius: "6px",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <Typography sx={{ color: "white" }}>
+                      {shipment.subscription?.shortName} {shipment.cycle}:{" "}
+                      {monthOptions[shipment.month]?.long} {shipment.year}
+                    </Typography>
+                  </Box>
+                )
+              })
+            )}
           </Box>
         </Box>
       </form>

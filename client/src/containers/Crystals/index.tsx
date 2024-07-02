@@ -151,7 +151,10 @@ const Crystals = () => {
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewCrystal />
       {crystalToUpdate ? (
-        <UpdateCrystalModal crystal={crystalToUpdate} onClose={() => setCrystalToUpdate(null)} />
+        <UpdateCrystalModal
+          listCrystal={crystalToUpdate}
+          onClose={() => setCrystalToUpdate(null)}
+        />
       ) : null}
       <Pagination
         fetchData={getCrystals}

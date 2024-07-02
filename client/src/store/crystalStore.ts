@@ -6,12 +6,16 @@ import {
   deleteCrystalRequest,
   fetchCrystalsRequest,
   getSuggestedCrystalsRequest,
+  getUnusedCrystalsRequest,
+  fetchCrystalByIdRequest,
 } from "../api/crystals"
 import { PagingT, defaultPaging } from "../types/Paging"
 
 type CrystalStoreT = {
   suggestedCrystals: CrystalT[]
+  unusedCrystals: CrystalT[]
   crystals: CrystalT[]
+  selectedCrystal: CrystalT
   crystalMatches: CrystalT[]
   fetchCrystalMatches: (params: { searchTerm?: string; noPaging?: boolean }) => Promise<void>
   paging: PagingT | null
@@ -42,11 +46,14 @@ type CrystalStoreT = {
     selectedCyclesString?: number
     filters?: Record<string, string>
   }) => Promise<void>
+  fetchUnusedCrystals: () => Promise<void>
 }
 
 export const useCrystalStore = create<CrystalStoreT>((set) => ({
   suggestedCrystals: [],
   crystals: [],
+  selectedCrystal: null,
+  unusedCrystals: [],
   crystalMatches: [],
   fetchCrystalMatches: async (params) => {
     const { data } = await fetchCrystalsRequest(params)
@@ -80,4 +87,13 @@ export const useCrystalStore = create<CrystalStoreT>((set) => ({
     const { data } = await getSuggestedCrystalsRequest(params)
     set({ suggestedCrystals: data })
   },
+  fetchUnusedCrystals: async () => {
+    const { data } = await getUnusedCrystalsRequest()
+    set({ unusedCrystals: data })
+  },
+  fetchCrystalById: async (crystalId) => {
+    const { data } = await fetchCrystalByIdRequest(crystalId)
+    set({ selectedCrystal: data })
+  },
+  setSelectedCrystal: (selectedCrystal) => set({ selectedCrystal }),
 }))

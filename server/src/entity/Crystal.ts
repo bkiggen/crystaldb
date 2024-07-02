@@ -4,99 +4,104 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  ManyToMany,
   CreateDateColumn,
-} from "typeorm";
-import { Color } from "./Color";
-import { Category } from "./Category";
-import { Location } from "./Location";
+} from 'typeorm'
+import { Color } from './Color'
+import { Category } from './Category'
+import { Location } from './Location'
+import { Shipment } from './Shipment' // Import Shipment entity
 
 export enum Rarity {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
 }
 
 export enum FindAge {
-  NEW = "NEW",
-  OLD = "OLD",
-  DEAD = "DEAD",
+  NEW = 'NEW',
+  OLD = 'OLD',
+  DEAD = 'DEAD',
 }
 
 export enum Size {
-  XS = "XS",
-  S = "S",
-  M = "M",
-  L = "L",
-  XL = "XL",
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+  XL = 'XL',
 }
 
 export enum Inventory {
-  HIGH = "HIGH",
-  MEDIUM = "MEDIUM",
-  LOW = "LOW",
-  OUT = "OUT",
+  HIGH = 'HIGH',
+  MEDIUM = 'MEDIUM',
+  LOW = 'LOW',
+  OUT = 'OUT',
 }
 
 @Entity()
 export class Crystal extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  name: string;
+  name: string
 
-  @ManyToOne(() => Color, { eager: true, nullable: true, onDelete: "SET NULL" })
-  color: Color;
+  @ManyToOne(() => Color, { eager: true, nullable: true, onDelete: 'SET NULL' })
+  color: Color
 
-  @ManyToOne(() => Category, (category) => category.crystals, {
+  @ManyToOne(() => Category, category => category.crystals, {
     eager: true,
     nullable: true,
-    onDelete: "SET NULL",
+    onDelete: 'SET NULL',
   })
-  category: Category;
+  category: Category
 
-  @ManyToOne(() => Location, (location) => location.crystals, {
+  @ManyToOne(() => Location, location => location.crystals, {
     eager: true,
     nullable: true,
-    onDelete: "SET NULL",
+    onDelete: 'SET NULL',
   })
-  location: Location;
+  location: Location
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Rarity,
     nullable: true,
   })
-  rarity: Rarity;
+  rarity: Rarity
 
   @Column({ nullable: true })
-  description: string;
+  description: string
 
   @Column({ nullable: true })
-  image: string;
+  image: string
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: FindAge,
     nullable: true,
   })
-  findAge: FindAge;
+  findAge: FindAge
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Size,
     nullable: true,
   })
-  size: Size;
+  size: Size
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Inventory,
     default: Inventory.MEDIUM,
     nullable: true,
   })
-  inventory: Inventory;
+  inventory: Inventory
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
+
+  @ManyToMany(() => Shipment, shipment => shipment.crystals)
+  shipments: Shipment[]
 }

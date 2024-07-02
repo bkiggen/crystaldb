@@ -1,6 +1,7 @@
 import { ColorT } from "./Color"
 import { LocationT } from "./Location"
 import { CategoryT } from "./Category"
+import { ShipmentT } from "./Shipment"
 
 export const rarity = {
   LOW: "LOW",
@@ -78,4 +79,5 @@ export type CrystalT = {
   locationId?: number
   location?: LocationT
   category?: CategoryT
+  shipments?: ShipmentT[]
 }

@@ -1,6 +1,7 @@
 import { Container } from "@mui/material"
 
 import InventoryReport from "./InventoryReport"
+import UnusedCrystalReport from "./UnusedCrystalReport"
 
 const Dashboard = () => {
   return (
@@ -13,6 +14,7 @@ const Dashboard = () => {
     >
       <InventoryReport type="LOW" />
       <InventoryReport type="OUT" />
+      <UnusedCrystalReport />
     </Container>
   )
 }

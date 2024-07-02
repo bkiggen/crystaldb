@@ -61,6 +61,13 @@ export const fetchCrystalsRequest = async ({
   const endpoint = `/crystals?${query}`
   return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>({ endpoint, method: "GET" })
 }
+export const getUnusedCrystalsRequest = async (): Promise<{
+  data: CrystalT[]
+  paging: PagingT
+}> => {
+  const endpoint = `/crystals/unused-crystals`
+  return makeRestRequest<{ data: CrystalT[]; paging: PagingT }>({ endpoint, method: "GET" })
+}
 
 export const getSuggestedCrystalsRequest = async ({
   searchTerm = "",
@@ -108,4 +115,10 @@ export const getSuggestedCrystalsRequest = async ({
     endpoint,
     method: "GET",
   })
+}
+
+// fetch a single crystal by id
+export const fetchCrystalByIdRequest = async (crystalId: number): Promise<{ data: CrystalT }> => {
+  const endpoint = `/crystals/${crystalId}`
+  return makeRestRequest<{ data: CrystalT }>({ endpoint, method: "GET" })
 }
