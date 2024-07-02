@@ -45,8 +45,20 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
   const { updateCrystal, deleteCrystal, fetchCrystalById, setSelectedCrystal, selectedCrystal } =
     useCrystalStore()
   const { colors, fetchColors } = useColorStore()
-  const { categories } = useCategoryStore()
-  const { locations } = useLocationStore()
+  const { categories, fetchCategories } = useCategoryStore()
+  const { locations, fetchLocations } = useLocationStore()
+
+  useEffect(() => {
+    if (!colors?.length) {
+      fetchColors()
+    }
+    if (!categories?.length) {
+      fetchCategories()
+    }
+    if (!locations?.length) {
+      fetchLocations()
+    }
+  }, [])
 
   useEffect(() => {
     if (!selectedCrystal) {
