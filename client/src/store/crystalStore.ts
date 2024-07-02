@@ -47,6 +47,8 @@ type CrystalStoreT = {
     filters?: Record<string, string>
   }) => Promise<void>
   fetchUnusedCrystals: () => Promise<void>
+  setSelectedCrystal: (selectedCrystal: CrystalT) => void
+  fetchCrystalById: (crystalId: number) => Promise<void>
 }
 
 export const useCrystalStore = create<CrystalStoreT>((set) => ({
