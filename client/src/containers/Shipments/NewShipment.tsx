@@ -158,7 +158,12 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
           <CrystalSelect formik={formik} />
         </FormControl>
         <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
-          <Button type="submit" variant="contained" color="primary">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={formik.values.crystalIds.length === 0}
+          >
             Create Shipment
           </Button>
         </Box>

@@ -74,10 +74,12 @@ const Shipments = () => {
   }, [subscriptions])
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    createShipment({ ...formData, userCount: 0, userCountIsNew: false })
+    if (formData.crystalIds.length > 0) {
+      createShipment({ ...formData, userCount: 0, userCountIsNew: false })
 
-    await formik.resetForm()
-    resetSubType()
+      await formik.resetForm()
+      resetSubType()
+    }
   }
 
   const formik = useFormik({
