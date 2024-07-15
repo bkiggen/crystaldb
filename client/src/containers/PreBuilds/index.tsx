@@ -106,6 +106,10 @@ const PreBuilds = () => {
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
           color: "white",
+          // pointer cursor on ALL rows
+          "& .MuiDataGrid-row:hover": {
+            cursor: "pointer",
+          },
         }}
         rowHeight={120}
         rows={preBuilds || []}

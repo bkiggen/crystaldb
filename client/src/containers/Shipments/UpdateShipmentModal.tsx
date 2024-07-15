@@ -284,7 +284,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
                         variant="outlined"
                         label={crystals.find((c) => c.id === option)?.name}
                         {...getTagProps({ index })}
-                        sx={{ color: "white" }}
+                        sx={{ color: "white", textTransform: "capitalize" }}
                       />
                     ))
                   }}

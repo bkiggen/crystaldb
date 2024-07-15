@@ -45,7 +45,9 @@ const CrystalChip = ({
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <ColorIndicator indicatorValue={crystal?.color?.hex} />
-              <Typography sx={{ fontSize: "14px" }}>{crystal?.name}</Typography>
+              <Typography sx={{ fontSize: "14px", textTransform: "capitalize" }}>
+                {crystal?.name}
+              </Typography>
             </Box>
             {withoutDelete ? null : (
               <CloseIcon

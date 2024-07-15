@@ -171,6 +171,10 @@ const Crystals = () => {
           "& .MuiDataGrid-iconButtonContainer": {
             display: "none",
           },
+          // pointer cursor on ALL rows
+          "& .MuiDataGrid-row:hover": {
+            cursor: "pointer",
+          },
         }}
         // sortingMode="server"
         // sortModel={sortModel}

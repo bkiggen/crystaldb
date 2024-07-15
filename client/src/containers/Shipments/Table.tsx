@@ -140,7 +140,7 @@ const Shipments = ({
                 }}
               >
                 <ColorIndicator indicatorValue={crystal.color?.hex} />
-                <Box sx={{ marginRight: "6px" }}>
+                <Box sx={{ marginRight: "6px", textTransform: "capitalize" }}>
                   {crystal.name}
                   {idx !== params.row.crystals.length - 1 ? "," : ""}
                 </Box>
@@ -189,6 +189,7 @@ const Shipments = ({
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
           color: "white",
+          cursor: "pointer",
           // pointer cursor on ALL rows
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",
