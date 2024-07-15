@@ -10,7 +10,6 @@ const ShipDay = () => {
   const { shipments, fetchShipments } = useShipmentStore()
 
   const shipmentGroups = groupShipments(shipments)
-  console.log("🚀 ~ ShipDay ~ shipmentGroups:", shipmentGroups)
 
   const isFullScreen = useStore((state) => state.isFullScreen)
   const toggleFullscreen = useStore((state) => state.toggleFullscreen)
