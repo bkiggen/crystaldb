@@ -35,6 +35,7 @@ const Pagination = ({
   const { width } = useWindowSize()
   const isTablet = width < 768
 
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(null)
   const [rawSearch, setRawSearch] = useState(null)
   const searchTerm = useDebounce(rawSearch, 300) // debounced
 
@@ -43,7 +44,13 @@ const Pagination = ({
   const { sortBy, sortDirection } = queryString.parse(location.search)
 
   useEffect(() => {
-    fetchData({ page: 1, searchTerm, sortBy, sortDirection })
+    fetchData({
+      page: 1,
+      searchTerm,
+      sortBy,
+      sortDirection,
+      subscriptionId: selectedSubscriptionId,
+    })
   }, [searchTerm])
 
   const renderDigit = (num) => {
@@ -64,7 +71,13 @@ const Pagination = ({
   const endItem = Math.min(adjustedCurrent * paging.pageSize, paging.totalCount)
 
   const handleNavClick = (newPage) => {
-    fetchData({ page: newPage, searchTerm, sortBy, sortDirection })
+    fetchData({
+      page: newPage,
+      searchTerm,
+      sortBy,
+      sortDirection,
+      subscriptionId: selectedSubscriptionId,
+    })
   }
 
   const pagesToRender = () => {
@@ -143,14 +156,16 @@ const Pagination = ({
             id="filter"
             placeholder="Filter"
             defaultValue="All"
-            onChange={(event) =>
+            onChange={(event) => {
+              setSelectedSubscriptionId(event.target.value)
+
               fetchData({
                 subscriptionId: event.target.value === "All" ? null : event.target.value,
                 searchTerm,
                 sortBy,
                 sortDirection,
               })
-            }
+            }}
             sx={{ ...textFieldStyles, minWidth: "200px" }}
           >
             <MenuItem key="All" value="All">
