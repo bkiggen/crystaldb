@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 
-import { Box, Typography, TextField, InputAdornment, IconButton } from "@mui/material"
+import { Box, Typography, TextField, InputAdornment, Menu, IconButton } from "@mui/material"
+import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import SearchIcon from "@mui/icons-material/Search"
 import { useTheme } from "@mui/material/styles"
 import queryString from "query-string"
@@ -15,6 +16,8 @@ import { defaultPaging } from "../../types/Paging"
 import { useLocation } from "react-router-dom"
 import FilterMenu from "../SmartSelect/FilterMenu"
 import SubscriptionFilter from "./SubscriptionFilter"
+import MonthFilter from "./MonthFilter"
+import YearFilter from "./YearFilter"
 
 type PaginationT = {
   paging: PagingT
@@ -36,6 +39,8 @@ const Pagination = ({
   const isTablet = width < 768
 
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(null)
+  const [selectedMonth, setSelectedMonth] = useState(null)
+  const [selectedYear, setSelectedYear] = useState(null)
   const [rawSearch, setRawSearch] = useState(null)
   const searchTerm = useDebounce(rawSearch, 300) // debounced
 
@@ -43,15 +48,26 @@ const Pagination = ({
 
   const { sortBy, sortDirection } = queryString.parse(location.search)
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
+
   useEffect(() => {
     fetchData({
       page: 1,
       searchTerm,
       sortBy,
       sortDirection,
+      ...(selectedMonth ? { month: selectedMonth } : {}),
+      ...(selectedYear ? { year: selectedYear } : {}),
       ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
     })
-  }, [searchTerm, selectedSubscriptionId])
+  }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear])
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -76,6 +92,8 @@ const Pagination = ({
       searchTerm,
       sortBy,
       sortDirection,
+      ...(selectedMonth ? { month: selectedMonth } : {}),
+      ...(selectedYear ? { year: selectedYear } : {}),
       ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
     })
   }
@@ -149,10 +167,33 @@ const Pagination = ({
             }}
           />
         ) : null}
-        {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
-        {withSubscriptionFilter ? (
-          <SubscriptionFilter setSelectedSubscriptionId={setSelectedSubscriptionId} />
-        ) : null}
+        <IconButton
+          id="basic-button"
+          aria-controls={open ? "basic-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleMenuOpen}
+        >
+          <FilterAltIcon sx={{ color: "white" }} />
+        </IconButton>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <Box sx={{ padding: "12px", display: "flex", gap: "12px" }}>
+            {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
+            {withSubscriptionFilter ? (
+              <SubscriptionFilter setSelectedSubscriptionId={setSelectedSubscriptionId} />
+            ) : null}
+            {withSubscriptionFilter ? <MonthFilter setSelectedMonth={setSelectedMonth} /> : null}
+            {withSubscriptionFilter ? <YearFilter setSelectedYear={setSelectedYear} /> : null}
+          </Box>
+        </Menu>
       </Box>
       <Box
         sx={{
