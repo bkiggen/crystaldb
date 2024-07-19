@@ -45,6 +45,7 @@ const Crystals = () => {
       headerName: "Name",
       minWidth: 300,
       flex: 3,
+      sortable: false,
       renderCell: (params: GridCellParams) => {
         return (
           <Tooltip title={params.row.description}>
@@ -57,6 +58,7 @@ const Crystals = () => {
       field: "color",
       headerName: "Color",
       width: 80,
+      sortable: false,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -90,6 +92,7 @@ const Crystals = () => {
       field: "inventory",
       headerName: "Inventory",
       width: 150,
+      sortable: false,
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -133,6 +136,7 @@ const Crystals = () => {
       field: "category",
       headerName: "Category",
       width: 150,
+      sortable: false,
       renderCell: (params: GridCellParams) => {
         return <Box sx={{ textTransform: "capitalize" }}>{params.row.category?.name}</Box>
       },
@@ -141,6 +145,7 @@ const Crystals = () => {
       field: "location",
       headerName: "Location",
       width: 150,
+      sortable: false,
       renderCell: (params: GridCellParams) => {
         return <Box sx={{ textTransform: "capitalize" }}>{params.row.location?.name}</Box>
       },

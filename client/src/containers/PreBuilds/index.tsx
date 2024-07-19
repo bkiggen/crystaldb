@@ -31,6 +31,7 @@ const PreBuilds = () => {
       headerName: "Cycle",
       width: 100,
       align: "center",
+      sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return <div>{params.row.cycle}</div>
@@ -41,6 +42,7 @@ const PreBuilds = () => {
       headerName: "Subscription Type",
       width: 150,
       align: "center",
+      sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return <div>{params.row.subscription?.shortName}</div>
@@ -49,6 +51,7 @@ const PreBuilds = () => {
     {
       field: "crystals",
       headerName: "Crystals",
+      sortable: false,
       flex: 3,
       renderCell: (params: GridCellParams) => {
         return (
