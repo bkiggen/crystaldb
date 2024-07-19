@@ -36,9 +36,9 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
     take: pageSizeNumber,
     order: {
       subscription: { id: 'ASC' }, // Correctly order by subscriptionId
-      cycle: 'ASC', // Then by cycle in ascending order
       year: 'DESC', // Then by year in descending order
       month: 'DESC', // Then by month in descending order
+      cycle: 'ASC', // Then by cycle in ascending order
     },
     relations: ['crystals', 'subscription'],
   })
