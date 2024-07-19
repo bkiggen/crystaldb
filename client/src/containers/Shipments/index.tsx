@@ -112,7 +112,6 @@ const Shipments = () => {
         loading={loading}
         shipments={shipments}
         paging={paging}
-        allSubscriptions={subscriptions}
         fetchShipments={fetchShipments}
         setSelectedShipment={setSelectedShipment}
         handleClone={handleClone}

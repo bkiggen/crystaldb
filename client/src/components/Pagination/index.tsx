@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react"
 
-import { Box, Typography, MenuItem, TextField, InputAdornment, IconButton } from "@mui/material"
+import { Box, Typography, TextField, InputAdornment, IconButton } from "@mui/material"
 import SearchIcon from "@mui/icons-material/Search"
 import { useTheme } from "@mui/material/styles"
 import queryString from "query-string"
 
 import colors from "../../styles/colors"
-import { textFieldStyles } from "../../styles/vars"
 
 import useWindowSize from "../../hooks/useWindowSize"
 import useDebounce from "../../hooks/useDebounce"
@@ -15,13 +14,14 @@ import type { PagingT } from "../../types/Paging"
 import { defaultPaging } from "../../types/Paging"
 import { useLocation } from "react-router-dom"
 import FilterMenu from "../SmartSelect/FilterMenu"
+import SubscriptionFilter from "./SubscriptionFilter"
 
 type PaginationT = {
   paging: PagingT
   fetchData: (arg?: Record<string, unknown>) => void
   withoutSearch?: boolean
   onCrystalFilterChange?: (filters: Record<string, string>) => void
-  filterOptions?: { label: string; value: string | number }[]
+  withSubscriptionFilter?: boolean
 }
 
 const Pagination = ({
@@ -29,7 +29,7 @@ const Pagination = ({
   fetchData,
   withoutSearch = false,
   onCrystalFilterChange,
-  filterOptions = null,
+  withSubscriptionFilter,
 }: PaginationT) => {
   const theme = useTheme()
   const { width } = useWindowSize()
@@ -49,9 +49,9 @@ const Pagination = ({
       searchTerm,
       sortBy,
       sortDirection,
-      subscriptionId: selectedSubscriptionId,
+      ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
     })
-  }, [searchTerm])
+  }, [searchTerm, selectedSubscriptionId])
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -76,7 +76,7 @@ const Pagination = ({
       searchTerm,
       sortBy,
       sortDirection,
-      subscriptionId: selectedSubscriptionId,
+      ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
     })
   }
 
@@ -150,33 +150,8 @@ const Pagination = ({
           />
         ) : null}
         {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
-        {filterOptions ? (
-          <TextField
-            select
-            id="filter"
-            placeholder="Filter"
-            defaultValue="All"
-            onChange={(event) => {
-              setSelectedSubscriptionId(event.target.value)
-
-              fetchData({
-                subscriptionId: event.target.value === "All" ? null : event.target.value,
-                searchTerm,
-                sortBy,
-                sortDirection,
-              })
-            }}
-            sx={{ ...textFieldStyles, minWidth: "200px" }}
-          >
-            <MenuItem key="All" value="All">
-              All
-            </MenuItem>
-            {filterOptions.map((option) => (
-              <MenuItem key={option.label} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+        {withSubscriptionFilter ? (
+          <SubscriptionFilter setSelectedSubscriptionId={setSelectedSubscriptionId} />
         ) : null}
       </Box>
       <Box

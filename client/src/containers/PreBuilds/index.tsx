@@ -2,8 +2,6 @@ import { useState, useEffect } from "react"
 import { Box, Container } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
-import { useSubscriptionStore } from "../../store/subscriptionStore"
-
 import { usePreBuildStore } from "../../store/preBuildStore"
 
 import type { PreBuildT } from "../../types/PreBuild"
@@ -16,13 +14,11 @@ import ColorIndicator from "../../components/ColorIndicator"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
-  const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
   const [selectedPrebuild, setSelectedPreBuild] = useState<PreBuildT>(null)
 
   useEffect(() => {
     fetchPreBuilds({})
-    fetchSubscriptions()
   }, [])
 
   const columns: GridColDef[] = [
@@ -94,17 +90,7 @@ const PreBuilds = () => {
           setSelectedPreBuild={setSelectedPreBuild}
         />
       ) : null}
-      <Pagination
-        fetchData={fetchPreBuilds}
-        paging={paging}
-        filterOptions={subscriptions.map((s) => {
-          return {
-            label: s.shortName,
-            value: s.id,
-          }
-        })}
-        withoutSearch
-      />
+      <Pagination fetchData={fetchPreBuilds} paging={paging} withSubscriptionFilter withoutSearch />
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",

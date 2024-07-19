@@ -18,7 +18,6 @@ const Shipments = ({
   shipments,
   loading,
   paging,
-  allSubscriptions,
   setSelectedShipment,
   fetchShipments,
   handleClone,
@@ -174,17 +173,7 @@ const Shipments = ({
 
   return (
     <>
-      <Pagination
-        fetchData={fetchShipments}
-        paging={paging}
-        filterOptions={allSubscriptions.map((s) => {
-          return {
-            label: s.shortName,
-            value: s.id,
-          }
-        })}
-        withoutSearch
-      />
+      <Pagination fetchData={fetchShipments} paging={paging} withSubscriptionFilter withoutSearch />
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
