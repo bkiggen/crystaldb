@@ -60,7 +60,6 @@ const Crystals = () => {
       width: 80,
       sortable: false,
       align: "center",
-      sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (

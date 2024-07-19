@@ -7,7 +7,7 @@ import colors from "../../styles/colors"
 
 import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
 
-const FilterMenu = ({ onFilterChange = () => null }) => {
+const FilterMenu = ({ onFilterChange }) => {
   const { crystalFilterOptions } = useCrystalFilterOptions()
 
   const [activeFilters, setActiveFilters] = useState({})
