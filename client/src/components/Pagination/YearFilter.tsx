@@ -2,6 +2,7 @@ import { MenuItem, TextField } from "@mui/material"
 import { textFieldStyles } from "../../styles/vars"
 
 type YearFilterT = {
+  selectedYear: string | null
   setSelectedYear: (arg: string) => void
 }
 
@@ -16,7 +17,7 @@ const createYearOptions = () => {
   return options
 }
 
-const YearFilter = ({ setSelectedYear }: YearFilterT) => {
+const YearFilter = ({ setSelectedYear, selectedYear }: YearFilterT) => {
   const filterOptions = createYearOptions()
   return (
     <TextField
@@ -24,8 +25,10 @@ const YearFilter = ({ setSelectedYear }: YearFilterT) => {
       id="filter"
       placeholder="Filter"
       defaultValue="All"
+      value={selectedYear || "All"}
       onChange={(event) => {
-        setSelectedYear(event.target.value)
+        const selectedYear = event.target.value === "All" ? null : event.target.value
+        setSelectedYear(selectedYear)
       }}
       sx={{ ...textFieldStyles, minWidth: "200px" }}
     >

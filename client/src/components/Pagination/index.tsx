@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 
 import { Box, Typography, TextField, InputAdornment, Menu, IconButton } from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
 import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import SearchIcon from "@mui/icons-material/Search"
 import { useTheme } from "@mui/material/styles"
@@ -167,33 +168,55 @@ const Pagination = ({
             }}
           />
         ) : null}
-        <IconButton
-          id="basic-button"
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleMenuOpen}
-        >
-          <FilterAltIcon sx={{ color: "white" }} />
-        </IconButton>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleMenuClose}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-        >
-          <Box sx={{ padding: "12px", display: "flex", gap: "12px" }}>
-            {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
-            {withSubscriptionFilter ? (
-              <SubscriptionFilter setSelectedSubscriptionId={setSelectedSubscriptionId} />
-            ) : null}
-            {withSubscriptionFilter ? <MonthFilter setSelectedMonth={setSelectedMonth} /> : null}
-            {withSubscriptionFilter ? <YearFilter setSelectedYear={setSelectedYear} /> : null}
-          </Box>
-        </Menu>
+        {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
+
+        {withSubscriptionFilter && (
+          <>
+            <IconButton
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleMenuOpen}
+            >
+              <FilterAltIcon sx={{ color: "white" }} />
+            </IconButton>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <Box sx={{ padding: "12px", display: "flex", gap: "12px" }}>
+                {withSubscriptionFilter ? (
+                  <SubscriptionFilter
+                    selectedSubscriptionId={selectedSubscriptionId}
+                    setSelectedSubscriptionId={setSelectedSubscriptionId}
+                  />
+                ) : null}
+                {withSubscriptionFilter ? (
+                  <MonthFilter selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
+                ) : null}
+                {withSubscriptionFilter ? (
+                  <YearFilter selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                ) : null}
+                <IconButton
+                  onClick={() => {
+                    setSelectedMonth(null)
+                    setSelectedYear(null)
+                    setSelectedSubscriptionId(null)
+                  }}
+                  sx={{ height: "56px", width: "56px" }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </Menu>
+          </>
+        )}
       </Box>
       <Box
         sx={{

@@ -6,9 +6,10 @@ import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 type PaginationT = {
   setSelectedSubscriptionId: (arg: string) => void
+  selectedSubscriptionId: string | null
 }
 
-const Pagination = ({ setSelectedSubscriptionId }: PaginationT) => {
+const Pagination = ({ setSelectedSubscriptionId, selectedSubscriptionId }: PaginationT) => {
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
   const filterOptions = subscriptions.map((s) => {
@@ -28,6 +29,7 @@ const Pagination = ({ setSelectedSubscriptionId }: PaginationT) => {
       id="filter"
       placeholder="Filter"
       defaultValue="All"
+      value={selectedSubscriptionId || "All"}
       onChange={(event) => {
         setSelectedSubscriptionId(event.target.value)
       }}

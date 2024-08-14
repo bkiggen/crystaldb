@@ -4,9 +4,10 @@ import { monthOptions } from "../../lib/constants"
 
 type MonthFilterT = {
   setSelectedMonth: (arg: string) => void
+  selectedMonth: string | null
 }
 
-const MonthFilter = ({ setSelectedMonth }: MonthFilterT) => {
+const MonthFilter = ({ setSelectedMonth, selectedMonth }: MonthFilterT) => {
   const filterOptions = Object.keys(monthOptions).map((monthNumber) => {
     return {
       label: monthOptions[monthNumber].long,
@@ -20,8 +21,10 @@ const MonthFilter = ({ setSelectedMonth }: MonthFilterT) => {
       id="filter"
       placeholder="Filter"
       defaultValue="All"
+      value={selectedMonth || "All"}
       onChange={(event) => {
-        setSelectedMonth(event.target.value)
+        const selectedMonth = event.target.value === "All" ? null : event.target.value
+        setSelectedMonth(selectedMonth)
       }}
       sx={{ ...textFieldStyles, minWidth: "200px" }}
     >
