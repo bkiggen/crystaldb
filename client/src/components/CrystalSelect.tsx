@@ -2,7 +2,15 @@ import { useEffect } from "react"
 
 import { useFormik } from "formik"
 
-import { Box, TextField, Chip, ListItemText, Autocomplete } from "@mui/material"
+import {
+  Box,
+  TextField,
+  Chip,
+  ListItemText,
+  Autocomplete,
+  Tooltip,
+  Typography,
+} from "@mui/material"
 
 import { textFieldStyles } from "../styles/vars"
 import { useCrystalStore } from "../store/crystalStore"
@@ -50,17 +58,45 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
           const crystal = crystals.find((c) => c.id === option)
 
           return (
-            <Chip
-              variant="outlined"
-              label={
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <ColorIndicator indicatorValue={crystal?.color?.hex} />
-                  {crystal?.name}
+            <Tooltip
+              placement="top"
+              title={
+                <Box>
+                  <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>
+                      Inventory:
+                    </Typography>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+                      {crystal.inventory}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>Category:</Typography>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+                      {crystal.category?.name}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>Location:</Typography>
+                    <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+                      {crystal.location?.name}
+                    </Typography>
+                  </Box>
                 </Box>
               }
-              {...getTagProps({ index })}
-              sx={{ color: "white" }}
-            />
+            >
+              <Chip
+                variant="outlined"
+                label={
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <ColorIndicator indicatorValue={crystal?.color?.hex} />
+                    {crystal?.name}
+                  </Box>
+                }
+                {...getTagProps({ index })}
+                sx={{ color: "white" }}
+              />
+            </Tooltip>
           )
         })
       }}
