@@ -1,7 +1,20 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import { useFormik } from "formik"
-import { Box, TextField, Button, FormControl, Grid, Typography, MenuItem } from "@mui/material"
+import {
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  Grid,
+  Typography,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material"
 
 import { monthOptions } from "../../lib/constants"
 
@@ -23,10 +36,24 @@ type NewShipmentT = {
 
 const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
   const { preBuilds, fetchPreBuilds } = usePreBuildStore()
+  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     fetchPreBuilds({})
   }, [])
+
+  const handleOpenModal = () => {
+    setOpenModal(true) // Open the modal
+  }
+
+  const handleCloseModal = () => {
+    setOpenModal(false) // Close the modal
+  }
+
+  const handleConfirmSubmit = () => {
+    handleCloseModal()
+    formik.handleSubmit() // Submit the form after confirmation
+  }
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -159,15 +186,34 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
         </FormControl>
         <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
           <Button
-            type="submit"
             variant="contained"
             color="primary"
+            onClick={handleOpenModal}
             disabled={formik.values.crystalIds.length === 0}
           >
             Create Shipment
           </Button>
         </Box>
       </Box>
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Confirm Submission</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to create this shipment?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseModal}
+            color="primary"
+            variant="outlined"
+            sx={{ marginRight: "12px" }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmSubmit} color="primary" autoFocus variant="contained">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </form>
   )
 }

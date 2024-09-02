@@ -92,7 +92,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik }: PreBuildAutocompleteT) => {
                 }}
                 onClick={setFormWithTempValues}
               >
-                <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
+                <Typography sx={{ fontSize: "24px", color: "white" }}>
                   <AddIcon />
                 </Typography>
               </Box>
@@ -112,7 +112,7 @@ const PreBuildAutocomplete = ({ preBuilds, formik }: PreBuildAutocompleteT) => {
                 }}
                 onClick={removeSelectedCrystals}
               >
-                <Typography sx={{ fontSize: "24px", color: "skyblue" }}>
+                <Typography sx={{ fontSize: "24px", color: "white" }}>
                   <RemoveIcon />
                 </Typography>
               </Box>
