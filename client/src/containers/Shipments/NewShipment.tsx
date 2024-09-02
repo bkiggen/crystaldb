@@ -145,15 +145,15 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
           <Grid item xs={6}>
             <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
           </Grid>
-          <Grid item xs={6}>
+        </Grid>
+        <Grid container>
+          <Grid item xs={12}>
             <FormControl fullWidth variant="outlined">
               <SmartSelect formik={formik} />
             </FormControl>
           </Grid>
         </Grid>
-        <Box
-          sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "12px 0 48px 0" }}
-        />
+        <Box sx={{ width: "100%", height: "1px", background: "white", margin: "12px 0 48px 0" }} />
         <FormControl fullWidth variant="outlined">
           <CrystalSelect formik={formik} />
         </FormControl>

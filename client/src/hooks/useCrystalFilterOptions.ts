@@ -6,7 +6,16 @@ import { useLocationStore } from "../store/locationStore"
 
 import { inventoryOptions } from "../types/Crystal"
 
-const useCrystalFilterOptions = () => {
+type Props = {
+  defaultFilteredOut?: {
+    inventory?: string[]
+    category?: string[]
+    location?: string[]
+    color?: number[]
+  }
+}
+
+const useCrystalFilterOptions = ({ defaultFilteredOut = {} }: Props) => {
   const { colors, fetchColors } = useColorStore()
   const { categories, fetchCategories } = useCategoryStore()
   const { locations, fetchLocations } = useLocationStore()
@@ -21,24 +30,30 @@ const useCrystalFilterOptions = () => {
     inventory: {
       label: "Inventory",
       options: inventoryOptions.reduce((acc, inventory) => {
-        return { ...acc, [inventory]: { name: inventory, selected: true, value: inventory } }
+        const isFilteredOut = defaultFilteredOut.inventory?.includes(inventory) || false // Check if inventory item is in defaultFilteredOut
+        return {
+          ...acc,
+          [inventory]: { name: inventory, selected: !isFilteredOut, value: inventory },
+        }
       }, {}),
     },
     category: {
       label: "Category",
       options: categories.reduce((acc, category) => {
+        const isFilteredOut = defaultFilteredOut.category?.includes(category.name) || false // Check if category name is in defaultFilteredOut
         return {
           ...acc,
-          [category.name]: { name: category.name, selected: true, value: category.id },
+          [category.name]: { name: category.name, selected: !isFilteredOut, value: category.id },
         }
       }, {}),
     },
     location: {
       label: "Location",
       options: locations.reduce((acc, location) => {
+        const isFilteredOut = defaultFilteredOut.location?.includes(location.name) || false // Check if location name is in defaultFilteredOut
         return {
           ...acc,
-          [location.name]: { name: location.name, selected: true, value: location.id },
+          [location.name]: { name: location.name, selected: !isFilteredOut, value: location.id },
         }
       }, {}),
     },
@@ -46,7 +61,11 @@ const useCrystalFilterOptions = () => {
       label: "Color",
       dbLabel: "colorId",
       options: colors.reduce((acc, color) => {
-        return { ...acc, [color.id]: { name: color.name, selected: true, value: color.id } }
+        const isFilteredOut = defaultFilteredOut.color?.includes(color.id) || false // Check if color ID is in defaultFilteredOut
+        return {
+          ...acc,
+          [color.id]: { name: color.name, selected: !isFilteredOut, value: color.id },
+        }
       }, {}),
     },
   }

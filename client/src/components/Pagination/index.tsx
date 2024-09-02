@@ -15,7 +15,6 @@ import useDebounce from "../../hooks/useDebounce"
 import type { PagingT } from "../../types/Paging"
 import { defaultPaging } from "../../types/Paging"
 import { useLocation } from "react-router-dom"
-import FilterMenu from "../SmartSelect/FilterMenu"
 import SubscriptionFilter from "./SubscriptionFilter"
 import MonthFilter from "./MonthFilter"
 import YearFilter from "./YearFilter"
@@ -24,7 +23,7 @@ type PaginationT = {
   paging: PagingT
   fetchData: (arg?: Record<string, unknown>) => void
   withoutSearch?: boolean
-  onCrystalFilterChange?: (filters: Record<string, string>) => void
+  filterContent?: React.ReactNode
   withSubscriptionFilter?: boolean
 }
 
@@ -32,7 +31,7 @@ const Pagination = ({
   paging = defaultPaging,
   fetchData,
   withoutSearch = false,
-  onCrystalFilterChange,
+  filterContent,
   withSubscriptionFilter,
 }: PaginationT) => {
   const theme = useTheme()
@@ -168,8 +167,7 @@ const Pagination = ({
             }}
           />
         ) : null}
-        {onCrystalFilterChange ? <FilterMenu onFilterChange={onCrystalFilterChange} /> : null}
-
+        {filterContent}
         {withSubscriptionFilter && (
           <>
             <IconButton

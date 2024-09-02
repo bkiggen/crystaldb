@@ -11,15 +11,15 @@ import Pagination from "../../components/Pagination"
 import ColorIndicator from "../../components/ColorIndicator"
 import NewCrystal from "./NewCrystal"
 import UpdateCrystalModal from "./UpdateCrystalModal"
+import FilterMenu from "../../components/SmartSelect/FilterMenu"
+import { excludeFilters } from "../../components/SmartSelect/excludeFilters"
 
 const Crystals = () => {
-  // const navigate = useNavigate()
-  // const location = useLocation()
-
   const { fetchCrystals, crystals, paging } = useCrystalStore()
 
+  const [activeFilters, setActiveFilters] = useState({})
+
   const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
-  // const [sortModel, setSortModel] = useState<GridSortModel>([{ field: "commodity", sort: "asc" }])
 
   const getCrystals = async ({
     searchTerm = "",
@@ -28,16 +28,14 @@ const Crystals = () => {
     sortDirection = null,
     filters = {},
   }) => {
-    fetchCrystals({ searchTerm, page, sortBy, sortDirection, filters })
+    const excludedFilters = excludeFilters(filters)
+
+    fetchCrystals({ searchTerm, page, sortBy, sortDirection, filters: excludedFilters })
   }
 
   useEffect(() => {
     getCrystals({})
   }, [])
-
-  const onCrystalFilterChange = (filters: Record<string, string>) => {
-    getCrystals({ filters })
-  }
 
   const columns: GridColDef[] = [
     {
@@ -71,22 +69,6 @@ const Crystals = () => {
         )
       },
     },
-    // {
-    //   field: "size",
-    //   headerName: "Size",
-    //   width: 80,
-    //   align: "center",
-    //   headerAlign: "center",
-    //   renderCell: (params: GridCellParams) => {
-    //     return params.row.size ? (
-    //       <Box sx={{ display: "flex", alignItems: "center" }}>
-    //         <Box sx={{ textTransform: "capitalize" }}>{params.row.size}</Box>
-    //       </Box>
-    //     ) : (
-    //       <Box>-</Box>
-    //     )
-    //   },
-    // },
     {
       field: "inventory",
       headerName: "Inventory",
@@ -101,36 +83,6 @@ const Crystals = () => {
         )
       },
     },
-    // {
-    //   field: "rarity",
-    //   headerName: "Rarity",
-    //   width: 130,
-    //   renderCell: (params: GridCellParams) => {
-    //     return params.row.rarity ? (
-    //       <Box sx={{ display: "flex", alignItems: "center" }}>
-    //         <ColorIndicator indicatorType="rarity" indicatorValue={params.row.rarity} />
-    //         {params.row.rarity}
-    //       </Box>
-    //     ) : (
-    //       <Box>-</Box>
-    //     )
-    //   },
-    // },
-    // {
-    //   field: "findAge",
-    //   headerName: "Find Age",
-    //   width: 130,
-    //   renderCell: (params: GridCellParams) => {
-    //     return params.row.findAge ? (
-    //       <Box sx={{ display: "flex", alignItems: "center" }}>
-    //         <ColorIndicator indicatorType="findAge" indicatorValue={params.row.findAge} />
-    //         {params.row.findAge}
-    //       </Box>
-    //     ) : (
-    //       <Box sx={{ display: "flex", justifyContent: "center" }}>-</Box>
-    //     )
-    //   },
-    // },
     {
       field: "category",
       headerName: "Category",
@@ -163,7 +115,13 @@ const Crystals = () => {
       <Pagination
         fetchData={getCrystals}
         paging={paging}
-        onCrystalFilterChange={onCrystalFilterChange}
+        filterContent={
+          <FilterMenu
+            activeFilters={activeFilters}
+            setActiveFilters={setActiveFilters}
+            defaultFilteredOut={{}}
+          />
+        }
       />
       <DataGrid
         sx={{

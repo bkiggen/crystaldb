@@ -1,16 +1,14 @@
 import { useMemo, useState, useEffect } from "react"
 import { Box, Typography, Menu, MenuItem, IconButton, Checkbox } from "@mui/material"
 import FilterListIcon from "@mui/icons-material/FilterList"
-import { isEmpty } from "lodash"
-
+import { isEmpty, isEqual } from "lodash"
 import colors from "../../styles/colors"
-
 import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
+import { CloseOutlined } from "@mui/icons-material"
 
-const FilterMenu = ({ onFilterChange }) => {
-  const { crystalFilterOptions } = useCrystalFilterOptions()
+const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut }) => {
+  const { crystalFilterOptions } = useCrystalFilterOptions({ defaultFilteredOut })
 
-  const [activeFilters, setActiveFilters] = useState({})
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -19,6 +17,10 @@ const FilterMenu = ({ onFilterChange }) => {
       setLoaded(true)
     }
   }, [crystalFilterOptions])
+
+  const handleClearFilters = () => {
+    setActiveFilters(crystalFilterOptions)
+  }
 
   const [mainAnchorEl, setMainAnchorEl] = useState(null)
 
@@ -50,20 +52,6 @@ const FilterMenu = ({ onFilterChange }) => {
       {},
     )
 
-  const mapFiltersToExclude = (filters) =>
-    Object.keys(filters).reduce((acc, categoryKey) => {
-      const options = Object.keys(filters[categoryKey].options).reduce((acc, optionKey) => {
-        const option = filters[categoryKey].options[optionKey]
-        if (!option.selected) {
-          acc.push(option.value)
-        }
-        return acc
-      }, [])
-
-      const newCategoryKey = categoryKey === "color" ? "colorId" : categoryKey
-      return { ...acc, [newCategoryKey]: options }
-    }, {})
-
   const handleToggleFilter = (category, option) => {
     const newFilters = {
       ...activeFilters,
@@ -76,10 +64,7 @@ const FilterMenu = ({ onFilterChange }) => {
       },
     }
 
-    const filtersToExclude = mapFiltersToExclude(newFilters)
-
     setActiveFilters(newFilters)
-    onFilterChange(filtersToExclude)
   }
 
   const optionElems = useMemo(() => {
@@ -126,9 +111,17 @@ const FilterMenu = ({ onFilterChange }) => {
     })
   }, [crystalFilterOptions])
 
-  return (
+  const anyFiltersSelected = !isEqual(activeFilters, crystalFilterOptions)
+
+  return loaded ? (
     <Box>
-      <IconButton onClick={handleOpenFilters} sx={{ color: "white" }}>
+      <IconButton onClick={handleClearFilters} sx={{ color: "white", marginRight: "12px" }}>
+        <CloseOutlined sx={{ fontSize: "24px" }} />
+      </IconButton>
+      <IconButton
+        onClick={handleOpenFilters}
+        sx={{ color: anyFiltersSelected ? "#ffbf00" : "white" }}
+      >
         <FilterListIcon sx={{ fontSize: "32px" }} />
       </IconButton>
       <Menu
@@ -151,6 +144,8 @@ const FilterMenu = ({ onFilterChange }) => {
         </Box>
       </Menu>
     </Box>
+  ) : (
+    <Box sx={{ height: "48px" }} />
   )
 }
 
