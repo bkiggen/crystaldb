@@ -12,7 +12,7 @@ export const createShipmentRequest = async (
     endpoint,
     method: "POST",
     body: JSON.stringify(newShipment),
-    successMessage: "Shipment Created!",
+    successMessage: "Shipment(s) Created!",
   })
 }
 
@@ -22,6 +22,7 @@ export const getAllShipments = async ({
   pageSize = 50,
   subscriptionId,
   month,
+  cycle,
   year,
 }: {
   searchTerm?: string
@@ -31,12 +32,14 @@ export const getAllShipments = async ({
   subscriptionId?: string
   month?: number
   year?: number
+  cycle?: string
 }): Promise<{ data: ShipmentT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     ...(subscriptionId ? { subscriptionId } : {}),
     ...(month ? { month: month.toString() } : {}),
     ...(year ? { year: year.toString() } : {}),
+    ...(cycle ? { cycle } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
   }).toString()

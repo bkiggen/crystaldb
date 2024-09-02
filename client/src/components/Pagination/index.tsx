@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom"
 import SubscriptionFilter from "./SubscriptionFilter"
 import MonthFilter from "./MonthFilter"
 import YearFilter from "./YearFilter"
+import CycleFilter from "./CycleFilter"
 
 type PaginationT = {
   paging: PagingT
@@ -41,8 +42,10 @@ const Pagination = ({
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(null)
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [selectedYear, setSelectedYear] = useState(null)
+  const [selectedCycle, setSelectedCycle] = useState(null)
   const [rawSearch, setRawSearch] = useState(null)
-  const searchTerm = useDebounce(rawSearch, 300) // debounced
+  const debouncedCycle = useDebounce(selectedCycle, 600) // debounced
+  const searchTerm = useDebounce(rawSearch, 600) // debounced
 
   const location = useLocation()
 
@@ -65,9 +68,10 @@ const Pagination = ({
       sortDirection,
       ...(selectedMonth ? { month: selectedMonth } : {}),
       ...(selectedYear ? { year: selectedYear } : {}),
+      ...(selectedCycle ? { cycle: selectedCycle } : {}),
       ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
     })
-  }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear])
+  }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear, debouncedCycle])
 
   const renderDigit = (num) => {
     if (typeof num !== "number") {
@@ -135,7 +139,14 @@ const Pagination = ({
         border: "1px solid #fff",
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
         {!withoutSearch ? (
           <TextField
             placeholder="Search"
@@ -189,18 +200,13 @@ const Pagination = ({
               }}
             >
               <Box sx={{ padding: "12px", display: "flex", gap: "12px" }}>
-                {withSubscriptionFilter ? (
-                  <SubscriptionFilter
-                    selectedSubscriptionId={selectedSubscriptionId}
-                    setSelectedSubscriptionId={setSelectedSubscriptionId}
-                  />
-                ) : null}
-                {withSubscriptionFilter ? (
-                  <MonthFilter selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
-                ) : null}
-                {withSubscriptionFilter ? (
-                  <YearFilter selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
-                ) : null}
+                <SubscriptionFilter
+                  selectedSubscriptionId={selectedSubscriptionId}
+                  setSelectedSubscriptionId={setSelectedSubscriptionId}
+                />
+                <MonthFilter selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
+                <YearFilter selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                <CycleFilter selectedCycle={selectedCycle} setSelectedCycle={setSelectedCycle} />
                 <IconButton
                   onClick={() => {
                     setSelectedMonth(null)
