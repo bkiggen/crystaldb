@@ -83,6 +83,7 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Typography
             sx={{ fontSize: "24px", color: "white", fontStyle: "italic", marginRight: "12px" }}
+            onClick={fetchCrystalSuggestions}
           >
             Smart Select
           </Typography>
