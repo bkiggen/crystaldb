@@ -8,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close"
 import type { CrystalT } from "../../types/Crystal"
 
 import ColorIndicator from "../ColorIndicator"
+import InventoryIndicator from "../InventoryIndicator"
 
 type CrystalChipT = {
   crystal: CrystalT
@@ -30,20 +31,21 @@ const CrystalChip = ({
       title={
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>Inventory:</Typography>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Inventory:</Typography>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
               {crystal.inventory}
             </Typography>
+            <InventoryIndicator indicatorValue={crystal.inventory} />
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>Category:</Typography>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Category:</Typography>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
               {crystal.category?.name || "None"}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px" }}>Location:</Typography>
-            <Typography sx={{ fontSize: "12px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Location:</Typography>
+            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
               {crystal.location?.name || "None"}
             </Typography>
           </Box>

@@ -9,6 +9,7 @@ import type { CrystalT } from "../../types/Crystal"
 
 import Pagination from "../../components/Pagination"
 import ColorIndicator from "../../components/ColorIndicator"
+import InventoryIndicator from "../../components/InventoryIndicator"
 import NewCrystal from "./NewCrystal"
 import UpdateCrystalModal from "./UpdateCrystalModal"
 import FilterMenu from "../../components/SmartSelect/FilterMenu"
@@ -77,7 +78,7 @@ const Crystals = () => {
       renderCell: (params: GridCellParams) => {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <ColorIndicator indicatorType="inventory" indicatorValue={params.row.inventory} />
+            <InventoryIndicator indicatorValue={params.row.inventory} />
             {params.row.inventory}
           </Box>
         )
