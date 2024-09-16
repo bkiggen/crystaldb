@@ -60,10 +60,6 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
     }
   }
 
-  useEffect(() => {
-    fetchCrystalSuggestions()
-  }, [activeFilters])
-
   const handleRemoveCrystalFromSuggestions = async (e, id: number) => {
     e.stopPropagation()
     setExcludedCrystalIds([...excludedCrystalIds, id])

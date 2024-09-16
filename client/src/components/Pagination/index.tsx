@@ -232,7 +232,14 @@ const Pagination = ({
         {paging.totalPages > 1 && (
           <>
             {!isTablet && (
-              <Typography sx={{ marginRight: "12px", color: colors.slateGrey }}>
+              <Typography
+                sx={{
+                  marginRight: "12px",
+                  marginLeft: "12px",
+                  color: colors.slateGrey,
+                  whiteSpace: "nowrap",
+                }}
+              >
                 Showing {startItem.toLocaleString()} - {endItem.toLocaleString()} of{" "}
                 {paging.totalCount.toLocaleString()}
               </Typography>
