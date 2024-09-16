@@ -1,23 +1,27 @@
 import { useState, useEffect } from "react"
-import { Box, Container, Checkbox } from "@mui/material"
+import { Box, Container, Checkbox, Modal } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 import { usePreBuildStore } from "../../store/preBuildStore"
+import BuildIcon from "@mui/icons-material/Build"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
-
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
 import NewPreBuild from "./NewPreBuild"
 import ColorIndicator from "../../components/ColorIndicator"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
+import { useShipmentStore } from "../../store/shipmentStore"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
+  const { createShipment } = useShipmentStore()
 
   const [selectAll, setSelectAll] = useState(false)
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
+  const [buildModalVisible, setBuildModalVisible] = useState(false)
 
   useEffect(() => {
     fetchPreBuilds({})
@@ -50,6 +54,12 @@ const PreBuilds = () => {
     })
   }
 
+  const confirmBuildPrebuilds = () => {
+    setBuildModalVisible(false)
+    setSelectedPreBuilds([])
+    setSelectAll(false)
+  }
+
   const columns: GridColDef[] = [
     {
       field: "action",
@@ -60,6 +70,12 @@ const PreBuilds = () => {
       renderHeader: () => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Checkbox checked={selectAll} onChange={handleSelectAllClick} />
+          {selectedPrebuilds.length > 0 && (
+            <BuildIcon
+              sx={{ cursor: "pointer", marginRight: "8px" }}
+              onClick={() => setBuildModalVisible(true)}
+            />
+          )}
         </Box>
       ),
       headerAlign: "center",
@@ -168,6 +184,9 @@ const PreBuilds = () => {
         className="bg-white p-0"
         autoHeight
       />
+      <Modal open={buildModalVisible} onClose={() => setBuildModalVisible(false)}>
+        <Box>test</Box>
+      </Modal>
     </Container>
   )
 }

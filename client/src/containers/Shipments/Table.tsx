@@ -11,7 +11,7 @@ import Pagination from "../../components/Pagination"
 import ColorIndicator from "../../components/ColorIndicator"
 
 import DeleteIcon from "@mui/icons-material/Delete"
-import ConfirmDialoge from "../../components/ConfirmDialogue"
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 import { useShipmentStore } from "../../store/shipmentStore"
 
 const Shipments = ({
@@ -224,7 +224,7 @@ const Shipments = ({
         autoHeight
       />
 
-      <ConfirmDialoge
+      <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
         onConfirm={commitDeleteShipments}
