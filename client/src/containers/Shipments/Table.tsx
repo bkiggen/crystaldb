@@ -67,7 +67,12 @@ const Shipments = ({
         ) : null,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <Checkbox onChange={(e) => handleClick(e, params)} />
+        return (
+          <Checkbox
+            onChange={(e) => handleClick(e, params)}
+            checked={selectedShipmentIds.includes(params.row.id)}
+          />
+        )
       },
     },
     {
