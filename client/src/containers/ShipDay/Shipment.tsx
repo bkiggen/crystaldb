@@ -32,9 +32,8 @@ const Shipment = ({ shipmentGroup }) => {
           borderRadius: "8px",
           display: "flex",
           flexDirection: "column",
-          width: "12%",
+          width: "20%",
           alignItems: "flex-start",
-          flexGrow: 1,
         }}
       >
         <Typography
@@ -48,7 +47,7 @@ const Shipment = ({ shipmentGroup }) => {
           }}
           // onClick={() => setSelectedShipment(shipment)}
         >
-          {shipmentGroup.subscription.shortName}: {shipmentGroup.shipmentRange}
+          {shipmentGroup.groupLabel}
         </Typography>
         <Box sx={{ marginBottom: "24px", display: "flex", alignItems: "center", width: "100%" }}>
           {/* <Typography
@@ -60,7 +59,7 @@ const Shipment = ({ shipmentGroup }) => {
               width: "100%",
             }}
           >
-            ({shipment.userCount || 0})
+            ({shipmentGroup.userCount})
           </Typography> */}
           {/* {shipment?.userCountIsNew && (
             <VisibilityIcon

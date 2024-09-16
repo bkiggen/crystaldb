@@ -31,7 +31,7 @@ const ShipDay = () => {
         <DateChanger fetchShipments={fetchShipments} />
         <Box sx={{ display: "flex", flexWrap: "wrap" }}>
           {shipmentGroups.map((shipmentGroup) => {
-            return <Shipment key={shipmentGroup.id} shipmentGroup={shipmentGroup} />
+            return <Shipment key={shipmentGroup.groupLabel} shipmentGroup={shipmentGroup} />
           })}
         </Box>
       </Box>
@@ -41,57 +41,44 @@ const ShipDay = () => {
 
 export default ShipDay
 
-function parseCycles(cycles) {
-  cycles.sort((a, b) => a - b)
-  let rangeStr = ""
-  let start = cycles[0]
-
-  for (let i = 1; i <= cycles.length; i++) {
-    if (i === cycles.length || cycles[i] !== cycles[i - 1] + 1) {
-      if (start === cycles[i - 1]) {
-        rangeStr += `${start}, `
-      } else {
-        rangeStr += `${start}-${cycles[i - 1]}, `
-      }
-      start = cycles[i]
-    }
+function groupShipments(shipments) {
+  if (!Array.isArray(shipments) || shipments.length === 0) {
+    return [] // Return an empty array if shipments is not a valid array
   }
 
-  return rangeStr.slice(0, -2) // Remove the trailing comma and space
-}
-
-function groupShipments(shipments) {
   const shipmentGroups = {}
 
   shipments.forEach((shipment) => {
-    // Create a unique identifier for the crystal group and subscription ID
-    const crystalIds = shipment.crystals
-      .map((crystal) => crystal.id)
-      .sort()
-      .join(",")
-    const subscriptionId = shipment.subscription.id
-    const uniqueId = `${crystalIds}-${subscriptionId}`
+    const groupLabel = shipment.groupLabel
 
-    if (!shipmentGroups[uniqueId]) {
-      shipmentGroups[uniqueId] = {
+    if (!shipmentGroups[groupLabel]) {
+      shipmentGroups[groupLabel] = {
+        groupLabel: groupLabel,
+        crystals: [],
         shipments: [],
-        cycles: [],
+        crystalIds: new Set(), // Use a Set to track unique crystal IDs
       }
     }
 
-    shipmentGroups[uniqueId].shipments.push(shipment)
-    shipmentGroups[uniqueId].cycles.push(shipment.cycle)
+    // Add all unique crystals from this shipment to the group
+    shipment.crystals.forEach((crystal) => {
+      if (!shipmentGroups[groupLabel].crystalIds.has(crystal.id)) {
+        shipmentGroups[groupLabel].crystals.push(crystal)
+        shipmentGroups[groupLabel].crystalIds.add(crystal.id)
+      }
+    })
+
+    shipmentGroups[groupLabel].shipments.push(shipment)
   })
 
-  // Convert the groups into an array with shipmentRange property
-  return Object.keys(shipmentGroups).map((uniqueId) => {
-    const group = shipmentGroups[uniqueId]
+  // Convert the groups into an array
+  return Object.keys(shipmentGroups).map((groupLabel) => {
+    const group = shipmentGroups[groupLabel]
     return {
+      groupLabel: group.groupLabel,
+      crystals: group.crystals,
       shipments: group.shipments,
-      crystals: group.shipments[0].crystals,
-      subscription: group.shipments[0].subscription,
-      id: uniqueId,
-      shipmentRange: parseCycles(group.cycles),
+      userCount: 0,
     }
   })
 }
