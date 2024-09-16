@@ -30,7 +30,7 @@ import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
-  setSelectedPreBuild: (preBuild: PreBuildT) => void
+  setSelectedPreBuild: (preBuild: PreBuildT[]) => void
 }
 
 const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildModalT) => {
@@ -47,7 +47,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   const onDelete = async () => {
     await deletePreBuild(preBuild.id)
 
-    setSelectedPreBuild(null)
+    setSelectedPreBuild([])
   }
 
   const initialValues: {
@@ -72,7 +72,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
 
   const handleSubmit = async (formData: typeof initialValues) => {
     updatePreBuild({ ...formData, id: preBuild.id })
-    setSelectedPreBuild(null)
+    setSelectedPreBuild([])
     formik.resetForm()
   }
 
@@ -91,7 +91,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [preBuild])
 
   return (
-    <ModalContainer open onClose={() => setSelectedPreBuild(null)} title="Update Pre-Build">
+    <ModalContainer open onClose={() => setSelectedPreBuild([])} title="Update Pre-Build">
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
