@@ -4,9 +4,9 @@ import FilterListIcon from "@mui/icons-material/FilterList"
 import { isEmpty, isEqual } from "lodash"
 import colors from "../../styles/colors"
 import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
-import { CloseOutlined } from "@mui/icons-material"
+import { CloseOutlined, PlayCircle } from "@mui/icons-material"
 
-const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut }) => {
+const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut, fetchCrystals }) => {
   const { crystalFilterOptions } = useCrystalFilterOptions({ defaultFilteredOut })
 
   const [loaded, setLoaded] = useState(false)
@@ -117,6 +117,9 @@ const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut }) => 
     <Box>
       <IconButton onClick={handleClearFilters} sx={{ color: "white", marginRight: "12px" }}>
         <CloseOutlined sx={{ fontSize: "24px" }} />
+      </IconButton>
+      <IconButton onClick={fetchCrystals} sx={{ color: "white", marginRight: "12px" }}>
+        <PlayCircle sx={{ fontSize: "24px" }} />
       </IconButton>
       <IconButton
         onClick={handleOpenFilters}

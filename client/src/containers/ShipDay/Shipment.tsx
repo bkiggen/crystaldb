@@ -29,10 +29,10 @@ const Shipment = ({ shipmentGroup }) => {
           padding: "24px",
           margin: "12px",
           background: colors.slateA4,
-          minWidth: "20%",
           borderRadius: "8px",
           display: "flex",
           flexDirection: "column",
+          width: "12%",
           alignItems: "flex-start",
           flexGrow: 1,
         }}

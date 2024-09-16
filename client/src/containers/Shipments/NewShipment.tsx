@@ -166,6 +166,33 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
               </TextField>
             </FormControl>
           </Grid>
+          <Grid item xs={8}>
+            <FormControl fullWidth variant="outlined">
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "4px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                  }}
+                >
+                  Group Tag
+                </Typography>
+              </Box>
+              <TextField
+                id="groupLabel"
+                variant="outlined"
+                fullWidth
+                {...formik.getFieldProps("groupLabel")}
+                inputProps={{ style: { color: "white" } }}
+                sx={textFieldStyles}
+              />
+            </FormControl>
+          </Grid>
         </Grid>
         <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
         <Grid container>

@@ -4,6 +4,7 @@ import { Container } from "@mui/material"
 import { useFormik } from "formik"
 import dayjs from "dayjs"
 import * as Yup from "yup"
+import { monthOptions } from "../../lib/constants"
 
 import { useShipmentStore } from "../../store/shipmentStore"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
@@ -63,6 +64,7 @@ const Shipments = () => {
     cycleString: Yup.string().nullable().required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
+    groupLabel: Yup.string().nullable(),
   })
 
   const resetSubType = () => {
@@ -87,6 +89,15 @@ const Shipments = () => {
     validationSchema,
     onSubmit: handleSubmit,
   })
+
+  // Set the default value for groupLabel based on year and month
+  useEffect(() => {
+    const { year, month } = formik.values
+    if (year && month) {
+      const groupLabelDefault = `${year}-${monthOptions[month]?.short}:${formik.values.cycleString}`
+      formik.setFieldValue("groupLabel", groupLabelDefault)
+    }
+  }, [formik.values.year, formik.values.month, formik.values.cycleString])
 
   useEffect(() => {
     if (suggestedCrystals.length) {

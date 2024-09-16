@@ -29,6 +29,9 @@ export class Shipment extends BaseEntity {
   @Column({ type: 'int', nullable: true })
   userCount: number
 
+  @Column({ nullable: true })
+  groupLabel: string
+
   @Column({ type: 'boolean', nullable: true })
   userCountIsNew: boolean
 

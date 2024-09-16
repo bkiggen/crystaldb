@@ -105,6 +105,7 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
           activeFilters={activeFilters}
           setActiveFilters={setActiveFilters}
           defaultFilteredOut={{ inventory: ["OUT"] }}
+          fetchCrystals={fetchCrystalSuggestions}
         />
       </Box>
       <Box>

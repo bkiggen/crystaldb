@@ -27,9 +27,8 @@ const Crystals = () => {
     page = 1,
     sortBy = null,
     sortDirection = null,
-    filters = {},
   }) => {
-    const excludedFilters = excludeFilters(filters)
+    const excludedFilters = excludeFilters(activeFilters)
 
     fetchCrystals({ searchTerm, page, sortBy, sortDirection, filters: excludedFilters })
   }
@@ -121,6 +120,7 @@ const Crystals = () => {
             activeFilters={activeFilters}
             setActiveFilters={setActiveFilters}
             defaultFilteredOut={{}}
+            fetchCrystals={getCrystals}
           />
         }
       />
