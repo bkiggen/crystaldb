@@ -75,9 +75,9 @@ const NewCrystal = () => {
 
   const validationSchema: Yup.Schema<typeof initialValues> = Yup.object({
     name: Yup.string().required("Name is required"),
-    colorId: Yup.number().integer(),
-    categoryId: Yup.number(),
-    locationId: Yup.number(),
+    colorId: Yup.number().integer().required("Color is required"),
+    categoryId: Yup.number().required("Category is required"),
+    locationId: Yup.number().required("Location is required"),
     rarity: Yup.string().oneOf(rarityOptions as RarityT[], "Invalid rarity value"),
     description: Yup.string(),
     image: Yup.string(),
@@ -148,17 +148,6 @@ const NewCrystal = () => {
     setLocationModalOpen(true)
   }
 
-  // const indicatorOptions = (indicatorName, indicatorValues) => {
-  //   return indicatorValues.map((value) => (
-  //     <MenuItem key={value} value={value}>
-  //       <Box sx={{ display: "flex", alignItems: "center" }}>
-  //         <ColorIndicator indicatorType={indicatorName} indicatorValue={value} />
-  //         {value}
-  //       </Box>
-  //     </MenuItem>
-  //   ))
-  // }
-
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -183,6 +172,7 @@ const NewCrystal = () => {
                 {...formik.getFieldProps("name")}
                 sx={textFieldStyles}
                 onBlur={() => setCrystalsVisible(false)}
+                error={formik.touched.name && Boolean(formik.errors.name)}
               />
               {crystalsVisible && crystalMatches.length > 0 ? (
                 <Box
@@ -213,6 +203,7 @@ const NewCrystal = () => {
                   id="colorId"
                   {...formik.getFieldProps("colorId")}
                   sx={textFieldStyles}
+                  error={formik.touched.colorId && Boolean(formik.errors.colorId)}
                 >
                   <MenuItem>
                     <Button onClick={() => setColorModalOpen(true)} sx={{ width: "100%" }}>
@@ -263,6 +254,7 @@ const NewCrystal = () => {
                 select
                 {...formik.getFieldProps("categoryId")}
                 sx={textFieldStyles}
+                error={formik.touched.categoryId && Boolean(formik.errors.categoryId)}
               >
                 <MenuItem>
                   <Button onClick={() => setCategoryModalOpen(true)} sx={{ width: "100%" }}>
@@ -301,6 +293,7 @@ const NewCrystal = () => {
                 select
                 {...formik.getFieldProps("locationId")}
                 sx={textFieldStyles}
+                error={formik.touched.locationId && Boolean(formik.errors.locationId)}
               >
                 <MenuItem>
                   <Button onClick={() => setLocationModalOpen(true)} sx={{ width: "100%" }}>
