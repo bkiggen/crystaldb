@@ -25,6 +25,7 @@ const Shipments = ({
   const { deleteShipments } = useShipmentStore()
   const [selectedShipmentIds, setSelectedShipmentIds] = useState<number[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [selectAll, setSelectAll] = useState(false)
 
   const handleClick = (e, params: GridCellParams) => {
     e.stopPropagation()
@@ -35,6 +36,15 @@ const Shipments = ({
         return [...prev, params.row.id]
       }
     })
+  }
+
+  const handleSelectAllClick = (e) => {
+    setSelectAll(e.target.checked)
+    if (e.target.checked) {
+      setSelectedShipmentIds(shipments.map((shipment) => shipment.id)) // Select all shipment IDs
+    } else {
+      setSelectedShipmentIds([]) // Deselect all
+    }
   }
 
   const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
@@ -49,22 +59,33 @@ const Shipments = ({
     deleteShipments(selectedShipmentIds)
     setDeleteModalVisible(false)
     setSelectedShipmentIds([])
+    setSelectAll(false)
   }
 
   const columns: GridColDef[] = [
     {
       field: "action",
       headerName: "",
-      width: 60,
+      width: 100,
       align: "center",
       sortable: false,
-      renderHeader: () =>
-        selectedShipmentIds.length ? (
-          <DeleteIcon
-            sx={{ color: "red", cursor: "pointer" }}
-            onClick={() => setDeleteModalVisible(true)}
+      renderHeader: () => (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Checkbox
+            checked={selectAll}
+            indeterminate={
+              selectedShipmentIds.length > 0 && selectedShipmentIds.length < shipments.length
+            }
+            onChange={handleSelectAllClick}
           />
-        ) : null,
+          {selectedShipmentIds.length > 0 && (
+            <DeleteIcon
+              sx={{ color: "#cc0000", cursor: "pointer", marginRight: "8px" }}
+              onClick={() => setDeleteModalVisible(true)}
+            />
+          )}
+        </Box>
+      ),
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
         return (

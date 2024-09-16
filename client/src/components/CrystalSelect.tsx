@@ -60,6 +60,7 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
           return (
             <Tooltip
               placement="top"
+              key={crystal.id}
               title={
                 <Box>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
