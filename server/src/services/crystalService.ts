@@ -91,30 +91,21 @@ export const addFilters = (query: SelectQueryBuilder<any>, allFilters: any) => {
       const filterArray = filterValue.split(',').map(item => item.trim())
       if (filterArray.length > 0) {
         if (filterKey === 'location') {
-          query = query.andWhere(
-            'location.id NOT IN (:...locationIds) OR location.id IS NULL',
-            {
-              locationIds: filterArray,
-            }
-          )
+          query = query.andWhere('location.id NOT IN (:...locationIds)', {
+            locationIds: filterArray,
+          })
         } else if (filterKey === 'category') {
-          query = query.andWhere(
-            'category.id NOT IN (:...categoryIds) OR category.id IS NULL',
-            {
-              categoryIds: filterArray,
-            }
-          )
+          query = query.andWhere('category.id NOT IN (:...categoryIds)', {
+            categoryIds: filterArray,
+          })
         } else if (filterKey === 'colorId') {
-          query = query.andWhere(
-            'color.id NOT IN (:...colorIds) OR color.id IS NULL',
-            {
-              colorIds: filterArray,
-            }
-          )
+          query = query.andWhere('color.id NOT IN (:...colorIds)', {
+            colorIds: filterArray,
+          })
         } else {
           // Default filtering
           query = query.andWhere(
-            `(crystal.${filterKey} NOT IN (:...${filterKey}) OR crystal.${filterKey} IS NULL)`,
+            `crystal.${filterKey} NOT IN (:...${filterKey})`,
             { [filterKey]: filterArray }
           )
         }
