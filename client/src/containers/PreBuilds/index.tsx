@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react"
-import { Box, Container, Checkbox, Modal } from "@mui/material"
+import { Box, Container, Checkbox, Typography, TextField, Button, MenuItem } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 import { usePreBuildStore } from "../../store/preBuildStore"
 import BuildIcon from "@mui/icons-material/Build"
 
 import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
-import ConfirmDialogue from "../../components/ConfirmDialogue"
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
 import NewPreBuild from "./NewPreBuild"
 import ColorIndicator from "../../components/ColorIndicator"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { useShipmentStore } from "../../store/shipmentStore"
+import { monthOptions } from "../../lib/constants" // Import monthOptions
+import ModalContainer from "../../components/Modals/ModalContainer"
+import { textFieldStyles } from "../../styles/vars"
+import dayjs from "dayjs"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
@@ -22,6 +25,8 @@ const PreBuilds = () => {
   const [selectAll, setSelectAll] = useState(false)
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
   const [buildModalVisible, setBuildModalVisible] = useState(false)
+  const [month, setMonth] = useState(dayjs().month())
+  const [year, setYear] = useState(dayjs().year())
 
   useEffect(() => {
     fetchPreBuilds({})
@@ -31,10 +36,8 @@ const PreBuilds = () => {
   const handleSelectAllClick = (e) => {
     setSelectAll(e.target.checked)
     if (e.target.checked) {
-      // Select all prebuilds
       setSelectedPreBuilds(preBuilds)
     } else {
-      // Deselect all prebuilds
       setSelectedPreBuilds([])
     }
   }
@@ -42,19 +45,33 @@ const PreBuilds = () => {
   const handleClick = (e, params) => {
     e.stopPropagation()
     const selectedId = params.row.id
-    setSelectedPreBuilds((prevSelected) => {
-      if (prevSelected.some((prebuild) => prebuild.id === selectedId)) {
-        // If the prebuild with selectedId is already in the selected array, remove it
-        return prevSelected.filter((prebuild) => prebuild.id !== selectedId)
-      } else {
-        // If not, add the corresponding prebuild to the selected array
-        const selectedPrebuild = preBuilds.find((prebuild) => prebuild.id === selectedId)
-        return [...prevSelected, selectedPrebuild]
-      }
-    })
+    console.log("🚀 ~ handleClick ~ selectedId:", selectedId)
+    // add or remove from selectedPrebuilds
+    setSelectedPreBuilds((prevSelected) =>
+      prevSelected.some((prebuild) => prebuild.id === selectedId)
+        ? prevSelected.filter((prebuild) => prebuild.id !== selectedId)
+        : [...prevSelected, preBuilds.find((prebuild) => prebuild.id === selectedId)],
+    )
   }
 
   const confirmBuildPrebuilds = () => {
+    selectedPrebuilds.forEach((prebuild) => {
+      const subscriptionId = prebuild.subscription.id
+      const crystalIds = prebuild.crystals.map((crystal) => crystal.id)
+
+      // Call createShipment with the collected data
+      createShipment({
+        cycleString: prebuild.cycle.toString(),
+        subscriptionId,
+        crystalIds,
+        month: parseInt(month),
+        year: parseInt(year),
+        userCount: 0,
+        userCountIsNew: false,
+      })
+    })
+
+    // Close modal and reset state
     setBuildModalVisible(false)
     setSelectedPreBuilds([])
     setSelectAll(false)
@@ -150,7 +167,7 @@ const PreBuilds = () => {
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
       <NewPreBuild />
-      {selectedPrebuilds.length === 1 && ( // Check if any prebuilds are selected
+      {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
           preBuild={selectedPrebuilds[0]}
           setSelectedPreBuild={setSelectedPreBuilds}
@@ -170,9 +187,9 @@ const PreBuilds = () => {
         onRowClick={(item) => {
           const id = item.row.id
           setSelectedPreBuilds((prevSelected) =>
-            prevSelected.includes(id)
-              ? prevSelected.filter((prebuildId) => prebuildId !== id)
-              : [...prevSelected, id],
+            prevSelected.some((prebuild) => prebuild.id === id)
+              ? prevSelected.filter((prebuild) => prebuild.id !== id)
+              : [...prevSelected, preBuilds.find((prebuild) => prebuild.id === id)],
           )
         }}
         columns={columns}
@@ -184,9 +201,40 @@ const PreBuilds = () => {
         className="bg-white p-0"
         autoHeight
       />
-      <Modal open={buildModalVisible} onClose={() => setBuildModalVisible(false)}>
-        <Box>test</Box>
-      </Modal>
+      <ModalContainer
+        open={buildModalVisible}
+        onClose={() => setBuildModalVisible(false)}
+        paperStyles={{ maxWidth: "400px" }}
+      >
+        <Typography variant="h5" sx={{ marginBottom: "16px", color: "white" }}>
+          Are you sure you want to build the selected prebuilds?
+        </Typography>
+        <TextField
+          label="Month"
+          select
+          value={month}
+          onChange={(e) => setMonth(e.target.value)}
+          fullWidth
+          sx={{ ...textFieldStyles, marginBottom: "16px" }}
+        >
+          {Object.keys(monthOptions).map((key) => (
+            <MenuItem key={key} value={key}>
+              {monthOptions[key].long}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="Year"
+          type="number"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          fullWidth
+          sx={{ ...textFieldStyles, marginBottom: "16px" }}
+        />
+        <Button variant="contained" color="primary" onClick={confirmBuildPrebuilds} fullWidth>
+          Confirm
+        </Button>
+      </ModalContainer>
     </Container>
   )
 }
