@@ -26,6 +26,7 @@ const PreBuilds = () => {
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
   const [buildModalVisible, setBuildModalVisible] = useState(false)
   const [month, setMonth] = useState(dayjs().month())
+  console.log(month)
   const [year, setYear] = useState(dayjs().year())
 
   useEffect(() => {
@@ -64,8 +65,8 @@ const PreBuilds = () => {
         cycleString: prebuild.cycle.toString(),
         subscriptionId,
         crystalIds,
-        month: parseInt(month),
-        year: parseInt(year),
+        month,
+        year,
         userCount: 0,
         userCountIsNew: false,
       })
@@ -213,7 +214,7 @@ const PreBuilds = () => {
           label="Month"
           select
           value={month}
-          onChange={(e) => setMonth(e.target.value)}
+          onChange={(e) => setMonth(parseInt(e.target.value))}
           fullWidth
           sx={{ ...textFieldStyles, marginBottom: "16px" }}
         >
@@ -227,7 +228,7 @@ const PreBuilds = () => {
           label="Year"
           type="number"
           value={year}
-          onChange={(e) => setYear(e.target.value)}
+          onChange={(e) => setYear(parseInt(e.target.value))}
           fullWidth
           sx={{ ...textFieldStyles, marginBottom: "16px" }}
         />
