@@ -62,6 +62,7 @@ const PreBuilds = () => {
         subscriptionId,
         crystalIds,
         month,
+        groupLabel: prebuild.cycle,
         year,
         userCount: 0,
         userCountIsNew: false,

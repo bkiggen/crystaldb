@@ -26,7 +26,6 @@ const Shipments = () => {
 
   useEffect(() => {
     fetchSubscriptions()
-    fetchShipments({})
   }, [])
 
   const handleClone = (e, crystals: CrystalT[]) => {

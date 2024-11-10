@@ -72,6 +72,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     crystalIds: number[]
     subscriptionId: number
     userCount: number
+    groupLabel: string | number
   } = {
     month: currentMonth,
     year: currentYear,
@@ -79,6 +80,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     crystalIds: selectedShipment.crystals.map((c) => c.id),
     subscriptionId: selectedShipment.subscription.id || 1,
     userCount: selectedShipment.userCount || 0,
+    groupLabel: selectedShipment.groupLabel || "",
   }
 
   useEffect(() => {
@@ -96,6 +98,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     userCount: Yup.number().integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
+    groupLabel: Yup.string(),
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
@@ -253,6 +256,27 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
                 </TextField>
               </FormControl>
             </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ position: "relative", marginTop: "24px" }}>
+            <Typography
+              sx={{
+                fontSize: "14px",
+                marginBottom: "4px",
+                color: "white",
+              }}
+            >
+              Group Label
+            </Typography>
+            <TextField
+              id="groupLabel"
+              variant="outlined"
+              fullWidth
+              {...formik.getFieldProps("groupLabel")}
+              inputProps={{ style: { color: "white" } }}
+              sx={textFieldStyles}
+              error={formik.touched.groupLabel && Boolean(formik.errors.groupLabel)}
+              helperText={<>{formik.touched.groupLabel ? formik.errors.groupLabel : ""}</>}
+            />
           </Grid>
           <Grid
             container

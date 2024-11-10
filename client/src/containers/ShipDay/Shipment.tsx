@@ -1,21 +1,15 @@
 import { useState } from "react"
-
+import { useNavigate } from "react-router-dom"
 import { Box, TextField, Typography } from "@mui/material"
-
-// import { useShipmentStore } from "../../store/shipmentStore"
-
 import ColorIndicator from "../../components/ColorIndicator"
-
 import colors from "../../styles/colors"
-
-// import VisibilityIcon from "@mui/icons-material/Visibility"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
 const Shipment = ({ shipmentGroup }) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
-  // const { updateShipment } = useShipmentStore()
   const [subscriberCount, setSubscriberCount] = useState(0)
   const [editing, setEditing] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -28,7 +22,7 @@ const Shipment = ({ shipmentGroup }) => {
       <Box
         key={shipmentGroup.id}
         sx={{
-          padding: "24px",
+          padding: "12px",
           margin: "12px",
           background: colors.slateA4,
           borderRadius: "8px",
@@ -41,15 +35,15 @@ const Shipment = ({ shipmentGroup }) => {
         <Typography
           sx={{
             fontWeight: 600,
-            fontSize: "1.5em",
+            fontSize: "2em",
             textAlign: "center",
             textDecoration: "underline",
             cursor: "pointer",
             width: "100%",
           }}
-          // onClick={() => setSelectedShipment(shipment)}
+          onClick={() => navigate(`/shipments?searchTerm=${shipmentGroup.groupLabel}`)}
         >
-          {shipmentGroup.groupLabel}
+          {shipmentGroup.groupLabel || "No Group"}
         </Typography>
         <Box
           sx={{
@@ -72,17 +66,17 @@ const Shipment = ({ shipmentGroup }) => {
             <Typography
               sx={{
                 textAlign: "center",
-                fontSize: "24px",
                 // color: shipment?.userCountIsNew ? "red" : "white",
                 color: "white",
                 marginRight: "4px",
                 width: "100%",
+                fontSize: "1em",
               }}
               onClick={() => {
                 setEditing(true)
               }}
             >
-              {subscriberCount.toLocaleString()}
+              Count: {subscriberCount.toLocaleString()}
             </Typography>
           )}
           {/* {shipment?.userCountIsNew && (

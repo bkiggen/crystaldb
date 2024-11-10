@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Box, Button, Checkbox } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
 
@@ -22,6 +23,7 @@ const Shipments = ({
   fetchShipments,
   handleClone,
 }) => {
+  const navigate = useNavigate()
   const { deleteShipments } = useShipmentStore()
   const [selectedShipmentIds, setSelectedShipmentIds] = useState<number[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
@@ -62,6 +64,17 @@ const Shipments = ({
     setSelectAll(false)
   }
 
+  const onPaginationDataFetch = (pagingData) => {
+    const queryParams = new URLSearchParams()
+
+    queryParams.append("page", pagingData.page)
+
+    if (pagingData.searchTerm) {
+      queryParams.append("searchTerm", pagingData.searchTerm)
+    }
+
+    navigate(`?${queryParams.toString()}`)
+  }
   const columns: GridColDef[] = [
     {
       field: "action",
@@ -94,6 +107,17 @@ const Shipments = ({
             checked={selectedShipmentIds.includes(params.row.id)}
           />
         )
+      },
+    },
+    {
+      field: "groupLabel",
+      headerName: "Group Label",
+      width: 150,
+      align: "center",
+      sortable: false,
+      headerAlign: "center",
+      renderCell: (params: GridCellParams) => {
+        return <div>{params.row.groupLabel}</div>
       },
     },
     {
@@ -199,7 +223,12 @@ const Shipments = ({
 
   return (
     <>
-      <Pagination fetchData={fetchShipments} paging={paging} withSubscriptionFilter withoutSearch />
+      <Pagination
+        fetchData={fetchShipments}
+        paging={paging}
+        withSubscriptionFilter
+        onDataChange={onPaginationDataFetch}
+      />
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",

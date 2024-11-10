@@ -25,6 +25,7 @@ type PaginationT = {
   fetchData: (arg?: Record<string, unknown>) => void
   withoutSearch?: boolean
   filterContent?: React.ReactNode
+  onDataChange?: (arg: Record<string, unknown>) => void
   withSubscriptionFilter?: boolean
 }
 
@@ -33,23 +34,28 @@ const Pagination = ({
   fetchData,
   withoutSearch = false,
   filterContent,
+  onDataChange = () => null,
   withSubscriptionFilter,
 }: PaginationT) => {
   const theme = useTheme()
   const { width } = useWindowSize()
   const isTablet = width < 768
 
+  const location = useLocation()
+
+  const {
+    sortBy,
+    sortDirection,
+    searchTerm: defaultSearchTerm,
+  } = queryString.parse(location.search)
+
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState(null)
   const [selectedMonth, setSelectedMonth] = useState(null)
   const [selectedYear, setSelectedYear] = useState(null)
   const [selectedCycle, setSelectedCycle] = useState(null)
-  const [rawSearch, setRawSearch] = useState(null)
+  const [rawSearch, setRawSearch] = useState(defaultSearchTerm || "")
   const debouncedCycle = useDebounce(selectedCycle, 600) // debounced
   const searchTerm = useDebounce(rawSearch, 600) // debounced
-
-  const location = useLocation()
-
-  const { sortBy, sortDirection } = queryString.parse(location.search)
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -61,16 +67,19 @@ const Pagination = ({
   }
 
   useEffect(() => {
-    fetchData({
+    const newData = {
       page: 1,
-      searchTerm,
+      searchTerm: rawSearch,
       sortBy,
       sortDirection,
       ...(selectedMonth ? { month: selectedMonth } : {}),
       ...(selectedYear ? { year: selectedYear } : {}),
       ...(selectedCycle ? { cycle: selectedCycle } : {}),
       ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
-    })
+    }
+
+    onDataChange(newData)
+    fetchData(newData)
   }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear, debouncedCycle])
 
   const renderDigit = (num) => {

@@ -57,6 +57,7 @@ function groupShipments(shipments) {
         crystals: [],
         shipments: [],
         crystalIds: new Set(), // Use a Set to track unique crystal IDs
+        subscription: shipment.subscription,
       }
     }
 
@@ -79,6 +80,7 @@ function groupShipments(shipments) {
       crystals: group.crystals,
       shipments: group.shipments,
       userCount: 0,
+      subscription: group.subscription,
     }
   })
 }

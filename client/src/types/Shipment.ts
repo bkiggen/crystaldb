@@ -9,6 +9,7 @@ export type ShipmentT = {
   crystalIds: number[]
   crystals?: CrystalT[]
   createdAt?: string
+  groupLabel?: string | number
   updatedAt?: string
   subscriptionId: number
   subscription?: SubscriptionT
