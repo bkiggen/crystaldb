@@ -27,7 +27,10 @@ const Shipment = ({ shipmentGroup }) => {
           borderRadius: "8px",
           display: "flex",
           flexDirection: "column",
-          width: "20%",
+          width: "300px",
+          maxHeight: "300px",
+          overflowY: "auto",
+          overflowX: "hidden",
           alignItems: "flex-start",
         }}
       >
