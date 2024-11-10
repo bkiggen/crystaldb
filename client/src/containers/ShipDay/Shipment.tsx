@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Box, TextField, Typography } from "@mui/material"
 import ColorIndicator from "../../components/ColorIndicator"
 import colors from "../../styles/colors"
@@ -32,19 +32,25 @@ const Shipment = ({ shipmentGroup }) => {
           alignItems: "flex-start",
         }}
       >
-        <Typography
-          sx={{
-            fontWeight: 600,
-            fontSize: "2em",
+        <Link
+          to={`/shipments?searchTerm=${shipmentGroup.groupLabel}`}
+          style={{
             textAlign: "center",
             textDecoration: "underline",
             cursor: "pointer",
             width: "100%",
           }}
-          onClick={() => navigate(`/shipments?searchTerm=${shipmentGroup.groupLabel}`)}
         >
-          {shipmentGroup.groupLabel || "No Group"}
-        </Typography>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: "2em",
+              color: "white",
+            }}
+          >
+            {shipmentGroup.groupLabel || "No Group"}
+          </Typography>
+        </Link>
         <Box
           sx={{
             marginBottom: "24px",
