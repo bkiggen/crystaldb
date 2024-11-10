@@ -18,7 +18,6 @@ import Table from "./Table"
 const Shipments = () => {
   const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
-
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
 
   useEffect(() => {
@@ -86,13 +85,10 @@ const Shipments = () => {
     onSubmit: handleSubmit,
   })
 
-  // Set the default value for groupLabel based on year and month
+  // Set the default value for groupLabel based on cycle string
   useEffect(() => {
-    const { year, month } = formik.values
-    if (year && month) {
-      formik.setFieldValue("groupLabel", formik.values.cycleString)
-    }
-  }, [formik.values.year, formik.values.month, formik.values.cycleString])
+    formik.setFieldValue("groupLabel", formik.values.cycleString)
+  }, [formik.values.cycleString])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
