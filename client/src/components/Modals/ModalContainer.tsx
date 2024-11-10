@@ -1,5 +1,6 @@
 import React from "react"
-import { Modal, Paper, Typography } from "@mui/material"
+import { Modal, Paper, Typography, IconButton } from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
 import colors from "../../styles/colors"
 
 type ModalContainerT = {
@@ -32,13 +33,26 @@ const ModalContainer = ({
           width: "50vw",
           maxWidth: "1000px",
           minWidth: "400px",
-          padding: "24px",
+          padding: "40px",
           ...paperStyles,
         },
         ...modalStyles,
       }}
     >
-      <Paper sx={{ outline: "none", background: colors.slate }}>
+      <Paper
+        sx={{ outline: "none", background: colors.slate, position: "relative", padding: "32px" }}
+      >
+        <IconButton
+          onClick={() => onClose(null)}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: "white",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         {title && (
           <Typography
             sx={{

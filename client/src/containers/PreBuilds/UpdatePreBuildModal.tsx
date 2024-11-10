@@ -229,7 +229,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
               onClick={() => setDeleteConfirmVisible(true)}
               sx={{ marginRight: "16px" }}
             >
-              X
+              Delete
             </Button>
             <Button type="submit" variant="contained" color="primary">
               Update PreBuild
