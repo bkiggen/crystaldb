@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Box, TextField, Typography } from "@mui/material"
 import ColorIndicator from "../../components/ColorIndicator"
 import colors from "../../styles/colors"
@@ -9,7 +9,6 @@ const Shipment = ({ shipmentGroup }) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
   const [subscriberCount, setSubscriberCount] = useState(0)
   const [editing, setEditing] = useState(false)
-  const navigate = useNavigate()
 
   return (
     <>
