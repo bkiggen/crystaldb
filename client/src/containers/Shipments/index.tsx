@@ -4,11 +4,9 @@ import { Container } from "@mui/material"
 import { useFormik } from "formik"
 import dayjs from "dayjs"
 import * as Yup from "yup"
-import { monthOptions } from "../../lib/constants"
 
 import { useShipmentStore } from "../../store/shipmentStore"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
-import { useCrystalStore } from "../../store/crystalStore"
 
 import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
@@ -20,7 +18,6 @@ import Table from "./Table"
 const Shipments = () => {
   const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
-  const { suggestedCrystals, setSuggestedCrystals } = useCrystalStore()
 
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
 
@@ -93,21 +90,9 @@ const Shipments = () => {
   useEffect(() => {
     const { year, month } = formik.values
     if (year && month) {
-      const groupLabelDefault = `${year}-${monthOptions[month]?.short}:${formik.values.cycleString}`
-      formik.setFieldValue("groupLabel", groupLabelDefault)
+      formik.setFieldValue("groupLabel", formik.values.cycleString)
     }
   }, [formik.values.year, formik.values.month, formik.values.cycleString])
-
-  useEffect(() => {
-    if (suggestedCrystals.length) {
-      setSuggestedCrystals([])
-    }
-  }, [
-    formik.values.cycleString,
-    formik.values.month,
-    formik.values.year,
-    formik.values.subscriptionId,
-  ])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
