@@ -220,6 +220,7 @@ const Pagination = ({
                   onClick={() => {
                     setSelectedMonth(null)
                     setSelectedYear(null)
+                    setSelectedCycle(null)
                     setSelectedSubscriptionId(null)
                   }}
                   sx={{ height: "56px", width: "56px" }}
