@@ -57,6 +57,7 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
       crystalIds: selectedShipment.crystals.map((c) => c.id),
       subscriptionId: selectedShipment.subscription.id || 1,
       userCount: selectedShipment.userCount,
+      groupLabel: selectedShipment.groupLabel,
     })
   }, [selectedShipment])
 
