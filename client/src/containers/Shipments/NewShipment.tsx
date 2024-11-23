@@ -60,7 +60,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
       <Box
         sx={{
           background: colors.slateA4,
-          border: "1px solid #fff",
+          border: `1px solid ${colors.slateGrey}`,
           padding: "24px",
           paddingTop: "48px",
           margin: "0 auto",

@@ -62,9 +62,8 @@ const NewPreBuild = () => {
       <Box
         sx={{
           background: colors.slateA4,
-          border: "1px solid #fff",
+          border: `1px solid ${colors.slateGrey}`,
           padding: "24px",
-          paddingTop: "48px",
           margin: "0 auto",
           marginBottom: "48px",
           borderRadius: "4px",
@@ -83,6 +82,7 @@ const NewPreBuild = () => {
               <Typography
                 sx={{
                   fontSize: "14px",
+                  color: "white",
                 }}
               >
                 Cycle
@@ -104,6 +104,7 @@ const NewPreBuild = () => {
                 sx={{
                   fontSize: "14px",
                   marginBottom: "4px",
+                  color: "white",
                 }}
               >
                 Subscription Type
@@ -123,11 +124,7 @@ const NewPreBuild = () => {
             </FormControl>
           </Grid>
         </Grid>
-        <Grid
-          container
-          spacing={2}
-          sx={{ marginTop: "24px", display: "flex", alignItems: "center" }}
-        >
+        <Grid container spacing={2} sx={{ display: "flex", alignItems: "center" }}>
           <Grid item xs={12} sx={{ marginTop: "28px" }}>
             <FormControl fullWidth variant="outlined">
               <CrystalSelect formik={formik} />

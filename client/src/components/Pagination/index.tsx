@@ -143,9 +143,8 @@ const Pagination = ({
         flexDirection: isTablet ? "column" : "row",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "12px 18px",
+        padding: "6px 16px",
         borderRadius: "4px",
-        border: "1px solid #515151",
       }}
     >
       <Box
