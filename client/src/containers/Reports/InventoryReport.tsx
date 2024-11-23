@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import { Box, Button, Typography } from "@mui/material"
 import DownloadIcon from "@mui/icons-material/Download"
@@ -10,6 +10,7 @@ import createCSVFromArray from "../../util/createCSVFromArray"
 import ColorIndicator from "../../components/ColorIndicator"
 
 import colors from "../../styles/colors"
+import UpdateCrystalModal from "../Crystals/UpdateCrystalModal"
 
 type InventoryReportT = {
   type: "LOW" | "MEDIUM" | "HIGH" | "OUT"
@@ -17,6 +18,7 @@ type InventoryReportT = {
 
 const InventoryReport = ({ type }: InventoryReportT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
+  const [crystalToUpdate, setCrystalToUpdate] = useState(null)
 
   useEffect(() => {
     fetchCrystals({
@@ -98,13 +100,25 @@ const InventoryReport = ({ type }: InventoryReportT) => {
                 borderRadius: "4px",
                 border: "1px solid white",
                 padding: "4px 12px",
+                cursor: "pointer",
+
+                "&:hover": {
+                  backgroundColor: colors.slateA4,
+                },
               }}
+              onClick={() => setCrystalToUpdate(c)}
             >
               <ColorIndicator indicatorValue={c.color?.hex} />
-              <Box>{c.name}</Box>
+              <Box sx={{ color: "white" }}>{c.name}</Box>
             </Box>
           )
         })}
+        {crystalToUpdate ? (
+          <UpdateCrystalModal
+            listCrystal={crystalToUpdate}
+            onClose={() => setCrystalToUpdate(null)}
+          />
+        ) : null}
       </Box>
     </Box>
   )

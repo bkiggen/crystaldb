@@ -1,51 +1,50 @@
-import { Router, Request, Response } from 'express'
-import fetch from 'node-fetch'
+import { Router } from "express";
+import fetch from "node-fetch";
 
-const router = Router()
+const router = Router();
 
-const clientId = process.env.CRATEJOY_KEY
-const clientSecret = process.env.CRATEJOY_SECRET
+const clientId = process.env.CRATEJOY_KEY;
+const clientSecret = process.env.CRATEJOY_SECRET;
 
 const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
-  'base64'
-)
+  "base64"
+);
 
 router.use(async (req, res) => {
-  console.log('🚀 ~ router.BODY ~ req:', req.body)
-  const endpoint = req.body.path
-  const method = req.body.method
-  const baseUrl = 'https://api.cratejoy.com/v1'
-  const url = `${baseUrl}${endpoint}`
-  console.log('🚀 ~ router.use ~ url:', url)
+  const { path: endpoint, method, body: requestBody } = req.body;
 
+  const baseUrl = "https://api.cratejoy.com/v1";
+  const url = `${baseUrl}${endpoint}`;
+
+  console.log("🚀 ~ router.use ~ url:", url);
   const headers = {
     Authorization: `Basic ${credentials}`,
-    'Content-Type': 'application/json',
-  }
+    "Content-Type": "application/json",
+  };
+
   try {
     const response = await fetch(url, {
       method,
       headers,
-      body: ['POST', 'PUT', 'PATCH'].includes(method)
-        ? JSON.stringify(req.body)
-        : undefined,
-    })
+      body:
+        ["POST", "PUT", "PATCH"].includes(method) && requestBody
+          ? JSON.stringify(requestBody)
+          : undefined,
+    });
+    console.log("🚀 ~ Response status:", response.status);
 
-    console.log('🚀 ~ Response status:', response, JSON.stringify(req.body))
-    const contentType = response.headers.get('content-type')
-    let data
+    const contentType = response.headers.get("content-type");
+    let data =
+      contentType && contentType.includes("application/json")
+        ? await response.json()
+        : await response.text();
 
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json() // Parse JSON response
-    } else {
-      data = await response.text() // Parse non-JSON response
-    }
-
-    res.status(response.status).send(data)
+    res.status(response.status).send(data);
   } catch (error) {
-    console.error('Error proxying request to Cratejoy:', error)
-    res.status(500).send({ error: 'Error communicating with Cratejoy API' })
+    console.error("Error proxying request to Cratejoy:", error);
+    res.status(500).send({ error: "Error communicating with Cratejoy API" });
   }
-})
+});
+console.log("🚀 ~ router.use ~ response:", response);
 
-export default router
+export default router;

@@ -85,18 +85,18 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", marginLeft: "12px" }}>
             <ArrowLeftIcon
-              sx={{ fontSize: "32px", cursor: "pointer" }}
+              sx={{ fontSize: "32px", cursor: "pointer", color: "white" }}
               onClick={() => updatePage("left")}
             />
             <Typography sx={{ fontSize: "16px", color: "white", marginRight: "4px" }}>
               {currentPage}
             </Typography>
-            of
+            <Typography sx={{ fontSize: "16px", color: "white" }}>of</Typography>
             <Typography sx={{ fontSize: "16px", color: "white", marginLeft: "4px" }}>
               {Math.ceil(crystals.length / PAGE_SIZE || 1)}
             </Typography>
             <ArrowRightIcon
-              sx={{ fontSize: "32px", cursor: "pointer" }}
+              sx={{ fontSize: "32px", cursor: "pointer", color: "white" }}
               onClick={() => updatePage("right")}
             />
           </Box>

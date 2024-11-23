@@ -62,11 +62,15 @@ const InventoryReport = () => {
                 border: "1px solid white",
                 padding: "4px 12px",
                 cursor: "pointer",
+
+                "&:hover": {
+                  backgroundColor: colors.slateA4,
+                },
               }}
               onClick={() => setCrystalToUpdate(c)}
             >
               <ColorIndicator indicatorValue={c.color?.hex} />
-              <Box>{c.name}</Box>
+              <Box sx={{ color: "white" }}>{c.name}</Box>
             </Box>
           )
         })}

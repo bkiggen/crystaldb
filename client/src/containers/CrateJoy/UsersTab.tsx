@@ -34,8 +34,8 @@ const UsersTab = () => {
   }
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 200 },
-    { field: "name", headerName: "Name", width: 200 },
+    { field: "id", headerName: "ID", width: 100 },
+    { field: "name", headerName: "Name", flex: 1, minWidth: 200 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "country", headerName: "Country", width: 100 },
     { field: "created_at", headerName: "Created At", width: 200 },

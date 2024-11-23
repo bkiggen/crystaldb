@@ -65,6 +65,7 @@ const AppHeader = () => {
             <NavItem linkTo="/pre-builds" title="Pre-Builds" pathname={pathname} />
             <NavItem linkTo="/ship-day" title="ShipDay" pathname={pathname} />
             <NavItem linkTo="/crate-joy" title="CrateJoy" pathname={pathname} />
+            <NavItem linkTo="/ship-station" title="ShipStation" pathname={pathname} />
           </Box>
         )}
       </Box>

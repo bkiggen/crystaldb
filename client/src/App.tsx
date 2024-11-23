@@ -9,6 +9,7 @@ import Shipments from "./containers/Shipments/index"
 import PreBuilds from "./containers/PreBuilds/index"
 import ShipDay from "./containers/ShipDay/index"
 import CrateJoy from "./containers/CrateJoy/index"
+import ShipStation from "./containers/ShipStation/index"
 import Reports from "./containers/Reports/index"
 import Login from "./containers/Login/index"
 
@@ -87,6 +88,14 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <CrateJoy />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/ship-station"
+                element={
+                  <ProtectedRoute>
+                    <ShipStation />
                   </ProtectedRoute>
                 }
               />

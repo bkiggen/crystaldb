@@ -113,7 +113,7 @@ const Shipment = ({ shipmentGroup }) => {
                 }}
               >
                 <ColorIndicator indicatorValue={crystal.color?.hex} />
-                <Box sx={{ marginLeft: "4px" }}>{crystal.name}</Box>
+                <Box sx={{ marginLeft: "4px", color: "white" }}>{crystal.name}</Box>
               </Box>
             ))}
         </Box>

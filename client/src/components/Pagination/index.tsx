@@ -145,7 +145,7 @@ const Pagination = ({
         justifyContent: "space-between",
         padding: "12px 18px",
         borderRadius: "4px",
-        border: "1px solid #fff",
+        border: "1px solid #515151",
       }}
     >
       <Box

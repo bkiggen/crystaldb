@@ -35,8 +35,6 @@ const UpdateUserModal = ({ user, open, onClose }) => {
         path: `/customers/${searchId}`,
       })
 
-      console.log("🚀 ~ handleSearch ~ response:", response)
-      // If user is found, populate the form
       setFormData({
         first_name: response.first_name,
         last_name: response.last_name,
@@ -64,15 +62,14 @@ const UpdateUserModal = ({ user, open, onClose }) => {
   }
 
   const handleSave = async () => {
-    console.log("Updated User Data:", formData)
-    // Update user data via API
     try {
       const response: any = await callCratejoyApi({
         method: "PUT",
-        path: `/customers/${searchId}`,
+        path: `/customers/${searchId || user.id}`,
         body: formData,
       })
       console.log("🚀 ~ handleSave ~ response:", response)
+      onClose()
     } catch (err) {
       console.error("Error saving user data:", err)
       setError("Failed to save user data. Please try again.")
