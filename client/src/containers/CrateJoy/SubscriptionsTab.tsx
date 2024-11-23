@@ -2,7 +2,6 @@ import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callCratejoyApi } from "../../api/cratejoy"
 import Pagination from "../../components/Pagination"
-import { Button } from "@mui/material"
 
 const SubscriptionsTab = () => {
   const [rows, setRows] = useState([])
@@ -40,17 +39,18 @@ const SubscriptionsTab = () => {
     { field: "store_id", headerName: "Store ID", width: 150 },
   ]
 
+  const pageSize = 10
+
   return (
     <div style={{ height: 600, width: "100%" }}>
       <Pagination
         fetchData={fetchSubscriptions}
         paging={{
           currentPage: page,
-          totalPages: Math.ceil(itemCount / 50),
+          totalPages: Math.ceil(itemCount / pageSize),
           totalCount: itemCount,
-          pageSize: 50,
+          pageSize: pageSize,
         }}
-        filterContent={<Button variant="contained">Filter Subscriptions</Button>}
         withoutSearch
         onDataChange={fetchSubscriptions}
       />

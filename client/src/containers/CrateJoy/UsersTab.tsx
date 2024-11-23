@@ -43,15 +43,17 @@ const UsersTab = () => {
     { field: "subscription_status", headerName: "Subscription Status", width: 150 },
   ]
 
+  const pageSize = 10
+
   return (
     <div style={{ height: 600, width: "100%" }}>
       <Pagination
         fetchData={fetchCustomers}
         paging={{
           currentPage: page,
-          totalPages: itemCount,
+          totalPages: Math.ceil(itemCount / pageSize),
           totalCount: itemCount,
-          pageSize: 50,
+          pageSize: pageSize,
         }}
         filterContent={
           <Button onClick={() => setUpdateUserModalOpen(true)} variant="contained">

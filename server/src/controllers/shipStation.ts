@@ -32,7 +32,7 @@ router.use(async (req: Request, res: Response) => {
         : undefined,
     });
 
-    console.log("🚀 ~ Response status:", response.status);
+    console.log("🚀 ~ Response status:", response);
     const contentType = response.headers.get("content-type");
     let data;
 

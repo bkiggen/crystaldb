@@ -31,7 +31,7 @@ router.use(async (req, res) => {
           ? JSON.stringify(requestBody)
           : undefined,
     });
-    console.log("🚀 ~ Response status:", response.status);
+    console.log("🚀 ~ Response status:", response);
 
     const contentType = response.headers.get("content-type");
     let data =
@@ -45,6 +45,5 @@ router.use(async (req, res) => {
     res.status(500).send({ error: "Error communicating with Cratejoy API" });
   }
 });
-console.log("🚀 ~ router.use ~ response:", response);
 
 export default router;

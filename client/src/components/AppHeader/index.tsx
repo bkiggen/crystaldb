@@ -44,7 +44,7 @@ const AppHeader = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            marginRight: "48px",
+            marginRight: "36px",
             paddingTop: "4px",
           }}
         >
@@ -62,7 +62,7 @@ const AppHeader = () => {
           >
             <NavItem linkTo="/shipments" title="Shipments" pathname={pathname} />
             <NavItem linkTo="/crystals" title="Crystals" pathname={pathname} />
-            <NavItem linkTo="/pre-builds" title="Pre-Builds" pathname={pathname} />
+            <NavItem linkTo="/pre-builds" title="PreBuilds" pathname={pathname} />
             <NavItem linkTo="/ship-day" title="ShipDay" pathname={pathname} />
             <NavItem linkTo="/crate-joy" title="CrateJoy" pathname={pathname} />
             <NavItem linkTo="/ship-station" title="ShipStation" pathname={pathname} />

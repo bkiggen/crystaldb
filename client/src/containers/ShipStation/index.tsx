@@ -14,7 +14,7 @@ const CrateJoy = () => {
   }
 
   return (
-    <Box sx={{ paddingBottom: "80px" }}>
+    <Box sx={{ paddingBottom: "80px", paddingX: "24px" }}>
       {/* Tabs Header */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="tabs">
@@ -25,7 +25,7 @@ const CrateJoy = () => {
       </Box>
 
       {/* Tabs Content */}
-      <Box sx={{ padding: "48px 24px" }}>
+      <Box sx={{ paddingTop: "48px" }}>
         {value === 0 && (
           <Box>
             <OrdersTab />
