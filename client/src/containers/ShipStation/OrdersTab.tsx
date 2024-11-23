@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callShipStationApi } from "../../api/shipstation"
 import Pagination from "../../components/Pagination"
@@ -11,14 +11,14 @@ const OrdersTab = () => {
 
   const mapOrdersToRows = (orders) =>
     orders.map((order) => ({
-      id: order.orderId,
-      customer_id: order.customerId,
-      status: order.orderStatus,
-      created_at: order.createDate,
-      adjusted_ordered_at: order.orderDate,
-      shipped_at: order.shipDate,
-      tracking_number: order.advancedOptions?.customField1 || "N/A",
-      type: order.advancedOptions?.source || "N/A",
+      id: order.orderId || "—",
+      customer_id: order.customerId || "—",
+      status: order.orderStatus || "—",
+      created_at: order.createDate || "—",
+      adjusted_ordered_at: order.orderDate || "—",
+      shipped_at: order.shipDate || "—",
+      tracking_number: order.advancedOptions?.customField1 || "—",
+      type: order.advancedOptions?.source || "—",
     }))
 
   const fetchShipments = async (newData) => {
@@ -29,11 +29,12 @@ const OrdersTab = () => {
     try {
       const response: any = await callShipStationApi({
         method: "GET",
-        path: `/orders?page=${newPage}&pageSize=50`,
+        path: `/orders?page=${newPage}&pageSize=50&orderStatus=awaiting_shipment`,
       })
-
-      // Debugging response from ShipStation API
-      console.log("🚀 ~ fetchShipments ~ response:", response)
+      const out = response.orders.map((order) => {
+        return order.orderStatus
+      })
+      console.log("🚀 ~ fetchShipments ~ response:", out)
 
       setPage(newPage)
       setRows(mapOrdersToRows(response.orders)) // Map orders to DataGrid rows
@@ -45,17 +46,43 @@ const OrdersTab = () => {
     }
   }
 
-  useEffect(() => {
-    fetchShipments({ page: 1 })
-  }, [])
-
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 200 },
     { field: "customer_id", headerName: "Customer ID", width: 150 },
     { field: "status", headerName: "Status", width: 150 },
-    { field: "created_at", headerName: "Created At", width: 200 },
-    { field: "adjusted_ordered_at", headerName: "Adjusted Ordered At", width: 200 },
-    { field: "shipped_at", headerName: "Shipped At", width: 200 },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      width: 150,
+      renderCell: (params) =>
+        new Date(params.value).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
+    },
+    {
+      field: "adjusted_ordered_at",
+      headerName: "Updated At",
+      width: 150,
+      renderCell: (params) =>
+        new Date(params.value).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
+    },
+    {
+      field: "shipped_at",
+      headerName: "Shipped At",
+      width: 150,
+      renderCell: (params) =>
+        new Date(params.value).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
+    },
     { field: "tracking_number", headerName: "Tracking Number", width: 200 },
     { field: "type", headerName: "Type", width: 150 },
   ]

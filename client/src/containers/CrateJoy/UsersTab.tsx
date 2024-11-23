@@ -38,7 +38,17 @@ const UsersTab = () => {
     { field: "name", headerName: "Name", flex: 1, minWidth: 200 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "country", headerName: "Country", width: 100 },
-    { field: "created_at", headerName: "Created At", width: 200 },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      width: 200,
+      renderCell: (params) =>
+        new Date(params.value).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
+    },
     { field: "total_revenue", headerName: "Total Revenue", width: 150 },
     { field: "subscription_status", headerName: "Subscription Status", width: 150 },
   ]

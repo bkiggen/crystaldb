@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callShipStationApi } from "../../api/shipstation"
 import Pagination from "../../components/Pagination"
@@ -42,10 +42,6 @@ const FulfillmentsTab = () => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    fetchFulfillments({ page: 1 })
-  }, [])
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "Fulfillment ID", width: 200 },

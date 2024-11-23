@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callShipStationApi } from "../../api/shipstation"
 import Pagination from "../../components/Pagination"
@@ -33,8 +33,6 @@ const CustomersTab = () => {
         path: `/customers?page=${newPage}&pageSize=50`,
       })
 
-      console.log("🚀 ~ fetchCustomers ~ response:", response)
-
       setPage(newPage)
       setRows(mapCustomersToRows(response.customers)) // Map customers to DataGrid rows
       setItemCount(response.total)
@@ -44,10 +42,6 @@ const CustomersTab = () => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    fetchCustomers({ page: 1 })
-  }, [])
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 150 },
