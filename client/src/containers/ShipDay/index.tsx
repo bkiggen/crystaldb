@@ -5,11 +5,16 @@ import DateChanger from "./DateChanger"
 import FullscreenIcon from "@mui/icons-material/Fullscreen"
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit"
 import Shipment from "./Shipment"
+import { useEffect, useState } from "react"
 
 const ShipDay = () => {
   const { shipments, fetchShipments } = useShipmentStore()
+  const [shipmentGroups, setShipmentGroups] = useState([])
 
-  const shipmentGroups = groupShipments(shipments)
+  useEffect(() => {
+    const groups = groupShipments(shipments)
+    setShipmentGroups(groups)
+  }, [shipments])
 
   const isFullScreen = useStore((state) => state.isFullScreen)
   const toggleFullscreen = useStore((state) => state.toggleFullscreen)

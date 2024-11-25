@@ -2,6 +2,7 @@ import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callShipStationApi } from "../../api/shipstation"
 import Pagination from "../../components/Pagination"
+import { Box } from "@mui/material"
 
 const OrdersTab = () => {
   const [rows, setRows] = useState([])
@@ -21,22 +22,20 @@ const OrdersTab = () => {
       type: order.advancedOptions?.source || "—",
     }))
 
-  const fetchShipments = async (newData) => {
+  const fetchShipments = async ({ page = 1 }) => {
     setLoading(true)
-
-    const newPage = newData.page || 1
 
     try {
       const response: any = await callShipStationApi({
         method: "GET",
-        path: `/orders?page=${newPage}&pageSize=50&orderStatus=awaiting_shipment`,
+        path: `/orders?page=${page}&pageSize=50&orderStatus=awaiting_shipment`,
       })
       const out = response.orders.map((order) => {
         return order.orderStatus
       })
       console.log("🚀 ~ fetchShipments ~ response:", out)
 
-      setPage(newPage)
+      setPage(page)
       setRows(mapOrdersToRows(response.orders)) // Map orders to DataGrid rows
       setItemCount(response.total)
     } catch (error) {
@@ -49,7 +48,16 @@ const OrdersTab = () => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 200 },
     { field: "customer_id", headerName: "Customer ID", width: 150 },
-    { field: "status", headerName: "Status", width: 150 },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <Box sx={{ textTransform: "capitalize" }}>{params.value.replace("_", " ") || "—"}</Box>
+        )
+      },
+    },
     {
       field: "created_at",
       headerName: "Created At",
@@ -76,12 +84,17 @@ const OrdersTab = () => {
       field: "shipped_at",
       headerName: "Shipped At",
       width: 150,
-      renderCell: (params) =>
-        new Date(params.value).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-        }),
+      renderCell: (params) => {
+        return params.value ? (
+          <Box>—</Box>
+        ) : (
+          new Date(params.value).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+          })
+        )
+      },
     },
     { field: "tracking_number", headerName: "Tracking Number", width: 200 },
     { field: "type", headerName: "Type", width: 150 },

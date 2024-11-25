@@ -13,6 +13,7 @@ const UpdateUserModal = ({ user, open, onClose }) => {
           email: user?.email || "",
           country: user?.country || "",
           subscription_status: user?.subscription_status || "",
+          num_orders: user?.num_orders || "",
         }
       : null,
   )
@@ -41,6 +42,7 @@ const UpdateUserModal = ({ user, open, onClose }) => {
         email: response.email,
         country: response.country,
         subscription_status: response.subscription_status,
+        num_orders: response.num_orders,
       })
     } catch (err) {
       // Handle errors (e.g., user not found)
@@ -132,6 +134,16 @@ const UpdateUserModal = ({ user, open, onClose }) => {
                 label="Subscription Status"
                 name="subscription_status"
                 value={formData.subscription_status}
+                onChange={handleInputChange}
+                sx={textFieldStyles}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Num Orders"
+                name="num_orders"
+                value={formData.num_orders}
                 onChange={handleInputChange}
                 sx={textFieldStyles}
               />

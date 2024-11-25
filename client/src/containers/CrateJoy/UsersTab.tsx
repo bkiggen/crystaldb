@@ -37,6 +37,7 @@ const UsersTab = () => {
     { field: "id", headerName: "ID", width: 100 },
     { field: "name", headerName: "Name", flex: 1, minWidth: 200 },
     { field: "email", headerName: "Email", width: 250 },
+    { field: "num_orders", headerName: "Num Orders", width: 100 },
     { field: "country", headerName: "Country", width: 100 },
     {
       field: "created_at",
@@ -49,7 +50,15 @@ const UsersTab = () => {
           day: "numeric",
         }),
     },
-    { field: "total_revenue", headerName: "Total Revenue", width: 150 },
+    {
+      field: "total_revenue",
+      headerName: "Total Revenue",
+      width: 150,
+      renderCell: (params) => {
+        const num = params.value / 100
+        return `$${num.toFixed(2)}`
+      },
+    },
     { field: "subscription_status", headerName: "Subscription Status", width: 150 },
   ]
 
