@@ -19,7 +19,6 @@ export const makeRestRequest = async <T>({
     Accept: "application/json",
     Authorization: `Bearer ${token}`,
   }
-
   const options: RequestInit = {
     method,
     headers,

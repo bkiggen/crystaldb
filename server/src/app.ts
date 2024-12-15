@@ -11,6 +11,8 @@ import subscriptionRoutes from "./controllers/subscriptions";
 import locationsRoutes from "./controllers/locations";
 import categoriesRoutes from "./controllers/categories";
 import userRoutes from "./controllers/users";
+import crateJoyRoutes from "./controllers/crateJoy";
+import shipStationRoutes from "./controllers/shipStation";
 
 const app = express();
 app.use(cors());
@@ -29,6 +31,8 @@ const main = async () => {
     app.use("/preBuilds", preBuildRoutes);
     app.use("/locations", locationsRoutes);
     app.use("/categories", categoriesRoutes);
+    app.use("/crateJoy", crateJoyRoutes);
+    app.use("/shipStation", shipStationRoutes);
 
     app.listen(4000, () => {
       console.log("REST API server running at http://localhost:4000/");

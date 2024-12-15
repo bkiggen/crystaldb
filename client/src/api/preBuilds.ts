@@ -53,3 +53,16 @@ export const deletePreBuildRequest = async (id: number): Promise<void> => {
   const endpoint = `/preBuilds/${id}`
   return makeRestRequest<void>({ endpoint, method: "DELETE", successMessage: "PreBuild Deleted!" })
 }
+
+export const smartCheckPreBuildRequest = async (smartCheckData: {
+  id: number
+  month: number
+  year: number
+}): Promise<number[]> => {
+  const endpoint = `/preBuilds/${smartCheckData.id}/smartCheck`
+  return makeRestRequest<number[]>({
+    endpoint,
+    method: "POST",
+    body: JSON.stringify(smartCheckData),
+  })
+}

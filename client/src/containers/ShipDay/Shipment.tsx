@@ -1,14 +1,12 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Box, TextField, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import ColorIndicator from "../../components/ColorIndicator"
 import colors from "../../styles/colors"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
-const Shipment = ({ shipmentGroup }) => {
+const Shipment = ({ shipmentGroup, loadingShipstation }) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
-  const [subscriberCount, setSubscriberCount] = useState(0)
-  const [editing, setEditing] = useState(false)
 
   return (
     <>
@@ -62,43 +60,19 @@ const Shipment = ({ shipmentGroup }) => {
             justifyContent: "center",
           }}
         >
-          {editing ? (
-            <TextField
-              sx={{ "*": { color: "white", textAlign: "center" } }}
-              onBlur={() => setEditing(false)}
-              defaultValue={subscriberCount}
-              onChange={(e) => setSubscriberCount(parseInt(e.target.value))}
-              type="number"
-            />
-          ) : (
+          {!loadingShipstation && (
             <Typography
               sx={{
                 textAlign: "center",
-                // color: shipment?.userCountIsNew ? "red" : "white",
                 color: "white",
                 marginRight: "4px",
                 width: "100%",
                 fontSize: "1em",
               }}
-              onClick={() => {
-                setEditing(true)
-              }}
             >
-              Count: {subscriberCount.toLocaleString()}
+              Count: {shipmentGroup.count}
             </Typography>
           )}
-          {/* {shipment?.userCountIsNew && (
-            <VisibilityIcon
-              sx={{ color: "red", cursor: "pointer" }}
-              onClick={() => {
-                const newData = {
-                  ...shipment,
-                  userCountIsNew: false,
-                }
-                updateShipment(newData)
-              }}
-            />
-          )} */}
         </Box>
         <Box>
           {shipmentGroup.crystals
@@ -113,7 +87,7 @@ const Shipment = ({ shipmentGroup }) => {
                 }}
               >
                 <ColorIndicator indicatorValue={crystal.color?.hex} />
-                <Box sx={{ marginLeft: "4px" }}>{crystal.name}</Box>
+                <Box sx={{ marginLeft: "4px", color: "white" }}>{crystal.name}</Box>
               </Box>
             ))}
         </Box>

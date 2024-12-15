@@ -27,6 +27,7 @@ import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { PreBuildT } from "../../types/PreBuild"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
+import SmartCheck from "./SmartCheck"
 
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
@@ -35,13 +36,23 @@ type UpdatePreBuildModalT = {
 
 const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildModalT) => {
   const { crystals, fetchCrystals } = useCrystalStore()
-  const { updatePreBuild, deletePreBuild } = usePreBuildStore()
+  const {
+    updatePreBuild,
+    deletePreBuild,
+    smartCheckPrebuild,
+    smartCheck: badCrystalIds,
+    setPreBuildStore,
+  } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
   useEffect(() => {
     fetchSubscriptions()
+
+    return () => {
+      setPreBuildStore({ smartCheck: [] })
+    }
   }, [])
 
   const onDelete = async () => {
@@ -90,8 +101,17 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     })
   }, [preBuild])
 
+  const handleSmartCheck = (dateData) => {
+    smartCheckPrebuild({ id: preBuild.id, ...dateData })
+  }
+
   return (
-    <ModalContainer open onClose={() => setSelectedPreBuild([])} title="Update Pre-Build">
+    <ModalContainer
+      open
+      onClose={() => setSelectedPreBuild([])}
+      title="Update Pre-Build"
+      paperStyles={{ minWidth: "600px" }}
+    >
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
@@ -179,14 +199,22 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                     formik.setFieldValue("crystalIds", value)
                   }}
                   renderTags={(value: number[], getTagProps) => {
-                    return value.map((option: number, index: number) => (
-                      <Chip
-                        variant="outlined"
-                        label={crystals.find((c) => c.id === option)?.name}
-                        {...getTagProps({ index })}
-                        sx={{ color: "white" }}
-                      />
-                    ))
+                    return value.map((option: number, index: number) => {
+                      const isBadCrystal = badCrystalIds.includes(option) // Check if the crystal is in the badCrystalIds array
+                      return (
+                        <Chip
+                          variant="outlined"
+                          label={crystals.find((c) => c.id === option)?.name}
+                          {...getTagProps({ index })}
+                          sx={{
+                            color: "white",
+                            borderColor: isBadCrystal ? "red" : "white",
+                            borderWidth: isBadCrystal ? "2px" : "1px",
+                            textTransform: "capitalize",
+                          }}
+                        />
+                      )
+                    })
                   }}
                   renderInput={(params) => {
                     return (
@@ -222,13 +250,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
             </Grid>
           </Grid>
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => setDeleteConfirmVisible(true)}
-              sx={{ marginRight: "16px" }}
-            >
+          <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "48px" }}>
+            <Button variant="contained" color="error" onClick={() => setDeleteConfirmVisible(true)}>
               Delete
             </Button>
             <Button type="submit" variant="contained" color="primary">
@@ -242,6 +265,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
           onConfirm={onDelete}
         />
       </form>
+      <hr />
+      <SmartCheck handleSubmit={handleSmartCheck} />
     </ModalContainer>
   )
 }

@@ -60,7 +60,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
       <Box
         sx={{
           background: colors.slateA4,
-          border: "1px solid #fff",
+          border: `1px solid ${colors.slateGrey}`,
           padding: "24px",
           paddingTop: "48px",
           margin: "0 auto",
@@ -121,6 +121,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
               <Typography
                 sx={{
                   fontSize: "14px",
+                  color: "white",
                 }}
               >
                 Cycle (ex: 1, 4-5, 23, 56-76)
@@ -148,6 +149,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
                 sx={{
                   fontSize: "14px",
                   marginBottom: "4px",
+                  color: "white",
                 }}
               >
                 Subscription Type
@@ -178,6 +180,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
                 <Typography
                   sx={{
                     fontSize: "14px",
+                    color: "white",
                   }}
                 >
                   Group Tag

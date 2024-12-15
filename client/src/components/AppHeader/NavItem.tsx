@@ -15,9 +15,10 @@ const NavItem = ({ linkTo, title, pathname }: NavItemT) => {
     <Box sx={{ marginRight: "48px" }}>
       <Link to={linkTo}>
         <Typography
-          variant="h6"
+          variant="body1"
           sx={{
             color,
+            fontSize: "18px",
             fontWeight: "600",
             letterSpacing: "1px",
 

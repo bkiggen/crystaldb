@@ -154,7 +154,7 @@ const NewCrystal = () => {
         <Box
           sx={{
             background: systemColors.slateA4,
-            border: "1px solid #fff",
+            border: `1px solid ${systemColors.slateGrey}`,
             padding: "24px",
             paddingTop: "48px",
             margin: "0 auto",

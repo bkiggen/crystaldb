@@ -4,6 +4,7 @@ import { Subscription } from "../entity/Subscription";
 import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { authenticateToken } from "./util/authenticateToken";
+import { smartCheckCrystalList } from "../services/crystalService";
 
 const router = Router();
 
@@ -114,6 +115,36 @@ router.delete(
     }
     await PreBuild.remove(preBuild);
     res.json(preBuild);
+  }
+);
+
+router.post(
+  "/:id/smartCheck",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const preBuild = await PreBuild.findOne({
+      where: { id: parseInt(req.params.id) },
+      relations: ["crystals", "subscription"], // Load the related crystals
+    });
+
+    if (!preBuild) {
+      return res.status(404).json({ message: "PreBuild not found" });
+    }
+
+    // Access the associated crystals
+    const crystalIds = preBuild.crystals.map((crystal) => crystal.id);
+
+    // Smart check logic here
+    const barredCrystalIds = await smartCheckCrystalList({
+      month: req.body.month,
+      year: req.body.year,
+      cyclesArray: [preBuild.cycle],
+      subscriptionId: preBuild.subscription.id,
+      selectedCrystalIds: crystalIds,
+    });
+
+    // return list of crystal ids that do not pass smart check
+    res.json(barredCrystalIds);
   }
 );
 
