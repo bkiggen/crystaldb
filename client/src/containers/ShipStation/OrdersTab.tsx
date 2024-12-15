@@ -33,7 +33,7 @@ const OrdersTab = () => {
       const out = response.orders.map((order) => {
         return order.orderStatus
       })
-      console.log("🚀 ~ fetchShipments ~ response:", out)
+      console.log("🚀 ~ fetchShipments ~ response:", response)
 
       setPage(page)
       setRows(mapOrdersToRows(response.orders)) // Map orders to DataGrid rows
