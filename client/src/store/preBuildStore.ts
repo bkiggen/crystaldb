@@ -5,26 +5,31 @@ import {
   getAllPreBuildsRequest,
   updatePreBuildRequest,
   deletePreBuildRequest,
+  smartCheckPreBuildRequest,
 } from "../api/preBuilds"
 import { defaultPaging, type PagingT } from "../types/Paging"
 
 type PreBuildStoreT = {
   preBuilds: PreBuildT[]
   paging: PagingT | null
+  smartCheck: number[]
   fetchPreBuilds: (params: {
     searchTerm?: string
     page?: number
     pageSize?: number
     subscriptionId?: string
   }) => Promise<void>
+  smartCheckPrebuild: (smartCheckData: { id: number; month: number; year: number }) => Promise<void>
   createPreBuild: (newPreBuild: Omit<PreBuildT, "id">) => Promise<void>
   updatePreBuild: (updatedPreBuild: PreBuildT) => Promise<void>
   deletePreBuild: (id: number) => Promise<void>
+  setPreBuildStore: (state: Partial<PreBuildStoreT>) => void
 }
 
 export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
   preBuilds: [],
   paging: defaultPaging,
+  smartCheck: [],
 
   fetchPreBuilds: async (params) => {
     try {
@@ -69,4 +74,17 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
       console.error("Failed to delete pre-build", error)
     }
   },
+
+  smartCheckPrebuild: async (smartCheckData: { id: number; month: number; year: number }) => {
+    try {
+      const result = await smartCheckPreBuildRequest(smartCheckData)
+      set(() => ({
+        smartCheck: result,
+      }))
+    } catch (error) {
+      console.error("Failed to delete pre-build", error)
+    }
+  },
+
+  setPreBuildStore: (state: Partial<PreBuildStoreT>) => set(state),
 }))
