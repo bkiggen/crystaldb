@@ -131,15 +131,17 @@ router.post(
       return res.status(404).json({ message: "PreBuild not found" });
     }
 
-    // Access the associated crystals
-    const crystalIds = req.body.newCrystalIds;
+    const crystalIds =
+      req.body.crystalIds || preBuild.crystals.map((crystal) => crystal.id);
+    const cycles = req.body.cycle || preBuild.cycle;
+    const subscriptionId = req.body.subscriptionId || preBuild.subscription.id;
 
     // Smart check logic here
     const barredCrystalIds = await smartCheckCrystalList({
       month: req.body.month,
       year: req.body.year,
-      cyclesArray: [preBuild.cycle],
-      subscriptionId: preBuild.subscription.id,
+      cyclesArray: [cycles],
+      subscriptionId,
       selectedCrystalIds: crystalIds,
     });
 

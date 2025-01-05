@@ -9,7 +9,7 @@ import { textFieldStyles } from "../../styles/vars"
 import { monthOptions } from "../../lib/constants"
 import { usePreBuildStore } from "../../store/preBuildStore"
 
-const MonthYearForm = ({ handleSubmit }) => {
+const MonthYearForm = ({ handleSubmit, onClear }) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
@@ -40,6 +40,7 @@ const MonthYearForm = ({ handleSubmit }) => {
   })
 
   const clearSmartCheck = () => {
+    onClear()
     setPreBuildStore({ smartCheck: [] })
   }
 

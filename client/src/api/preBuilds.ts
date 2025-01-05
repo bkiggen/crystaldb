@@ -58,7 +58,9 @@ export const smartCheckPreBuildRequest = async (smartCheckData: {
   id: number
   month: number
   year: number
-  newCrystalIds: number[]
+  crystalIds: number[]
+  cycle: number
+  subscriptionId: number
 }): Promise<number[]> => {
   const endpoint = `/preBuilds/${smartCheckData.id}/smartCheck`
   return makeRestRequest<number[]>({

@@ -44,6 +44,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     setPreBuildStore,
   } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
+  const [smartChecked, setSmartChecked] = useState(false)
 
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
@@ -102,7 +103,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [preBuild])
 
   const handleSmartCheck = (dateData) => {
-    smartCheckPrebuild({ id: preBuild.id, ...dateData, newCrystalIds: formik.values.crystalIds })
+    setSmartChecked(true)
+    smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values })
   }
 
   return (
@@ -201,6 +203,26 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                   renderTags={(value: number[], getTagProps) => {
                     return value.map((option: number, index: number) => {
                       const isBadCrystal = badCrystalIds.includes(option) // Check if the crystal is in the badCrystalIds array
+
+                      const styleOptions = () => {
+                        if (!smartChecked) {
+                          return {
+                            borderColor: "white",
+                            borderWidth: "1px",
+                          }
+                        } else if (isBadCrystal) {
+                          return {
+                            borderColor: "red",
+                            borderWidth: "2px",
+                          }
+                        } else {
+                          return {
+                            borderColor: "lightGreen",
+                            borderWidth: "2px",
+                          }
+                        }
+                      }
+
                       return (
                         <Chip
                           variant="outlined"
@@ -208,8 +230,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                           {...getTagProps({ index })}
                           sx={{
                             color: "white",
-                            borderColor: isBadCrystal ? "red" : "white",
-                            borderWidth: isBadCrystal ? "2px" : "1px",
+                            borderColor: styleOptions().borderColor,
+                            borderWidth: styleOptions().borderWidth,
                             textTransform: "capitalize",
                           }}
                         />
@@ -266,7 +288,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
         />
       </form>
       <hr />
-      <SmartCheck handleSubmit={handleSmartCheck} />
+      <SmartCheck handleSubmit={handleSmartCheck} onClear={() => setSmartChecked(false)} />
     </ModalContainer>
   )
 }
