@@ -3,7 +3,7 @@ import { Shipment } from "../entity/Shipment";
 // import { PreBuild } from "../entity/PreBuild";
 import { In, Not, SelectQueryBuilder } from "typeorm";
 
-const getPreviousShipmentCrystalIds = async (
+export const getPreviousShipmentCrystalIds = async (
   month: number,
   year: number,
   cyclesArray: number[],

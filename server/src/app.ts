@@ -14,25 +14,26 @@ import userRoutes from "./controllers/users";
 import crateJoyRoutes from "./controllers/crateJoy";
 import shipStationRoutes from "./controllers/shipStation";
 
-const app = express();
+export const app = express(); // Export the app for testing
 app.use(cors());
 app.use(express.json());
 
-const main = async () => {
+// Initialize routes
+app.use("/crystals", crystalRoutes);
+app.use("/colors", colorRoutes);
+app.use("/shipments", shipmentRoutes);
+app.use("/subscriptions", subscriptionRoutes);
+app.use("/users", userRoutes);
+app.use("/preBuilds", preBuildRoutes);
+app.use("/locations", locationsRoutes);
+app.use("/categories", categoriesRoutes);
+app.use("/crateJoy", crateJoyRoutes);
+app.use("/shipStation", shipStationRoutes);
+
+const startServer = async () => {
   try {
     await appDataSource.initialize();
     console.log("Data Source has been initialized!");
-
-    app.use("/crystals", crystalRoutes);
-    app.use("/colors", colorRoutes);
-    app.use("/shipments", shipmentRoutes);
-    app.use("/subscriptions", subscriptionRoutes);
-    app.use("/users", userRoutes);
-    app.use("/preBuilds", preBuildRoutes);
-    app.use("/locations", locationsRoutes);
-    app.use("/categories", categoriesRoutes);
-    app.use("/crateJoy", crateJoyRoutes);
-    app.use("/shipStation", shipStationRoutes);
 
     app.listen(4000, () => {
       console.log("REST API server running at http://localhost:4000/");
@@ -42,4 +43,8 @@ const main = async () => {
     process.exit(1);
   }
 };
-main();
+
+// Only start the server if this file is run directly
+if (require.main === module) {
+  startServer();
+}
