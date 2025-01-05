@@ -137,16 +137,17 @@ router.post(
     const subscriptionId = req.body.subscriptionId || preBuild.subscription.id;
 
     // Smart check logic here
-    const barredCrystalIds = await smartCheckCrystalList({
-      month: req.body.month,
-      year: req.body.year,
-      cyclesArray: [cycles],
-      subscriptionId,
-      selectedCrystalIds: crystalIds,
-    });
+    const [barredCrystalIds, outInventoryCrystalIds] =
+      await smartCheckCrystalList({
+        month: req.body.month,
+        year: req.body.year,
+        cyclesArray: [cycles],
+        subscriptionId,
+        selectedCrystalIds: crystalIds,
+      });
 
     // return list of crystal ids that do not pass smart check
-    res.json(barredCrystalIds);
+    res.json({ barredCrystalIds, outInventoryCrystalIds });
   }
 );
 

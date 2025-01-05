@@ -12,7 +12,10 @@ import { defaultPaging, type PagingT } from "../types/Paging"
 type PreBuildStoreT = {
   preBuilds: PreBuildT[]
   paging: PagingT | null
-  smartCheck: number[]
+  smartCheck: {
+    badCrystalIds: number[]
+    outInventoryCrystals: number[]
+  }
   fetchPreBuilds: (params: {
     searchTerm?: string
     page?: number
@@ -36,7 +39,10 @@ type PreBuildStoreT = {
 export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
   preBuilds: [],
   paging: defaultPaging,
-  smartCheck: [],
+  smartCheck: {
+    badCrystalIds: [],
+    outInventoryCrystals: [],
+  },
 
   fetchPreBuilds: async (params) => {
     try {
@@ -92,8 +98,12 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
   }) => {
     try {
       const result = await smartCheckPreBuildRequest(smartCheckData)
+
       set(() => ({
-        smartCheck: result,
+        smartCheck: {
+          badCrystalIds: result.barredCrystalIds,
+          outInventoryCrystals: result.outInventoryCrystalIds,
+        },
       }))
     } catch (error) {
       console.error("Failed to delete pre-build", error)

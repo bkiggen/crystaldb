@@ -41,7 +41,12 @@ const MonthYearForm = ({ handleSubmit, onClear }) => {
 
   const clearSmartCheck = () => {
     onClear()
-    setPreBuildStore({ smartCheck: [] })
+    setPreBuildStore({
+      smartCheck: {
+        badCrystalIds: [],
+        outInventoryCrystals: [],
+      },
+    })
   }
 
   return (

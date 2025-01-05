@@ -193,8 +193,18 @@ export const smartCheckCrystalList = async ({
     cyclesArray,
     subscriptionId
   );
-  const ShippedSelectedCrystals = selectedCrystalIds.filter((id) =>
+
+  const shippedSelectedCrystals = selectedCrystalIds.filter((id) =>
     previousShipmentCrystalIds.includes(id)
   );
-  return ShippedSelectedCrystals;
+
+  const outInventoryCrystals = await Crystal.createQueryBuilder("crystal")
+    .select("crystal.id")
+    .where("crystal.id IN (:...ids)", { ids: selectedCrystalIds })
+    .andWhere("crystal.inventory = :inventory", { inventory: Inventory.OUT })
+    .getMany();
+
+  const outInventoryCrystalIds = outInventoryCrystals.map((row) => row.id);
+
+  return [shippedSelectedCrystals, outInventoryCrystalIds];
 };

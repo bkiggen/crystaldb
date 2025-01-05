@@ -40,7 +40,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     updatePreBuild,
     deletePreBuild,
     smartCheckPrebuild,
-    smartCheck: badCrystalIds,
+    smartCheck: { badCrystalIds, outInventoryCrystals },
     setPreBuildStore,
   } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
@@ -52,7 +52,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     fetchSubscriptions()
 
     return () => {
-      setPreBuildStore({ smartCheck: [] })
+      setPreBuildStore({ smartCheck: { badCrystalIds: [], outInventoryCrystals: [] } })
     }
   }, [])
 
@@ -101,6 +101,10 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
       subscriptionId: preBuild.subscription.id,
     })
   }, [preBuild])
+
+  useEffect(() => {
+    setSmartChecked(false)
+  }, [formik.values])
 
   const handleSmartCheck = (dateData) => {
     setSmartChecked(true)
@@ -202,7 +206,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                   }}
                   renderTags={(value: number[], getTagProps) => {
                     return value.map((option: number, index: number) => {
-                      const isBadCrystal = badCrystalIds.includes(option) // Check if the crystal is in the badCrystalIds array
+                      const isBadCrystal = badCrystalIds.includes(option)
+                      const isOutInventory = outInventoryCrystals.includes(option)
 
                       const styleOptions = () => {
                         if (!smartChecked) {
@@ -213,6 +218,11 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                         } else if (isBadCrystal) {
                           return {
                             borderColor: "red",
+                            borderWidth: "2px",
+                          }
+                        } else if (isOutInventory) {
+                          return {
+                            borderColor: "orange",
                             borderWidth: "2px",
                           }
                         } else {
