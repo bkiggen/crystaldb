@@ -87,7 +87,12 @@ const Shipments = () => {
 
   // Set the default value for groupLabel based on cycle string
   useEffect(() => {
-    formik.setFieldValue("groupLabel", formik.values.cycleString)
+    const subscriptionName = subscriptions.find((sub) => sub.id === formik.values.subscriptionId)
+      ?.shortName
+    const autoLabel = `${subscriptionName} - ${formik.values.cycleString} (${
+      formik.values.month + 1
+    }/${formik.values.year})`
+    formik.setFieldValue("groupLabel", autoLabel)
   }, [formik.values.cycleString])
 
   return (

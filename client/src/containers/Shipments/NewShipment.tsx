@@ -183,7 +183,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
                     color: "white",
                   }}
                 >
-                  Group Tag
+                  Group Label
                 </Typography>
               </Box>
               <TextField
