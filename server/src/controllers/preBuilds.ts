@@ -151,4 +151,54 @@ router.post(
   }
 );
 
+router.post(
+  "/smartCheckSelected",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      // Fetch PreBuilds with related entities
+      const preBuilds = await PreBuild.find({
+        where: { id: In(req.body.prebuildIds) },
+        relations: ["crystals", "subscription"],
+      });
+
+      if (!preBuilds.length) {
+        return res.status(404).json({ message: "PreBuilds not found" });
+      }
+
+      const badPrebuildIds: number[] = [];
+
+      for (const preBuild of preBuilds) {
+        const selectedCrystalIds = preBuild.crystals.map(
+          (crystal) => crystal.id
+        );
+
+        // Skip processing if no crystals are present
+        if (!selectedCrystalIds.length) {
+          continue;
+        }
+
+        // Perform the smart check
+        const [barredCrystalIds, outInventoryCrystalIds] =
+          await smartCheckCrystalList({
+            month: req.body.month,
+            year: req.body.year,
+            cyclesArray: [preBuild.cycle],
+            subscriptionId: preBuild.subscription.id,
+            selectedCrystalIds,
+          });
+
+        if (barredCrystalIds.length || outInventoryCrystalIds.length) {
+          badPrebuildIds.push(preBuild.id);
+        }
+      }
+
+      res.json({ badPrebuildIds });
+    } catch (error) {
+      console.error("Error in smartCheckSelected:", error);
+      res.status(500).json({ message: "An internal server error occurred" });
+    }
+  }
+);
+
 export default router;

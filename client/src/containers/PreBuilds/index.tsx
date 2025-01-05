@@ -15,7 +15,7 @@ import dayjs from "dayjs"
 import BuildPrebuildModal from "./BuildPrebuildModal"
 
 const PreBuilds = () => {
-  const { paging, preBuilds, fetchPreBuilds } = usePreBuildStore()
+  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
 
@@ -192,9 +192,18 @@ const PreBuilds = () => {
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",
           },
+          "& .bad-row": {
+            backgroundColor: "rgba(255, 0, 0, 0.1)", // Light red background for bad rows
+            border: "1px solid red", // Red outline
+          },
         }}
         rowHeight={120}
         rows={preBuilds || []}
+        getRowClassName={(params) => {
+          console.log("🚀 ~ PreBuilds ~ params:", params, badPrebuildIds)
+          const rowId = typeof params.id === "string" ? parseInt(params.id, 10) : params.id
+          return badPrebuildIds.includes(rowId) ? "bad-row" : ""
+        }}
         onRowClick={handleRowClick}
         columns={columns}
         disableColumnMenu

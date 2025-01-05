@@ -6,6 +6,7 @@ import {
   updatePreBuildRequest,
   deletePreBuildRequest,
   smartCheckPreBuildRequest,
+  smartCheckSelectedPrebuildsRequest,
 } from "../api/preBuilds"
 import { defaultPaging, type PagingT } from "../types/Paging"
 
@@ -30,10 +31,16 @@ type PreBuildStoreT = {
     cycle: number
     subscriptionId: number
   }) => Promise<void>
+  smartCheckSelectedPrebuilds: (smartCheckData: {
+    prebuildIds: number[]
+    month: number
+    year: number
+  }) => Promise<void>
   createPreBuild: (newPreBuild: Omit<PreBuildT, "id">) => Promise<void>
   updatePreBuild: (updatedPreBuild: PreBuildT) => Promise<void>
   deletePreBuild: (id: number) => Promise<void>
   setPreBuildStore: (state: Partial<PreBuildStoreT>) => void
+  badPrebuildIds: number[]
 }
 
 export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
@@ -43,6 +50,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     badCrystalIds: [],
     outInventoryCrystals: [],
   },
+  badPrebuildIds: [],
 
   fetchPreBuilds: async (params) => {
     try {
@@ -104,6 +112,22 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
           badCrystalIds: result.barredCrystalIds,
           outInventoryCrystals: result.outInventoryCrystalIds,
         },
+      }))
+    } catch (error) {
+      console.error("Failed to delete pre-build", error)
+    }
+  },
+
+  smartCheckSelectedPrebuilds: async (smartCheckData: {
+    prebuildIds: number[]
+    month: number
+    year: number
+  }) => {
+    try {
+      const result = await smartCheckSelectedPrebuildsRequest(smartCheckData)
+
+      set(() => ({
+        badPrebuildIds: result.badPrebuildIds,
       }))
     } catch (error) {
       console.error("Failed to delete pre-build", error)

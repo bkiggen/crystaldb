@@ -75,3 +75,20 @@ export const smartCheckPreBuildRequest = async (smartCheckData: {
     body: JSON.stringify(smartCheckData),
   })
 }
+
+export const smartCheckSelectedPrebuildsRequest = async (smartCheckData: {
+  prebuildIds: number[]
+  month: number
+  year: number
+}): Promise<{
+  badPrebuildIds: number[]
+}> => {
+  const endpoint = `/preBuilds/smartCheckSelected`
+  return makeRestRequest<{
+    badPrebuildIds: number[]
+  }>({
+    endpoint,
+    method: "POST",
+    body: JSON.stringify(smartCheckData),
+  })
+}
