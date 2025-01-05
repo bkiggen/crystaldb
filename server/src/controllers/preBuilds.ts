@@ -132,7 +132,7 @@ router.post(
     }
 
     // Access the associated crystals
-    const crystalIds = preBuild.crystals.map((crystal) => crystal.id);
+    const crystalIds = req.body.newCrystalIds;
 
     // Smart check logic here
     const barredCrystalIds = await smartCheckCrystalList({

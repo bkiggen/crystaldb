@@ -102,7 +102,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [preBuild])
 
   const handleSmartCheck = (dateData) => {
-    smartCheckPrebuild({ id: preBuild.id, ...dateData })
+    smartCheckPrebuild({ id: preBuild.id, ...dateData, newCrystalIds: formik.values.crystalIds })
   }
 
   return (

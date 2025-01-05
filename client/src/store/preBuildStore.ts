@@ -19,7 +19,12 @@ type PreBuildStoreT = {
     pageSize?: number
     subscriptionId?: string
   }) => Promise<void>
-  smartCheckPrebuild: (smartCheckData: { id: number; month: number; year: number }) => Promise<void>
+  smartCheckPrebuild: (smartCheckData: {
+    id: number
+    month: number
+    year: number
+    newCrystalIds: number[]
+  }) => Promise<void>
   createPreBuild: (newPreBuild: Omit<PreBuildT, "id">) => Promise<void>
   updatePreBuild: (updatedPreBuild: PreBuildT) => Promise<void>
   deletePreBuild: (id: number) => Promise<void>
@@ -75,7 +80,12 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     }
   },
 
-  smartCheckPrebuild: async (smartCheckData: { id: number; month: number; year: number }) => {
+  smartCheckPrebuild: async (smartCheckData: {
+    id: number
+    month: number
+    year: number
+    newCrystalIds: number[]
+  }) => {
     try {
       const result = await smartCheckPreBuildRequest(smartCheckData)
       set(() => ({
