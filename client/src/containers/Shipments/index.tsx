@@ -89,11 +89,14 @@ const Shipments = () => {
   useEffect(() => {
     const subscriptionName = subscriptions.find((sub) => sub.id === formik.values.subscriptionId)
       ?.shortName
-    const autoLabel = `${subscriptionName} - ${formik.values.cycleString} (${
-      formik.values.month + 1
-    }/${formik.values.year})`
-    formik.setFieldValue("groupLabel", autoLabel)
-  }, [formik.values.cycleString])
+
+    if (subscriptionName) {
+      const autoLabel = `${subscriptionName} - ${formik.values.cycleString} (${
+        formik.values.month + 1
+      }/${formik.values.year})`
+      formik.setFieldValue("groupLabel", autoLabel)
+    }
+  }, [formik.values.cycleString, subscriptions])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
