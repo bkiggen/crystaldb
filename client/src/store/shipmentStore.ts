@@ -27,7 +27,7 @@ type ShipmentStoreT = {
       cycleString: string
     },
   ) => Promise<void>
-  updateShipment: (updatedShipment: ShipmentT) => Promise<void>
+  updateShipment: (updatedShipment: ShipmentT & { isBulkEdit: boolean }) => Promise<void>
   deleteShipments: (shipmentId: number[]) => Promise<void>
   loading: boolean
   setLoading: (loading: boolean) => void
@@ -77,9 +77,12 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
 
   updateShipment: async (updatedShipment) => {
     try {
-      const shipment = await updateShipmentRequest(updatedShipment)
+      const shipments = await updateShipmentRequest(updatedShipment)
       set((state) => ({
-        shipments: state.shipments.map((s) => (s.id === shipment.id ? shipment : s)),
+        shipments: state.shipments.map((s) => {
+          const updatedShipment = shipments.find((us) => us.id === s.id)
+          return updatedShipment ? updatedShipment : s
+        }),
       }))
     } catch (error) {
       console.error("Failed to update shipment", error)

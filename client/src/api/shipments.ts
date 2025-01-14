@@ -50,9 +50,11 @@ export const getAllShipments = async ({
   })
 }
 
-export const updateShipmentRequest = async (updatedShipment: ShipmentT): Promise<ShipmentT> => {
+export const updateShipmentRequest = async (
+  updatedShipment: ShipmentT & { isBulkEdit: boolean },
+): Promise<ShipmentT[]> => {
   const endpoint = `/shipments/${updatedShipment.id}`
-  return makeRestRequest<ShipmentT>({
+  return makeRestRequest<ShipmentT[]>({
     endpoint,
     method: "PUT",
     body: JSON.stringify(updatedShipment),

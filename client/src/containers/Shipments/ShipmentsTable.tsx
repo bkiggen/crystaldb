@@ -168,6 +168,7 @@ const ShipmentsTable = ({
       field: "crystals",
       headerName: "Crystals",
       flex: 3,
+      minWidth: 300,
       sortable: false,
       renderCell: (params: GridCellParams) => {
         return (

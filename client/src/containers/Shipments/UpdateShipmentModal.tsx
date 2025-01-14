@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import dayjs from "dayjs"
 import * as Yup from "yup"
@@ -15,6 +15,7 @@ import {
   Autocomplete,
   Typography,
   MenuItem,
+  Popover,
 } from "@mui/material"
 
 import colors from "../../styles/colors"
@@ -41,6 +42,9 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [editConfirm, setEditConfirm] = useState(false)
+
+  const updateButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
@@ -102,15 +106,23 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     groupLabel: Yup.string(),
   })
 
-  const handleSubmit = async (formData: typeof initialValues) => {
+  const handleUpdate = async ({ isBulkEdit }) => {
+    const formData = formik.values
     const userCountIsNew = formData.userCount !== selectedShipment.userCount
+
     await updateShipment({
       ...formData,
       id: selectedShipment.id,
       userCountIsNew: userCountIsNew,
+      isBulkEdit,
     })
+
     setSelectedShipment(null)
     formik.resetForm()
+  }
+
+  const handleSubmit = () => {
+    setEditConfirm(true)
   }
 
   const formik = useFormik({
@@ -357,7 +369,44 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
             >
               {deleteConfirm ? "Confirm Delete" : "Delete"}
             </Button>
-            <Button type="submit" variant="contained" color="primary">
+            <Popover
+              open={editConfirm}
+              anchorEl={updateButtonRef.current}
+              onClose={() => setEditConfirm(false)}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="subtitle1">Choose an option:</Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setEditConfirm(false)
+                    handleUpdate({ isBulkEdit: false })
+                  }}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => {
+                    setEditConfirm(false)
+                    handleUpdate({ isBulkEdit: true })
+                  }}
+                >
+                  Bulk Update
+                </Button>
+              </Box>
+            </Popover>
+            <Button type="submit" variant="contained" color="primary" ref={updateButtonRef}>
               Update
             </Button>
           </Box>
