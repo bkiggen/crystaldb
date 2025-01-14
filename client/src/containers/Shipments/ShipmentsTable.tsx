@@ -9,13 +9,13 @@ import type { ShipmentT } from "../../types/Shipment"
 import type { CrystalT } from "../../types/Crystal"
 
 import Pagination from "../../components/Pagination"
-import ColorIndicator from "../../components/ColorIndicator"
 
 import DeleteIcon from "@mui/icons-material/Delete"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import { useShipmentStore } from "../../store/shipmentStore"
+import CrystalChip from "../../components/SmartSelect/CrystalChip"
 
-const Shipments = ({
+const ShipmentsTable = ({
   shipments,
   loading,
   paging,
@@ -112,7 +112,7 @@ const Shipments = ({
     {
       field: "groupLabel",
       headerName: "Group Label",
-      width: 150,
+      width: 100,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -123,7 +123,7 @@ const Shipments = ({
     {
       field: "month",
       headerName: "Month",
-      width: 120,
+      width: 100,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -134,7 +134,7 @@ const Shipments = ({
     {
       field: "year",
       headerName: "Year",
-      width: 120,
+      width: 100,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -145,7 +145,7 @@ const Shipments = ({
     {
       field: "subscriptionType",
       headerName: "Subscription Type",
-      width: 150,
+      width: 140,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -156,7 +156,7 @@ const Shipments = ({
     {
       field: "cycle",
       headerName: "Cycle",
-      width: 120,
+      width: 100,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -172,29 +172,21 @@ const Shipments = ({
       renderCell: (params: GridCellParams) => {
         return (
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "4px",
-              minWidth: "300px",
-              flexWrap: "wrap",
-            }}
+            sx={{ minHeight: "100px", display: "flex", alignItems: "center", padding: "12px 0" }}
           >
-            {params.row.crystals?.map((crystal: CrystalT, idx) => (
-              <Box
-                key={crystal.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <ColorIndicator indicatorValue={crystal.color?.hex} />
-                <Box sx={{ marginRight: "6px", textTransform: "capitalize" }}>
-                  {crystal.name}
-                  {idx !== params.row.crystals.length - 1 ? "," : ""}
-                </Box>
-              </Box>
-            ))}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                minWidth: "300px",
+                flexWrap: "wrap",
+                height: "100%",
+              }}
+            >
+              {params.row.crystals?.map((crystal: CrystalT, idx) => (
+                <CrystalChip key={idx} crystal={crystal} withoutDelete fontSize="12px" />
+              ))}
+            </Box>
           </Box>
         )
       },
@@ -202,7 +194,7 @@ const Shipments = ({
     {
       field: "clone",
       headerName: "Clone",
-      width: 120,
+      width: 100,
       align: "center",
       sortable: false,
       headerAlign: "center",
@@ -234,12 +226,12 @@ const Shipments = ({
           background: "rgba(70, 90, 126, 0.4)",
           color: "white",
           cursor: "pointer",
-          // pointer cursor on ALL rows
+
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",
           },
         }}
-        rowHeight={120}
+        getRowHeight={() => "auto"}
         rows={shipments || []}
         onCellClick={handleCellClick}
         columns={columns}
@@ -262,4 +254,4 @@ const Shipments = ({
   )
 }
 
-export default Shipments
+export default ShipmentsTable

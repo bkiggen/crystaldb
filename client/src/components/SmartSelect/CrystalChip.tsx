@@ -12,10 +12,11 @@ import InventoryIndicator from "../InventoryIndicator"
 
 type CrystalChipT = {
   crystal: CrystalT
-  formik: ReturnType<typeof useFormik>
+  formik?: ReturnType<typeof useFormik>
   handleRemoveCrystalFromSuggestions?: (e: React.MouseEvent, id: number) => void
-  selectedCrystalIds: number[]
+  selectedCrystalIds?: number[]
   withoutDelete?: boolean
+  fontSize?: string
 }
 
 const CrystalChip = ({
@@ -24,6 +25,7 @@ const CrystalChip = ({
   handleRemoveCrystalFromSuggestions = () => null,
   selectedCrystalIds,
   withoutDelete,
+  fontSize = "14px",
 }: CrystalChipT) => {
   return (
     <Tooltip
@@ -31,21 +33,21 @@ const CrystalChip = ({
       title={
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Inventory:</Typography>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize, marginRight: "4px" }}>Inventory:</Typography>
+            <Typography sx={{ fontSize, marginRight: "4px", fontWeight: 600 }}>
               {crystal.inventory}
             </Typography>
             <InventoryIndicator indicatorValue={crystal.inventory} />
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Category:</Typography>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize, marginRight: "4px" }}>Category:</Typography>
+            <Typography sx={{ fontSize, marginRight: "4px", fontWeight: 600 }}>
               {crystal.category?.name || "None"}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px" }}>Location:</Typography>
-            <Typography sx={{ fontSize: "14px", marginRight: "4px", fontWeight: 600 }}>
+            <Typography sx={{ fontSize, marginRight: "4px" }}>Location:</Typography>
+            <Typography sx={{ fontSize, marginRight: "4px", fontWeight: 600 }}>
               {crystal.location?.name || "None"}
             </Typography>
           </Box>
@@ -58,7 +60,7 @@ const CrystalChip = ({
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <ColorIndicator indicatorValue={crystal?.color?.hex} />
-              <Typography sx={{ fontSize: "14px", textTransform: "capitalize" }}>
+              <Typography sx={{ fontSize, textTransform: "capitalize" }}>
                 {crystal?.name}
               </Typography>
             </Box>
@@ -73,22 +75,24 @@ const CrystalChip = ({
           </Box>
         }
         onClick={() => {
-          if (selectedCrystalIds.includes(crystal.id)) {
+          if (selectedCrystalIds?.includes(crystal.id)) {
             formik.setFieldValue(
               "crystalIds",
               selectedCrystalIds.filter((id) => id !== crystal.id),
             )
           } else {
-            const allIds = [...selectedCrystalIds, crystal.id]
-            const uniqueIds = Array.from(new Set(allIds))
-            formik.setFieldValue("crystalIds", uniqueIds)
+            if (selectedCrystalIds.length) {
+              const allIds = [...selectedCrystalIds, crystal.id]
+              const uniqueIds = Array.from(new Set(allIds))
+              formik.setFieldValue("crystalIds", uniqueIds)
+            }
           }
         }}
         sx={{
           color: "white",
           cursor: "pointer",
           margin: "6px",
-          background: selectedCrystalIds.includes(crystal.id)
+          background: selectedCrystalIds?.includes(crystal.id)
             ? "rgba(255,255,255,0.2)"
             : "rgba(0,0,0,0.2)",
         }}

@@ -13,7 +13,7 @@ import type { CrystalT } from "../../types/Crystal"
 
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 import NewShipment from "./NewShipment"
-import Table from "./Table"
+import ShipmentsTable from "./ShipmentsTable"
 
 const Shipments = () => {
   const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
@@ -107,7 +107,7 @@ const Shipments = () => {
           setSelectedShipment={setSelectedShipment}
         />
       ) : null}
-      <Table
+      <ShipmentsTable
         loading={loading}
         shipments={shipments}
         paging={paging}

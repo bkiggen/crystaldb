@@ -8,11 +8,11 @@ import type { CrystalT } from "../../types/Crystal"
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
 import NewPreBuild from "./NewPreBuild"
-import ColorIndicator from "../../components/ColorIndicator"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { useShipmentStore } from "../../store/shipmentStore"
 import dayjs from "dayjs"
 import BuildPrebuildModal from "./BuildPrebuildModal"
+import CrystalChip from "../../components/SmartSelect/CrystalChip"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
@@ -146,29 +146,21 @@ const PreBuilds = () => {
       renderCell: (params: GridCellParams) => {
         return (
           <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "4px",
-              minWidth: "300px",
-              flexWrap: "wrap",
-            }}
+            sx={{ minHeight: "100px", display: "flex", alignItems: "center", padding: "12px 0" }}
           >
-            {params.row.crystals?.map((crystal: CrystalT, idx) => (
-              <Box
-                key={crystal.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <ColorIndicator indicatorValue={crystal.color?.hex} />
-                <Box sx={{ marginRight: "6px" }}>
-                  {crystal.name}
-                  {idx !== params.row.crystals.length - 1 ? "," : ""}
-                </Box>
-              </Box>
-            ))}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                minWidth: "300px",
+                flexWrap: "wrap",
+                height: "100%",
+              }}
+            >
+              {params.row.crystals?.map((crystal: CrystalT, idx) => (
+                <CrystalChip key={idx} crystal={crystal} withoutDelete fontSize="12px" />
+              ))}
+            </Box>
           </Box>
         )
       },
@@ -197,10 +189,9 @@ const PreBuilds = () => {
             border: "1px solid red", // Red outline
           },
         }}
-        rowHeight={120}
         rows={preBuilds || []}
+        getRowHeight={() => "auto"}
         getRowClassName={(params) => {
-          console.log("🚀 ~ PreBuilds ~ params:", params, badPrebuildIds)
           const rowId = typeof params.id === "string" ? parseInt(params.id, 10) : params.id
           return badPrebuildIds.includes(rowId) ? "bad-row" : ""
         }}
