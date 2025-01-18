@@ -28,7 +28,13 @@ type ShipmentStoreT = {
     },
   ) => Promise<void>
   updateShipment: (updatedShipment: ShipmentT & { isBulkEdit: boolean }) => Promise<void>
-  deleteShipments: (shipmentId: number[]) => Promise<void>
+  deleteShipments: ({
+    shipmentIdArr,
+    isBulkDelete,
+  }: {
+    shipmentIdArr: number[]
+    isBulkDelete: boolean
+  }) => Promise<void>
   loading: boolean
   setLoading: (loading: boolean) => void
 }
@@ -89,14 +95,15 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
     }
   },
 
-  deleteShipments: async (shipmentIdArr) => {
+  deleteShipments: async ({ shipmentIdArr, isBulkDelete }) => {
     try {
-      await deleteShipmentsRequest(shipmentIdArr)
+      const { deletedIds } = await deleteShipmentsRequest({ shipmentIdArr, isBulkDelete })
+
       set((state) => ({
-        shipments: state.shipments.filter((s) => !shipmentIdArr.includes(s.id)),
+        shipments: state.shipments.filter((s) => !deletedIds.includes(s.id)),
       }))
     } catch (error) {
-      console.error("Failed to delete shipment", error)
+      console.error("Failed to delete shipments", error)
     }
   },
 }))

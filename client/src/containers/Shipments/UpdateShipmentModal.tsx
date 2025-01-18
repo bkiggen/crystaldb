@@ -15,7 +15,6 @@ import {
   Autocomplete,
   Typography,
   MenuItem,
-  Popover,
 } from "@mui/material"
 
 import colors from "../../styles/colors"
@@ -30,6 +29,7 @@ import { useShipmentStore } from "../../store/shipmentStore"
 import { ShipmentT } from "../../types/Shipment"
 
 import ModalContainer from "../../components/Modals/ModalContainer"
+import ConfirmModal from "./ConfirmModal"
 
 type UpdateShipmentModalT = {
   selectedShipment: ShipmentT
@@ -41,10 +41,10 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
   const { updateShipment, deleteShipments } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
 
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
-  const [editConfirm, setEditConfirm] = useState(false)
+  const [confirmMode, setConfirmMode] = useState<"edit" | "delete" | null>(null)
 
   const updateButtonRef = useRef<HTMLButtonElement | null>(null)
+  const deleteButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
@@ -64,11 +64,6 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
       groupLabel: selectedShipment.groupLabel,
     })
   }, [selectedShipment])
-
-  const handleDelete = async () => {
-    deleteShipments([selectedShipment.id])
-    setSelectedShipment(null)
-  }
 
   const initialValues: {
     month: number
@@ -106,23 +101,27 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     groupLabel: Yup.string(),
   })
 
-  const handleUpdate = async ({ isBulkEdit }) => {
-    const formData = formik.values
-    const userCountIsNew = formData.userCount !== selectedShipment.userCount
+  const handleUpdateOrDelete = async ({ isBulkEdit }) => {
+    if (confirmMode === "edit") {
+      const formData = formik.values
+      const userCountIsNew = formData.userCount !== selectedShipment.userCount
 
-    await updateShipment({
-      ...formData,
-      id: selectedShipment.id,
-      userCountIsNew: userCountIsNew,
-      isBulkEdit,
-    })
+      await updateShipment({
+        ...formData,
+        id: selectedShipment.id,
+        userCountIsNew: userCountIsNew,
+        isBulkEdit,
+      })
+    } else {
+      deleteShipments({ shipmentIdArr: [selectedShipment.id], isBulkDelete: isBulkEdit })
+    }
 
     setSelectedShipment(null)
     formik.resetForm()
   }
 
   const handleSubmit = () => {
-    setEditConfirm(true)
+    setConfirmMode("edit")
   }
 
   const formik = useFormik({
@@ -359,56 +358,23 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
             <Button
               variant="contained"
               color="error"
-              onClick={() => {
-                if (deleteConfirm) {
-                  handleDelete()
-                } else {
-                  setDeleteConfirm(true)
-                }
-              }}
+              onClick={() => setConfirmMode("delete")}
+              ref={deleteButtonRef}
             >
-              {deleteConfirm ? "Confirm Delete" : "Delete"}
+              Delete
             </Button>
-            <Popover
-              open={editConfirm}
-              anchorEl={updateButtonRef.current}
-              onClose={() => setEditConfirm(false)}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="subtitle1">Choose an option:</Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    setEditConfirm(false)
-                    handleUpdate({ isBulkEdit: false })
-                  }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => {
-                    setEditConfirm(false)
-                    handleUpdate({ isBulkEdit: true })
-                  }}
-                >
-                  Bulk Update
-                </Button>
-              </Box>
-            </Popover>
             <Button type="submit" variant="contained" color="primary" ref={updateButtonRef}>
               Update
             </Button>
+            <ConfirmModal
+              open={confirmMode}
+              onClose={() => {
+                setConfirmMode(null)
+              }}
+              onConfirm={handleUpdateOrDelete}
+              buttonRef={confirmMode === "edit" ? updateButtonRef : deleteButtonRef}
+              isEditMode={confirmMode === "edit"}
+            />
           </Box>
         </Box>
       </form>

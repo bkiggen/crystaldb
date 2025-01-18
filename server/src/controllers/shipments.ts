@@ -210,15 +210,35 @@ router.delete(
   "/:id",
   authenticateToken,
   async (req: Request, res: Response) => {
-    // id param will be comma separated ids. I need to delete all
-
     const ids = req.params.id.split(",").map((id) => parseInt(id));
     const shipments = await Shipment.findBy({ id: In(ids) });
+
     if (shipments.length === 0) {
-      return res.status(404).send("Shipment not found");
+      return res.status(404).send("Shipment(s) not found");
     }
-    await Shipment.remove(shipments);
-    res.json(shipments);
+
+    try {
+      let allShipmentsToDelete = [...shipments];
+
+      if (req.body.isBulkDelete) {
+        const relatedShipments = await Shipment.findBy({
+          groupLabel: In(shipments.map((s) => s.groupLabel).filter(Boolean)),
+        });
+
+        allShipmentsToDelete = [
+          ...new Set([...allShipmentsToDelete, ...relatedShipments]),
+        ];
+      }
+
+      const deletedIds = allShipmentsToDelete.map((shipment) => shipment.id);
+
+      await Shipment.remove(allShipmentsToDelete);
+
+      res.json({ deletedIds });
+    } catch (error) {
+      console.error("Error during shipment deletion:", error);
+      res.status(500).send("An error occurred while deleting shipments");
+    }
   }
 );
 

@@ -62,11 +62,18 @@ export const updateShipmentRequest = async (
   })
 }
 
-export const deleteShipmentsRequest = async (shipmentIdArr: number[]): Promise<ShipmentT> => {
+export const deleteShipmentsRequest = async ({
+  shipmentIdArr,
+  isBulkDelete,
+}: {
+  shipmentIdArr: number[]
+  isBulkDelete: boolean
+}): Promise<{ deletedIds: number[] }> => {
   const endpoint = `/shipments/${shipmentIdArr.join(",")}`
-  return makeRestRequest<ShipmentT>({
+  return makeRestRequest<{ deletedIds: number[] }>({
     endpoint,
     method: "DELETE",
     successMessage: "Shipment Deleted!",
+    body: JSON.stringify({ isBulkDelete }),
   })
 }

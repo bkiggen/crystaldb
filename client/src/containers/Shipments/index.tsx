@@ -85,8 +85,7 @@ const Shipments = () => {
     onSubmit: handleSubmit,
   })
 
-  // Set the default value for groupLabel based on cycle string
-  useEffect(() => {
+  const resetDefaultGroupLabel = () => {
     const subscriptionName = subscriptions.find((sub) => sub.id === formik.values.subscriptionId)
       ?.shortName
 
@@ -96,11 +95,20 @@ const Shipments = () => {
       }/${formik.values.year})`
       formik.setFieldValue("groupLabel", autoLabel)
     }
-  }, [formik.values.cycleString, subscriptions])
+  }
+
+  // Set the default value for groupLabel based on cycle string
+  useEffect(() => {
+    resetDefaultGroupLabel()
+  }, [subscriptions])
 
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      <NewShipment allSubscriptions={subscriptions} formik={formik} />
+      <NewShipment
+        allSubscriptions={subscriptions}
+        formik={formik}
+        resetDefaultGroupLabel={resetDefaultGroupLabel}
+      />
       {selectedShipment ? (
         <UpdateShipmentModal
           selectedShipment={selectedShipment}

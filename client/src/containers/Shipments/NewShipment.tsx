@@ -32,9 +32,10 @@ import PreBuildAutocomplete from "./PreBuildAutocomplete"
 type NewShipmentT = {
   allSubscriptions: SubscriptionT[]
   formik: ReturnType<typeof useFormik>
+  resetDefaultGroupLabel: () => void
 }
 
-const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
+const NewShipment = ({ formik, allSubscriptions, resetDefaultGroupLabel }: NewShipmentT) => {
   const { preBuilds, fetchPreBuilds } = usePreBuildStore()
   const [openModal, setOpenModal] = useState(false)
 
@@ -83,6 +84,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
               {...formik.getFieldProps("month")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
+              onBlur={resetDefaultGroupLabel}
             >
               {Object.keys(monthOptions).map((monthNumber) => (
                 <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
@@ -107,6 +109,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
               sx={textFieldStyles}
               error={formik.touched.year && Boolean(formik.errors.year)}
               helperText={<>{formik.touched.year ? formik.errors.year : ""}</>}
+              onBlur={resetDefaultGroupLabel}
             />
           </Grid>
           <Grid item xs={4} sx={{ position: "relative" }}>
@@ -135,6 +138,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
               {...formik.getFieldProps("cycleString")}
               inputProps={{ style: { color: "white" } }}
               sx={textFieldStyles}
+              onBlur={resetDefaultGroupLabel}
             />
           </Grid>
         </Grid>
@@ -159,6 +163,7 @@ const NewShipment = ({ formik, allSubscriptions }: NewShipmentT) => {
                 id="subscriptionId"
                 {...formik.getFieldProps("subscriptionId")}
                 sx={textFieldStyles}
+                onBlur={resetDefaultGroupLabel}
               >
                 {allSubscriptions.map((subscription) => (
                   <MenuItem key={subscription.id} value={subscription.id}>

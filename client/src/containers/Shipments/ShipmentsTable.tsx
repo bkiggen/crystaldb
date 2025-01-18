@@ -58,7 +58,7 @@ const ShipmentsTable = ({
   }
 
   const commitDeleteShipments = () => {
-    deleteShipments(selectedShipmentIds)
+    deleteShipments({ shipmentIdArr: selectedShipmentIds, isBulkDelete: false })
     setDeleteModalVisible(false)
     setSelectedShipmentIds([])
     setSelectAll(false)

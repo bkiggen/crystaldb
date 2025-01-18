@@ -44,7 +44,7 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
           <Typography
             sx={{
               fontWeight: 600,
-              fontSize: "2em",
+              fontSize: "1.5em",
               color: "white",
             }}
           >
