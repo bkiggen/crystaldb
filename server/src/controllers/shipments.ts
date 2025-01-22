@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Shipment } from "../entity/Shipment";
 import { Subscription } from "../entity/Subscription";
-import { In, ILike } from "typeorm";
+import { In } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { authenticateToken } from "./util/authenticateToken";
 import { parseCycleCSVToNumbersArray } from "./util/parseStringToNumbersArray";
@@ -32,7 +32,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     ...(searchTerm ? { groupLabel: searchTerm } : {}),
   };
 
-  const [result, total] = await Shipment.findAndCount({
+  const [shipments, total] = await Shipment.findAndCount({
     where: whereCondition,
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
@@ -52,7 +52,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     pageSize: pageSizeNumber,
   };
 
-  res.json({ data: result, paging });
+  res.json({ data: shipments, paging });
 });
 
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
@@ -122,9 +122,9 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   const { crystalIds, subscriptionId, isBulkEdit } = req.body;
 
-  // Find the shipment by ID for single update or groupLabel reference
-  const shipment = await Shipment.findOneBy({
-    id: parseInt(req.params.id),
+  const shipment = await Shipment.findOne({
+    where: { id: parseInt(req.params.id) },
+    relations: ["subscription"],
   });
 
   if (!shipment) {
@@ -133,7 +133,7 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
 
   const subscription = subscriptionId
     ? await Subscription.findOneBy({
-        id: subscriptionId,
+        id: subscriptionId || shipment.subscription.id,
       })
     : null;
 
@@ -143,13 +143,13 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
 
   try {
     if (isBulkEdit) {
-      // Bulk update: Find all shipments with the same groupLabel
       if (!shipment.groupLabel) {
         return res.status(400).send("groupLabel is required for bulk edits");
       }
 
-      const shipments = await Shipment.findBy({
-        groupLabel: shipment.groupLabel,
+      const shipments = await Shipment.find({
+        where: { groupLabel: shipment.groupLabel },
+        relations: ["subscription", "crystals"],
       });
 
       if (!shipments.length) {
@@ -158,10 +158,8 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
           .send("No shipments found for the provided groupLabel");
       }
 
-      const updatedShipments = []; // Array to collect updated shipments
-
-      for (let singleShipment of shipments) {
-        // Update crystals if provided
+      const updatedShipments = shipments.map((singleShipment) => {
+        // Update associations if provided
         if (crystals) {
           singleShipment.crystals = crystals;
         }
@@ -170,16 +168,18 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
           singleShipment.subscription = subscription;
         }
 
+        // Merge other fields from req.body into the shipment
         const newData = { ...req.body };
         delete newData.id;
-
         Shipment.merge(singleShipment, newData);
 
-        const savedShipment = await Shipment.save(singleShipment);
+        return singleShipment;
+      });
 
-        updatedShipments.push(savedShipment);
-      }
-      return res.json(updatedShipments); // Return the updated shipments
+      // Save all updated shipments in bulk
+      const savedShipments = await Shipment.save(updatedShipments);
+
+      return res.json(savedShipments); // Return the updated shipments
     } else {
       // Single update logic
 

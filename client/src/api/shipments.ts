@@ -24,6 +24,7 @@ export const getAllShipments = async ({
   month,
   cycle,
   year,
+  isGrouped,
 }: {
   searchTerm?: string
   page?: number
@@ -33,6 +34,7 @@ export const getAllShipments = async ({
   month?: number
   year?: number
   cycle?: string
+  isGrouped?: boolean
 }): Promise<{ data: ShipmentT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
@@ -42,6 +44,7 @@ export const getAllShipments = async ({
     ...(cycle ? { cycle } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
+    isGrouped: isGrouped ? "true" : "false",
   }).toString()
 
   return makeRestRequest<{ data: ShipmentT[]; paging: PagingT }>({

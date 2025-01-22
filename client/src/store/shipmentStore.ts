@@ -21,13 +21,14 @@ type ShipmentStoreT = {
     subscriptionId?: string
     month?: number
     year?: number
+    isGrouped?: boolean
   }) => Promise<void>
   createShipment: (
     newShipment: Omit<ShipmentT, "id" | "cycle"> & {
       cycleString: string
     },
   ) => Promise<void>
-  updateShipment: (updatedShipment: ShipmentT & { isBulkEdit: boolean }) => Promise<void>
+  updateShipment: (updatedShipment: any & { isBulkEdit: boolean }) => Promise<void>
   deleteShipments: ({
     shipmentIdArr,
     isBulkDelete,
@@ -84,6 +85,7 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
   updateShipment: async (updatedShipment) => {
     try {
       const shipments = await updateShipmentRequest(updatedShipment)
+
       set((state) => ({
         shipments: state.shipments.map((s) => {
           const updatedShipment = shipments.find((us) => us.id === s.id)

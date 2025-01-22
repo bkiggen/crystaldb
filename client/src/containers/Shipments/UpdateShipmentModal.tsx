@@ -101,19 +101,33 @@ const UpdateShipmentModal = ({ selectedShipment, setSelectedShipment }: UpdateSh
     groupLabel: Yup.string(),
   })
 
-  const handleUpdateOrDelete = async ({ isBulkEdit }) => {
+  const getUpdatedFields = (currentValues: any, initialValues: any) => {
+    return Object.keys(currentValues).reduce((updatedFields, key) => {
+      if (currentValues[key] !== initialValues[key]) {
+        updatedFields[key] = currentValues[key]
+      }
+      return updatedFields
+    }, {})
+  }
+
+  const handleUpdateOrDelete = async ({ isBulkEdit }: { isBulkEdit: boolean }) => {
     if (confirmMode === "edit") {
-      const formData = formik.values
-      const userCountIsNew = formData.userCount !== selectedShipment.userCount
+      // Extract only updated fields
+      const updatedFields = getUpdatedFields(formik.values, formik.initialValues)
+
+      if (Object.keys(updatedFields).length === 0) {
+        // No updates, avoid unnecessary API calls
+        setConfirmMode(null)
+        return
+      }
 
       await updateShipment({
-        ...formData,
+        ...updatedFields,
         id: selectedShipment.id,
-        userCountIsNew: userCountIsNew,
         isBulkEdit,
       })
     } else {
-      deleteShipments({ shipmentIdArr: [selectedShipment.id], isBulkDelete: isBulkEdit })
+      await deleteShipments({ shipmentIdArr: [selectedShipment.id], isBulkDelete: isBulkEdit })
     }
 
     setSelectedShipment(null)
