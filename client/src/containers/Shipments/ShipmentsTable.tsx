@@ -25,7 +25,7 @@ const ShipmentsTable = ({
   handleClone,
 }) => {
   const navigate = useNavigate()
-  const { deleteShipments, updateShipment } = useShipmentStore()
+  const { deleteShipments } = useShipmentStore()
   const [selectedShipmentIds, setSelectedShipmentIds] = useState<number[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
