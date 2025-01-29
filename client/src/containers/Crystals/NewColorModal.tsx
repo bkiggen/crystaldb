@@ -68,11 +68,23 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
             fullWidth
             id="name"
             label="Name"
-            variant="outlined"
             margin="normal"
             {...formik.getFieldProps("name")}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={<>{formik.touched.name ? formik.errors.name : ""}</>}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "black", // Default black outline
+                },
+                "&:hover fieldset": {
+                  borderColor: "black", // Black outline on hover
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "black", // Black outline when focused
+                },
+              },
+            }}
           />
           <Box
             sx={{

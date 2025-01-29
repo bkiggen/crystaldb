@@ -64,6 +64,19 @@ const NewLocationModal = ({ onClose, locationToEdit }) => {
             {...formik.getFieldProps("name")}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={<>{formik.touched.name ? formik.errors.name : ""}</>}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "black", // Default black outline
+                },
+                "&:hover fieldset": {
+                  borderColor: "black", // Black outline on hover
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "black", // Black outline when focused
+                },
+              },
+            }}
           />
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
             {locationToEdit ? (
