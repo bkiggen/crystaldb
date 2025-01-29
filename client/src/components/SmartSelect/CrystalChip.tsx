@@ -81,11 +81,9 @@ const CrystalChip = ({
               selectedCrystalIds.filter((id) => id !== crystal.id),
             )
           } else {
-            if (selectedCrystalIds.length) {
-              const allIds = [...selectedCrystalIds, crystal.id]
-              const uniqueIds = Array.from(new Set(allIds))
-              formik.setFieldValue("crystalIds", uniqueIds)
-            }
+            const allIds = [...selectedCrystalIds, crystal.id]
+            const uniqueIds = Array.from(new Set(allIds))
+            formik.setFieldValue("crystalIds", uniqueIds)
           }
         }}
         sx={{
