@@ -7,6 +7,7 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit"
 import Shipment from "./Shipment"
 import { useEffect, useState } from "react"
 import { callShipStationApi } from "../../api/shipstation"
+// import PrintContent from "./PrintContent"
 
 const ShipDay = () => {
   const { shipments, fetchShipments } = useShipmentStore()
@@ -81,6 +82,7 @@ const ShipDay = () => {
       )}
       <Box sx={{ margin: "12px 2%" }}>
         <DateChanger fetchShipments={fetchShipments} />
+        {/* <PrintContent data={shipmentGroups} /> */}
         {loading ? (
           <Box sx={{ widht: "100%", display: "flex", justifyContent: "center" }}>
             <CircularProgress />
