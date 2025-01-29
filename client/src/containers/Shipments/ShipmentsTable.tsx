@@ -10,10 +10,11 @@ import type { CrystalT } from "../../types/Crystal"
 
 import Pagination from "../../components/Pagination"
 
-import DeleteIcon from "@mui/icons-material/Delete"
+import SettingsIcon from "@mui/icons-material/Settings"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import { useShipmentStore } from "../../store/shipmentStore"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
+import UpdateOrDeleteModal from "./UpdateOrDeleteModal"
 
 const ShipmentsTable = ({
   shipments,
@@ -24,10 +25,13 @@ const ShipmentsTable = ({
   handleClone,
 }) => {
   const navigate = useNavigate()
-  const { deleteShipments } = useShipmentStore()
+  const { deleteShipments, updateShipment } = useShipmentStore()
   const [selectedShipmentIds, setSelectedShipmentIds] = useState<number[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [selectAll, setSelectAll] = useState(false)
+
+  const settingsButtonRef = React.useRef(null)
 
   const handleClick = (e, params: GridCellParams) => {
     e.stopPropagation()
@@ -57,8 +61,13 @@ const ShipmentsTable = ({
     }
   }
 
-  const commitDeleteShipments = () => {
-    deleteShipments({ shipmentIdArr: selectedShipmentIds, isBulkDelete: false })
+  const handleUpdateOrDelete = (actionType: "update" | "delete") => {
+    if (actionType === "update") {
+      // updateShipment(selectedShipmentIds[0])
+    } else {
+      deleteShipments({ shipmentIdArr: selectedShipmentIds, isBulkDelete: false })
+    }
+
     setDeleteModalVisible(false)
     setSelectedShipmentIds([])
     setSelectAll(false)
@@ -75,6 +84,7 @@ const ShipmentsTable = ({
 
     navigate(`?${queryParams.toString()}`)
   }
+
   const columns: GridColDef[] = [
     {
       field: "action",
@@ -92,10 +102,21 @@ const ShipmentsTable = ({
             onChange={handleSelectAllClick}
           />
           {selectedShipmentIds.length > 0 && (
-            <DeleteIcon
-              sx={{ color: "#cc0000", cursor: "pointer", marginRight: "8px" }}
-              onClick={() => setDeleteModalVisible(true)}
-            />
+            <>
+              <SettingsIcon
+                sx={{ cursor: "pointer", marginRight: "8px" }}
+                onClick={() => setConfirmOpen(true)}
+                ref={settingsButtonRef}
+              />
+              <UpdateOrDeleteModal
+                open={confirmOpen}
+                onClose={() => {
+                  setConfirmOpen(null)
+                }}
+                onConfirm={handleUpdateOrDelete}
+                buttonRef={settingsButtonRef}
+              />
+            </>
           )}
         </Box>
       ),
@@ -249,7 +270,7 @@ const ShipmentsTable = ({
       <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
-        onConfirm={commitDeleteShipments}
+        onConfirm={handleUpdateOrDelete}
       />
     </>
   )
