@@ -12,14 +12,42 @@ const PrintContent = ({ data }) => {
       printWindow.document.write(`
         <html>
           <head>
-            <title>Print</title>
+            <title>Print Report</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 20px; }
-              h1 { text-align: center; }
-              ul { list-style-type: none; padding: 0; }
+              @page { 
+                size: A4 portrait; 
+                margin: 10mm; 
+              }
+              body {
+                font-family: Arial, sans-serif;
+                padding: 0;
+                font-size: 9pt;
+              }
+              .container {
+                column-count: 3;
+                column-gap: 20px;
+              }
+              .group {
+                break-inside: avoid;
+                margin-bottom: 24px;
+              }
+              .group-label {
+                font-weight: bold;
+                margin-bottom: 4px;
+              }
+              ul {
+                list-style-type: none;
+                padding-left: 0;
+                margin: 0;
+              }
+              li {
+                margin-bottom: 2px;
+              }
             </style>
           </head>
-          <body>${printContent}</body>
+          <body>
+            ${printContent}
+          </body>
         </html>
       `)
 
@@ -32,22 +60,30 @@ const PrintContent = ({ data }) => {
 
   return (
     <div>
-      <div ref={printRef} id="printable-content">
-        <h1>Data Report</h1>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+      {/* Hidden printable content */}
+      <div ref={printRef} id="printable-content" style={{ display: "none" }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          January 2025
+        </Typography>
+        <Box className="container">
           {data.map((item, index) => (
-            <Box key={index}>
-              <Typography sx={{ fontSize: "24px" }}>{item.groupLabel}</Typography>
-              <Box>
+            <Box key={index} className="group">
+              <Typography variant="body1" className="group-label">
+                {item.groupLabel}
+              </Typography>
+              <ul>
                 {item.crystals.map((crystal, idx) => (
-                  <Box key={idx}>{crystal.name}</Box>
+                  <li key={idx}>
+                    <Typography variant="body2">{crystal.name}</Typography>
+                  </li>
                 ))}
-              </Box>
+              </ul>
             </Box>
           ))}
         </Box>
       </div>
-      <Button variant="contained" onClick={handlePrint} style={{ marginTop: "10px" }}>
+      {/* Only the button is visible on screen */}
+      <Button variant="contained" onClick={handlePrint} sx={{ mt: 2 }}>
         Print Report
       </Button>
     </div>

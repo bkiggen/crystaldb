@@ -20,7 +20,6 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
         key={shipmentGroup.id}
         sx={{
           padding: "12px",
-          margin: "12px",
           background: colors.slateA4,
           borderRadius: "8px",
           display: "flex",

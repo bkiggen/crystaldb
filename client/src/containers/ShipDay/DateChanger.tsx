@@ -78,7 +78,7 @@ const DateChanger = ({ fetchShipments }) => {
           border: "1px solid #fff",
           padding: "12px",
           margin: "0 auto",
-          marginBottom: "48px",
+          marginBottom: "24px",
           borderRadius: "4px",
         }}
       >
