@@ -65,6 +65,22 @@ export const updateShipmentRequest = async (
   })
 }
 
+export const updateSelectedShipmentsRequest = async ({
+  newData,
+  selectedIds,
+}: {
+  newData: ShipmentT & { isBulkEdit: boolean }
+  selectedIds: number[]
+}): Promise<ShipmentT[]> => {
+  const endpoint = `/shipments/updateSelected`
+  return makeRestRequest<ShipmentT[]>({
+    endpoint,
+    method: "POST",
+    body: JSON.stringify({ newData, selectedIds }),
+    successMessage: "Shipments Updated!",
+  })
+}
+
 export const deleteShipmentsRequest = async ({
   shipmentIdArr,
   isBulkDelete,

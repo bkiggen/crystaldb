@@ -5,6 +5,7 @@ import {
   createShipmentRequest,
   updateShipmentRequest,
   deleteShipmentsRequest,
+  updateSelectedShipmentsRequest,
 } from "../api/shipments"
 import { PagingT, defaultPaging } from "../types/Paging"
 
@@ -29,6 +30,13 @@ type ShipmentStoreT = {
     },
   ) => Promise<void>
   updateShipment: (updatedShipment: any & { isBulkEdit: boolean }) => Promise<void>
+  updateSelectedShipments: ({
+    selectedIds,
+    newData,
+  }: {
+    selectedIds: number[]
+    newData: any
+  }) => Promise<void>
   deleteShipments: ({
     shipmentIdArr,
     isBulkDelete,
@@ -93,7 +101,22 @@ export const useShipmentStore = create<ShipmentStoreT>((set) => ({
         }),
       }))
     } catch (error) {
-      console.error("Failed to update shipment", error)
+      console.error("Failed to update shipment(s)", error)
+    }
+  },
+
+  updateSelectedShipments: async ({ selectedIds, newData }) => {
+    try {
+      const shipments = await updateSelectedShipmentsRequest({ selectedIds, newData })
+
+      set((state) => ({
+        shipments: state.shipments.map((s) => {
+          const updatedShipment = shipments.find((us) => us.id === s.id)
+          return updatedShipment ? updatedShipment : s
+        }),
+      }))
+    } catch (error) {
+      console.error("Failed to update shipments", error)
     }
   },
 

@@ -206,6 +206,54 @@ router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
   }
 });
 
+router.post(
+  "/updateSelected",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const { newData, selectedIds } = req.body;
+    const { crystalIds, subscriptionId } = newData;
+
+    const shipments = await Shipment.find({
+      where: { id: In(selectedIds.map((id) => parseInt(id, 10))) },
+      relations: ["subscription", "crystals"],
+    });
+
+    if (!shipments.length) {
+      return res.status(404).send("Shipment not found");
+    }
+
+    const subscription = subscriptionId
+      ? await Subscription.findOneBy({
+          id: subscriptionId,
+        })
+      : null;
+
+    const crystals = crystalIds
+      ? await Crystal.findBy({ id: In(crystalIds) })
+      : null;
+
+    const updatedShipments = shipments.map((singleShipment) => {
+      // Update associations if provided
+      if (crystals) {
+        singleShipment.crystals = crystals;
+      }
+
+      if (subscription) {
+        singleShipment.subscription = subscription;
+      }
+
+      Shipment.merge(singleShipment, newData);
+
+      return singleShipment;
+    });
+
+    // Save all updated shipments in bulk
+    const savedShipments = await Shipment.save(updatedShipments);
+
+    return res.json(savedShipments); // Return the updated shipments
+  }
+);
+
 router.delete(
   "/:id",
   authenticateToken,

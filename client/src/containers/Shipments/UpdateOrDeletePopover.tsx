@@ -1,6 +1,6 @@
-import { Box, Button, Typography, Popover } from "@mui/material"
+import { Box, Button, Popover } from "@mui/material"
 
-const UpdateOrDeleteModal = ({ buttonRef, open, onClose, onConfirm }) => {
+const UpdateOrDeleteModal = ({ buttonRef, open, onClose, setConfirmDelete, setConfirmUpdate }) => {
   return (
     <Popover
       open={open}
@@ -16,13 +16,12 @@ const UpdateOrDeleteModal = ({ buttonRef, open, onClose, onConfirm }) => {
       }}
     >
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="subtitle1">Choose an option:</Typography>
         <Button
           variant="contained"
           color="primary"
           onClick={() => {
             onClose()
-            onConfirm("update")
+            setConfirmUpdate()
           }}
         >
           Update Selected
@@ -32,7 +31,7 @@ const UpdateOrDeleteModal = ({ buttonRef, open, onClose, onConfirm }) => {
           color="secondary"
           onClick={() => {
             onClose()
-            onConfirm("delete")
+            setConfirmDelete()
           }}
         >
           Delete Selected

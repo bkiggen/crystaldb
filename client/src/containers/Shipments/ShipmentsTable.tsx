@@ -14,7 +14,8 @@ import SettingsIcon from "@mui/icons-material/Settings"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import { useShipmentStore } from "../../store/shipmentStore"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
-import UpdateOrDeleteModal from "./UpdateOrDeleteModal"
+import UpdateOrDeleteModal from "./UpdateOrDeletePopover"
+import UpdateSelectedShipmentModal from "./UpdateSelectedShipmentModal"
 
 const ShipmentsTable = ({
   shipments,
@@ -29,6 +30,7 @@ const ShipmentsTable = ({
   const [selectedShipmentIds, setSelectedShipmentIds] = useState<number[]>([])
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [updateModalVisible, setUpdateModalVisible] = useState(false)
   const [selectAll, setSelectAll] = useState(false)
 
   const settingsButtonRef = React.useRef(null)
@@ -61,16 +63,15 @@ const ShipmentsTable = ({
     }
   }
 
-  const handleUpdateOrDelete = (actionType: "update" | "delete") => {
-    if (actionType === "update") {
-      // updateShipment(selectedShipmentIds[0])
-    } else {
-      deleteShipments({ shipmentIdArr: selectedShipmentIds, isBulkDelete: false })
-    }
-
+  const clearSelected = () => {
     setDeleteModalVisible(false)
     setSelectedShipmentIds([])
     setSelectAll(false)
+  }
+
+  const handleDelete = () => {
+    deleteShipments({ shipmentIdArr: selectedShipmentIds, isBulkDelete: false })
+    clearSelected()
   }
 
   const onPaginationDataFetch = (pagingData) => {
@@ -113,7 +114,8 @@ const ShipmentsTable = ({
                 onClose={() => {
                   setConfirmOpen(null)
                 }}
-                onConfirm={handleUpdateOrDelete}
+                setConfirmDelete={() => setDeleteModalVisible(true)}
+                setConfirmUpdate={() => setUpdateModalVisible(true)}
                 buttonRef={settingsButtonRef}
               />
             </>
@@ -266,12 +268,22 @@ const ShipmentsTable = ({
         className="bg-white p-0"
         autoHeight
       />
-
       <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
-        onConfirm={handleUpdateOrDelete}
+        onConfirm={handleDelete}
       />
+      {updateModalVisible && (
+        <UpdateSelectedShipmentModal
+          selectedShipmentIds={selectedShipmentIds}
+          onModalClose={() => {
+            setUpdateModalVisible(false)
+          }}
+          resetSelectedShipmentIds={() => {
+            clearSelected()
+          }}
+        />
+      )}
     </>
   )
 }
