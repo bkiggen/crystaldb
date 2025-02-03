@@ -12,8 +12,9 @@ import { monthOptions } from "../../lib/constants"
 
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
+import PrintContent from "./PrintContent"
 
-const DateChanger = ({ fetchShipments }) => {
+const DateChanger = ({ fetchShipments, shipmentGroups }) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
@@ -71,70 +72,77 @@ const DateChanger = ({ fetchShipments }) => {
   }, [formik.values.month, formik.values.year, formik.values.subscriptionId, subscriptions])
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <Box
-        sx={{
-          background: colors.slateA4,
-          border: "1px solid #fff",
-          padding: "12px",
-          margin: "0 auto",
-          marginBottom: "24px",
-          borderRadius: "4px",
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={4} sx={{ position: "relative" }}>
-            <TextField
-              id="month"
-              variant="outlined"
-              fullWidth
-              select
-              {...formik.getFieldProps("month")}
-              inputProps={{ style: { color: "white" } }}
-              sx={textFieldStyles}
-            >
-              {Object.keys(monthOptions).map((monthNumber) => (
-                <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
-                  {monthOptions[monthNumber]?.long}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={4} sx={{ position: "relative" }}>
-            <TextField
-              id="year"
-              variant="outlined"
-              fullWidth
-              type="number"
-              {...formik.getFieldProps("year")}
-              inputProps={{ style: { color: "white" } }}
-              sx={textFieldStyles}
-            />
-          </Grid>
-          <Grid item xs={4} sx={{ position: "relative" }}>
-            <FormControl fullWidth variant="outlined">
+    <>
+      <form onSubmit={formik.handleSubmit}>
+        <Box
+          sx={{
+            background: colors.slateA4,
+            border: "1px solid #fff",
+            padding: "12px",
+            margin: "0 auto",
+            marginBottom: "24px",
+            borderRadius: "4px",
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={4} sx={{ position: "relative" }}>
               <TextField
+                id="month"
+                variant="outlined"
+                fullWidth
                 select
-                id="subscriptionId"
-                {...formik.getFieldProps("subscriptionId")}
+                {...formik.getFieldProps("month")}
+                inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
               >
-                <MenuItem key="All" value={0}>
-                  All
-                </MenuItem>
-                {subscriptions.map((subscription) => {
-                  return (
-                    <MenuItem key={subscription.id} value={subscription.id}>
-                      {subscription.name}
-                    </MenuItem>
-                  )
-                })}
+                {Object.keys(monthOptions).map((monthNumber) => (
+                  <MenuItem key={monthNumber} value={parseInt(monthNumber, 10)}>
+                    {monthOptions[monthNumber]?.long}
+                  </MenuItem>
+                ))}
               </TextField>
-            </FormControl>
+            </Grid>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <TextField
+                id="year"
+                variant="outlined"
+                fullWidth
+                type="number"
+                {...formik.getFieldProps("year")}
+                inputProps={{ style: { color: "white" } }}
+                sx={textFieldStyles}
+              />
+            </Grid>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <FormControl fullWidth variant="outlined">
+                <TextField
+                  select
+                  id="subscriptionId"
+                  {...formik.getFieldProps("subscriptionId")}
+                  sx={textFieldStyles}
+                >
+                  <MenuItem key="All" value={0}>
+                    All
+                  </MenuItem>
+                  {subscriptions.map((subscription) => {
+                    return (
+                      <MenuItem key={subscription.id} value={subscription.id}>
+                        {subscription.name}
+                      </MenuItem>
+                    )
+                  })}
+                </TextField>
+              </FormControl>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    </form>
+        </Box>
+      </form>
+      <PrintContent
+        data={shipmentGroups}
+        month={monthOptions[formik.values.month]?.long}
+        year={formik.values.year}
+      />
+    </>
   )
 }
 

@@ -81,8 +81,8 @@ const ShipDay = () => {
         />
       )}
       <Box sx={{ margin: "12px 2%", display: "flex", flexDirection: "column", gap: 2 }}>
-        <DateChanger fetchShipments={fetchShipments} />
-        <PrintContent data={shipmentGroups} />
+        <DateChanger fetchShipments={fetchShipments} shipmentGroups={shipmentGroups} />
+
         {loading ? (
           <Box sx={{ widht: "100%", display: "flex", justifyContent: "center" }}>
             <CircularProgress />

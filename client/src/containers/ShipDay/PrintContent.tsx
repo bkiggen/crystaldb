@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material"
 import { useRef } from "react"
 
-const PrintContent = ({ data }) => {
+const PrintContent = ({ data, month, year }) => {
   const printRef = useRef(null)
 
   const handlePrint = () => {
@@ -63,8 +63,9 @@ const PrintContent = ({ data }) => {
       {/* Hidden printable content */}
       <div ref={printRef} id="printable-content" style={{ display: "none" }}>
         <Typography variant="h4" align="center" gutterBottom>
-          January 2025
+          {month} {year}
         </Typography>
+        <hr />
         <Box className="container">
           {data.map((item, index) => (
             <Box key={index} className="group">
