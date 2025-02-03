@@ -7,7 +7,6 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit"
 import Shipment from "./Shipment"
 import { useEffect, useState } from "react"
 import { callShipStationApi } from "../../api/shipstation"
-import PrintContent from "./PrintContent"
 
 const ShipDay = () => {
   const { shipments, fetchShipments } = useShipmentStore()
