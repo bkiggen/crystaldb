@@ -73,10 +73,17 @@ const createAndSaveShipment = async (
   crystals,
   subscription
 ) => {
+  const groupLabel =
+    shipmentData.groupLabel ||
+    `${subscription.shortName} - ${cycle} (${shipmentData.month + 1}/${
+      shipmentData.year
+    })`;
+
   const shipment = Shipment.create({
     ...shipmentData,
     cycle,
     crystals,
+    groupLabel,
     subscription,
   });
   await Shipment.save(shipment);
