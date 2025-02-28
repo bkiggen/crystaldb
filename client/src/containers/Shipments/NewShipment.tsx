@@ -33,9 +33,15 @@ type NewShipmentT = {
   allSubscriptions: SubscriptionT[]
   formik: ReturnType<typeof useFormik>
   resetDefaultGroupLabel: () => void
+  labelPlaceholder: string
 }
 
-const NewShipment = ({ formik, allSubscriptions, resetDefaultGroupLabel }: NewShipmentT) => {
+const NewShipment = ({
+  formik,
+  allSubscriptions,
+  resetDefaultGroupLabel,
+  labelPlaceholder,
+}: NewShipmentT) => {
   const { preBuilds, fetchPreBuilds } = usePreBuildStore()
   const [openModal, setOpenModal] = useState(false)
 
@@ -195,6 +201,7 @@ const NewShipment = ({ formik, allSubscriptions, resetDefaultGroupLabel }: NewSh
                 id="groupLabel"
                 variant="outlined"
                 fullWidth
+                placeholder={labelPlaceholder}
                 {...formik.getFieldProps("groupLabel")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}

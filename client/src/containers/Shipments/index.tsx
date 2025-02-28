@@ -19,6 +19,7 @@ const Shipments = () => {
   const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
+  const [autoLabel, setAutoLabel] = useState("")
 
   useEffect(() => {
     fetchSubscriptions()
@@ -93,7 +94,7 @@ const Shipments = () => {
       const autoLabel = `${subscriptionName} - ${formik.values.cycleString} (${
         formik.values.month + 1
       }/${formik.values.year})`
-      formik.setFieldValue("groupLabel", autoLabel)
+      setAutoLabel(autoLabel)
     }
   }
 
@@ -107,6 +108,7 @@ const Shipments = () => {
       <NewShipment
         allSubscriptions={subscriptions}
         formik={formik}
+        labelPlaceholder={autoLabel}
         resetDefaultGroupLabel={resetDefaultGroupLabel}
       />
       {selectedShipment ? (
