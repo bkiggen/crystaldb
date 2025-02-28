@@ -2,15 +2,7 @@ import { useEffect } from "react"
 
 import { useFormik } from "formik"
 
-import {
-  Box,
-  TextField,
-  Chip,
-  ListItemText,
-  Autocomplete,
-  Tooltip,
-  Typography,
-} from "@mui/material"
+import { Box, TextField, ListItemText, Autocomplete, Tooltip, Typography } from "@mui/material"
 
 import { textFieldStyles } from "../styles/vars"
 import { useCrystalStore } from "../store/crystalStore"
