@@ -33,15 +33,17 @@ const PrintContent = ({ data, month, year }) => {
               }
               .group-label {
                 font-weight: bold;
-                margin-bottom: 4px;
+                margin-bottom: -4px;
               }
               ul {
                 list-style-type: none;
-                padding-left: 0;
+                padding: 0;
                 margin: 0;
               }
               li {
-                margin-bottom: 2px;
+                margin: 0;
+                margin-bottom: -12px;
+                padding: 0;
               }
             </style>
           </head>
@@ -74,8 +76,10 @@ const PrintContent = ({ data, month, year }) => {
               </Typography>
               <ul>
                 {item.crystals.map((crystal, idx) => (
-                  <li key={idx}>
-                    <Typography variant="body2">{crystal.name}</Typography>
+                  <li>
+                    <Typography key={`${idx}-${crystal.name}`} variant="body2">
+                      {crystal.name}
+                    </Typography>
                   </li>
                 ))}
               </ul>
