@@ -19,6 +19,7 @@ import type { CrystalT } from "../types/Crystal"
 
 import ColorIndicator from "./ColorIndicator"
 import colors from "../styles/colors"
+import CrystalChip from "./SmartSelect/CrystalChip"
 
 type CrystalSelectT = {
   formik: ReturnType<typeof useFormik>
@@ -53,8 +54,8 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
       onChange={(_, value) => {
         formik.setFieldValue("crystalIds", value)
       }}
-      renderTags={(value: number[], getTagProps) => {
-        return value.map((option: number, index: number) => {
+      renderTags={(value: number[]) => {
+        return value.map((option: number) => {
           const crystal = crystals.find((c) => c.id === option)
 
           return (
@@ -86,16 +87,16 @@ const CrystalSelect = ({ formik }: CrystalSelectT) => {
                 </Box>
               }
             >
-              <Chip
-                variant="outlined"
-                label={
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <ColorIndicator indicatorValue={crystal?.color?.hex} />
-                    {crystal?.name}
-                  </Box>
+              <CrystalChip
+                crystal={crystal}
+                formik={formik}
+                handleRemoveCrystal={(_, crystalId) =>
+                  formik.setFieldValue(
+                    "crystalIds",
+                    formik.values.crystalIds.filter((id) => id !== crystalId),
+                  )
                 }
-                {...getTagProps({ index })}
-                sx={{ color: "white" }}
+                selectedCrystalIds={formik.values.crystalIds}
               />
             </Tooltip>
           )

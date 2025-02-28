@@ -114,7 +114,7 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
             <CrystalChip
               crystal={crystal}
               formik={formik}
-              handleRemoveCrystalFromSuggestions={handleRemoveCrystalFromSuggestions}
+              handleRemoveCrystal={handleRemoveCrystalFromSuggestions}
               selectedCrystalIds={formik.values.crystalIds}
             />
           )

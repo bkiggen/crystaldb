@@ -9,7 +9,6 @@ import {
   TextField,
   Button,
   FormControl,
-  Chip,
   Grid,
   ListItemText,
   Autocomplete,
@@ -28,6 +27,7 @@ import { PreBuildT } from "../../types/PreBuild"
 
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import SmartCheck from "./SmartCheck"
+import CrystalChip from "../../components/SmartSelect/CrystalChip"
 
 type UpdatePreBuildModalT = {
   preBuild: PreBuildT
@@ -109,6 +109,30 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   const handleSmartCheck = (dateData) => {
     setSmartChecked(true)
     smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values })
+  }
+
+  const styleOptions = (isBadCrystal, isOutInventory) => {
+    if (!smartChecked) {
+      return {
+        borderColor: "white",
+        borderWidth: "1px",
+      }
+    } else if (isBadCrystal) {
+      return {
+        borderColor: "red",
+        borderWidth: "2px",
+      }
+    } else if (isOutInventory) {
+      return {
+        borderColor: "orange",
+        borderWidth: "2px",
+      }
+    } else {
+      return {
+        borderColor: "lightGreen",
+        borderWidth: "2px",
+      }
+    }
   }
 
   return (
@@ -204,44 +228,29 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                   onChange={(_, value) => {
                     formik.setFieldValue("crystalIds", value)
                   }}
-                  renderTags={(value: number[], getTagProps) => {
-                    return value.map((option: number, index: number) => {
-                      const isBadCrystal = badCrystalIds.includes(option)
-                      const isOutInventory = outInventoryCrystals.includes(option)
-
-                      const styleOptions = () => {
-                        if (!smartChecked) {
-                          return {
-                            borderColor: "white",
-                            borderWidth: "1px",
-                          }
-                        } else if (isBadCrystal) {
-                          return {
-                            borderColor: "red",
-                            borderWidth: "2px",
-                          }
-                        } else if (isOutInventory) {
-                          return {
-                            borderColor: "orange",
-                            borderWidth: "2px",
-                          }
-                        } else {
-                          return {
-                            borderColor: "lightGreen",
-                            borderWidth: "2px",
-                          }
-                        }
-                      }
+                  renderTags={(value: number[]) => {
+                    return value.map((crystalId: number, index: number) => {
+                      const isBadCrystal = badCrystalIds.includes(crystalId)
+                      const isOutInventory = outInventoryCrystals.includes(crystalId)
+                      const crystal = crystals.find((c) => c.id === crystalId)
+                      const styles = styleOptions(isBadCrystal, isOutInventory)
 
                       return (
-                        <Chip
-                          variant="outlined"
-                          label={crystals.find((c) => c.id === option)?.name}
-                          {...getTagProps({ index })}
-                          sx={{
+                        <CrystalChip
+                          key={`${index}-${crystalId}`}
+                          crystal={crystal}
+                          formik={formik}
+                          handleRemoveCrystal={(_, crystalId) =>
+                            formik.setFieldValue(
+                              "crystalIds",
+                              formik.values.crystalIds.filter((id) => id !== crystalId),
+                            )
+                          }
+                          selectedCrystalIds={formik.values.crystalIds}
+                          chipStyles={{
                             color: "white",
-                            borderColor: styleOptions().borderColor,
-                            borderWidth: styleOptions().borderWidth,
+                            borderColor: styles.borderColor,
+                            borderWidth: styles.borderWidth,
                             textTransform: "capitalize",
                           }}
                         />
