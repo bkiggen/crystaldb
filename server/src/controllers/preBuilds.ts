@@ -26,7 +26,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     skip: (pageNumber - 1) * pageSizeNumber,
     take: pageSizeNumber,
     order: {
-      createdAt: "ASC",
+      subscription: { id: "ASC" }, // Correctly order by subscriptionId
+      cycle: "ASC", // Then by cycle in ascending order
     },
     relations: ["crystals", "subscription"],
   });
