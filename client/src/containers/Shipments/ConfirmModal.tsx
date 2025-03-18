@@ -18,7 +18,7 @@ const ConfirmModal = ({ buttonRef, open, onClose, onConfirm, isEditMode }) => {
       }}
     >
       <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="subtitle1">Choose an option:</Typography>
+        <Typography variant="subtitle1">Please Confirm</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -29,7 +29,7 @@ const ConfirmModal = ({ buttonRef, open, onClose, onConfirm, isEditMode }) => {
         >
           {actionName}
         </Button>
-        <Button
+        {/* <Button
           variant="outlined"
           color="secondary"
           onClick={() => {
@@ -38,7 +38,7 @@ const ConfirmModal = ({ buttonRef, open, onClose, onConfirm, isEditMode }) => {
           }}
         >
           Bulk {actionName}
-        </Button>
+        </Button> */}
       </Box>
     </Popover>
   )
