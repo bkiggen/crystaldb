@@ -25,12 +25,13 @@ const Crystals = () => {
   const getCrystals = async ({
     searchTerm = "",
     page = 1,
+    pageSize = 50,
     sortBy = null,
     sortDirection = null,
   }) => {
     const excludedFilters = excludeFilters(activeFilters)
 
-    fetchCrystals({ searchTerm, page, sortBy, sortDirection, filters: excludedFilters })
+    fetchCrystals({ searchTerm, page, pageSize, sortBy, sortDirection, filters: excludedFilters })
   }
 
   useEffect(() => {
@@ -104,7 +105,16 @@ const Crystals = () => {
   ]
 
   return (
-    <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        paddingBottom: "240px",
+        width: "90%",
+        margin: "0 auto",
+      }}
+    >
       <NewCrystal />
       {crystalToUpdate ? (
         <UpdateCrystalModal
@@ -162,6 +172,7 @@ const Crystals = () => {
         className="bg-white p-0"
         autoHeight
       />
+      <Pagination fetchData={getCrystals} paging={paging} withoutSearch showBackToTop />
     </Container>
   )
 }

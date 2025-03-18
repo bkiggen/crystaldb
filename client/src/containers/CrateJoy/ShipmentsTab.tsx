@@ -2,6 +2,7 @@ import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callCratejoyApi } from "../../api/cratejoy"
 import Pagination from "../../components/Pagination"
+import { Box } from "@mui/material"
 
 const ShipmentsTab = () => {
   const [rows, setRows] = useState([])
@@ -43,7 +44,7 @@ const ShipmentsTab = () => {
   const pageSize = 10
 
   return (
-    <div style={{ width: "100%" }}>
+    <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: "16px" }}>
       <Pagination
         fetchData={fetchShipments}
         paging={{
@@ -66,7 +67,19 @@ const ShipmentsTab = () => {
         sx={{ background: "rgba(70, 90, 126, 0.4)", color: "white" }}
         autoHeight
       />
-    </div>
+      <Pagination
+        fetchData={fetchShipments}
+        paging={{
+          currentPage: page,
+          totalPages: Math.ceil(itemCount / pageSize),
+          totalCount: itemCount,
+          pageSize: pageSize,
+        }}
+        withoutSearch
+        onDataChange={fetchShipments}
+        showBackToTop
+      />
+    </Box>
   )
 }
 

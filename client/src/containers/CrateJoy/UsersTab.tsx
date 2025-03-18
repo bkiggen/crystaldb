@@ -3,7 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callCratejoyApi } from "../../api/cratejoy"
 import Pagination from "../../components/Pagination"
 import UpdateUserModal from "./UpdateUserModal"
-import { Button } from "@mui/material"
+import { Box, Button } from "@mui/material"
 
 const UsersTab = () => {
   const [rows, setRows] = useState([])
@@ -65,7 +65,15 @@ const UsersTab = () => {
   const pageSize = 10
 
   return (
-    <div style={{ height: 600, width: "100%" }}>
+    <Box
+      sx={{
+        height: 600,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+      }}
+    >
       <Pagination
         fetchData={fetchCustomers}
         paging={{
@@ -107,7 +115,24 @@ const UsersTab = () => {
           }}
         />
       )}
-    </div>
+      <Pagination
+        fetchData={fetchCustomers}
+        paging={{
+          currentPage: page,
+          totalPages: Math.ceil(itemCount / pageSize),
+          totalCount: itemCount,
+          pageSize: pageSize,
+        }}
+        // filterContent={
+        //   <Button onClick={() => setUpdateUserModalOpen(true)} variant="contained">
+        //     Search By ID
+        //   </Button>
+        // }
+        withoutSearch
+        onDataChange={fetchCustomers}
+        showBackToTop
+      />
+    </Box>
   )
 }
 

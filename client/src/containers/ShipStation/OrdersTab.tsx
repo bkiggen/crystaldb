@@ -101,7 +101,16 @@ const OrdersTab = () => {
   ]
 
   return (
-    <div style={{ width: "100%" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        paddingBottom: "240px",
+        width: "100%",
+        margin: "0 auto",
+      }}
+    >
       <Pagination
         fetchData={fetchShipments}
         paging={{
@@ -124,7 +133,18 @@ const OrdersTab = () => {
         sx={{ background: "rgba(70, 90, 126, 0.4)", color: "white" }}
         autoHeight
       />
-    </div>
+      <Pagination
+        fetchData={fetchShipments}
+        paging={{
+          currentPage: page,
+          totalPages: Math.ceil(itemCount / 50),
+          totalCount: itemCount,
+          pageSize: 50,
+        }}
+        withoutSearch
+        onDataChange={fetchShipments}
+      />
+    </Box>
   )
 }
 

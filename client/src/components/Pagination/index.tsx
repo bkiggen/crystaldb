@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react"
-
-import { Box, Typography, TextField, InputAdornment, Menu, IconButton } from "@mui/material"
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp"
+import {
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+  Menu,
+  IconButton,
+  Button,
+  Popover,
+  Select,
+  Paper,
+  MenuItem,
+} from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import SearchIcon from "@mui/icons-material/Search"
@@ -27,6 +39,7 @@ type PaginationT = {
   filterContent?: React.ReactNode
   onDataChange?: (arg: Record<string, unknown>) => void
   withSubscriptionFilter?: boolean
+  showBackToTop?: boolean
 }
 
 const Pagination = ({
@@ -36,6 +49,7 @@ const Pagination = ({
   filterContent,
   onDataChange = () => null,
   withSubscriptionFilter,
+  showBackToTop,
 }: PaginationT) => {
   const theme = useTheme()
   const { width } = useWindowSize()
@@ -78,7 +92,7 @@ const Pagination = ({
   const lastPage = paging.totalPages
 
   const startBase = paging.currentPage * paging.pageSize - paging.pageSize + 2
-  const startItem = startBase - 1
+  const startItem = Math.max(startBase - 1, 0)
 
   const adjustedCurrent = paging.currentPage
   const endItem = Math.min(adjustedCurrent * paging.pageSize, paging.totalCount)
@@ -129,11 +143,20 @@ const Pagination = ({
     return pages
   }
 
+  // page size logic
+  const [changePageSizeAnchor, setChangePageSizeAnchor] = React.useState<HTMLButtonElement | null>(
+    null,
+  )
+  const changePageSizeOpen = Boolean(changePageSizeAnchor)
+  const handleClickPageSize = (event?: React.MouseEvent<HTMLButtonElement>) => {
+    const currentTarget = event?.currentTarget || undefined
+    setChangePageSizeAnchor(currentTarget)
+  }
+
   return (
     <Box
       sx={{
         background: colors.slateA4,
-        marginBottom: "12px",
         minHeight: "56px",
         display: "flex",
         flexDirection: isTablet ? "column" : "row",
@@ -143,6 +166,15 @@ const Pagination = ({
         borderRadius: "4px",
       }}
     >
+      {showBackToTop && (
+        <IconButton
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }}
+        >
+          <ArrowCircleUpIcon sx={{ color: colors.lightBlue }} />
+        </IconButton>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -234,80 +266,118 @@ const Pagination = ({
           marginTop: isTablet ? "12px" : "0",
         }}
       >
-        {paging.totalPages > 1 && (
-          <>
-            {!isTablet && (
-              <Typography
-                sx={{
-                  marginRight: "12px",
-                  marginLeft: "12px",
-                  color: colors.slateGrey,
-                  whiteSpace: "nowrap",
-                }}
+        <>
+          {!isTablet && (
+            <Typography
+              sx={{
+                marginRight: "12px",
+                marginLeft: "12px",
+                color: colors.slateGrey,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Showing{" "}
+              <Button
+                sx={{ padding: "2px", minWidth: "unset", fontWeight: "700" }}
+                onClick={handleClickPageSize}
               >
-                Showing {startItem.toLocaleString()} - {endItem.toLocaleString()} of{" "}
-                {paging.totalCount.toLocaleString()}
-              </Typography>
-            )}
-            <Box sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}>
-              {pagesToRender().map((page, i) => {
-                if (page === "...") {
-                  return (
-                    <Typography
-                      key={i}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "32px",
-                        padding: "0 0px",
-                        color: theme.palette.primary.main,
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        marginRight: "4px",
-                        minWidth: "18px",
-                      }}
-                    >
-                      {page}
-                    </Typography>
-                  )
-                }
+                {startItem.toLocaleString()} - {endItem.toLocaleString()}
+              </Button>{" "}
+              of {paging.totalCount.toLocaleString()}
+            </Typography>
+          )}
+          <Popover
+            id={changePageSizeOpen ? "simple-popover" : undefined}
+            open={changePageSizeOpen}
+            anchorEl={changePageSizeAnchor}
+            onClose={() => handleClickPageSize(undefined)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <Paper>
+              {[...Array(10)].map((_, i) => {
+                const val = (i + 1) * 50
+
                 return (
-                  <Box
+                  <MenuItem
+                    key={i}
+                    value={val}
+                    onClick={() => {
+                      onDataChange({ page: 1, pageSize: val })
+                      fetchData({ page: 1, pageSize: val })
+                      handleClickPageSize()
+                    }}
+                  >
+                    {(i + 1) * 50}
+                  </MenuItem>
+                )
+              })}
+            </Paper>
+          </Popover>
+          <Box sx={{ display: "flex", marginRight: "-2px", marginLeft: "2px" }}>
+            {pagesToRender().map((page, i) => {
+              if (page === "...") {
+                return (
+                  <Typography
                     key={i}
                     sx={{
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
-                      background: page === paging.currentPage ? theme.palette.primary.main : "none",
-                      border: `1px solid ${theme.palette.primary.main}`,
-                      color: page === paging.currentPage ? "white" : theme.palette.primary.main,
-                      borderRadius: "8px",
                       height: "32px",
-                      padding: "0 6px",
+                      padding: "0 0px",
+                      color: theme.palette.primary.main,
                       fontSize: "14px",
                       fontWeight: "500",
-                      marginRight: "6px",
-                      cursor: page === paging.currentPage ? "not-allowed" : "pointer",
-                      minWidth: "32px",
-
-                      "&:hover": {
-                        background:
-                          page === paging.currentPage
-                            ? theme.palette.primary.dark
-                            : theme.palette.primary.main,
-                        color: "white",
-                      },
+                      marginRight: "4px",
+                      minWidth: "18px",
                     }}
-                    onClick={() => handleNavClick(page)}
                   >
-                    {renderDigit(page)}
-                  </Box>
+                    {page}
+                  </Typography>
                 )
-              })}
-            </Box>
-          </>
-        )}
+              }
+              return (
+                <Box
+                  key={i}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    background: page === paging.currentPage ? theme.palette.primary.main : "none",
+                    border: `1px solid ${theme.palette.primary.main}`,
+                    color: page === paging.currentPage ? "white" : theme.palette.primary.main,
+                    borderRadius: "8px",
+                    height: "32px",
+                    padding: "0 6px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    marginRight: "6px",
+                    cursor: page === paging.currentPage ? "not-allowed" : "pointer",
+                    minWidth: "32px",
+
+                    "&:hover": {
+                      background:
+                        page === paging.currentPage
+                          ? theme.palette.primary.dark
+                          : theme.palette.primary.main,
+                      color: "white",
+                    },
+                  }}
+                  onClick={() => handleNavClick(page)}
+                >
+                  {renderDigit(page)}
+                </Box>
+              )
+            })}
+          </Box>
+        </>
       </Box>
     </Box>
   )

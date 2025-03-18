@@ -14,6 +14,7 @@ const colors = {
   green: "green",
   black: "black",
   lightGreen: lightGreen[500],
+  lightBlue: "#90caf9",
 } as const
 
 export default colors

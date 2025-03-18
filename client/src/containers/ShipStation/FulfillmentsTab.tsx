@@ -2,6 +2,7 @@ import { useState } from "react"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callShipStationApi } from "../../api/shipstation"
 import Pagination from "../../components/Pagination"
+import { Box } from "@mui/material"
 
 const FulfillmentsTab = () => {
   const [rows, setRows] = useState([])
@@ -55,7 +56,16 @@ const FulfillmentsTab = () => {
   ]
 
   return (
-    <div style={{ width: "100%" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        paddingBottom: "240px",
+        width: "100%",
+        margin: "0 auto",
+      }}
+    >
       <Pagination
         fetchData={fetchFulfillments}
         paging={{
@@ -78,7 +88,19 @@ const FulfillmentsTab = () => {
         sx={{ background: "rgba(70, 90, 126, 0.4)", color: "white" }}
         autoHeight
       />
-    </div>
+      <Pagination
+        fetchData={fetchFulfillments}
+        paging={{
+          currentPage: page,
+          totalPages: Math.ceil(itemCount / 50),
+          totalCount: itemCount,
+          pageSize: 50,
+        }}
+        withoutSearch
+        onDataChange={fetchFulfillments}
+        showBackToTop
+      />
+    </Box>
   )
 }
 

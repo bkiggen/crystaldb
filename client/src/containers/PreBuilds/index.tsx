@@ -167,7 +167,16 @@ const PreBuilds = () => {
   ]
 
   return (
-    <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        paddingBottom: "240px",
+        width: "90%",
+        margin: "0 auto",
+      }}
+    >
       <NewPreBuild />
       {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
@@ -214,6 +223,7 @@ const PreBuilds = () => {
         year={year}
         confirmBuildPrebuilds={confirmBuildPrebuilds}
       />
+      <Pagination fetchData={fetchPreBuilds} paging={paging} withoutSearch showBackToTop />
     </Container>
   )
 }

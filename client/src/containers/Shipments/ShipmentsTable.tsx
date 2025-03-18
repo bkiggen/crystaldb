@@ -237,7 +237,7 @@ const ShipmentsTable = ({
   ]
 
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <Pagination
         fetchData={(args) => {
           fetchShipments(args)
@@ -270,6 +270,16 @@ const ShipmentsTable = ({
         className="bg-white p-0"
         autoHeight
       />
+      <Pagination
+        fetchData={(args) => {
+          fetchShipments(args)
+          clearSelected()
+        }}
+        paging={paging}
+        withoutSearch
+        showBackToTop
+        onDataChange={onPaginationDataFetch}
+      />
       <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
@@ -286,7 +296,7 @@ const ShipmentsTable = ({
           }}
         />
       )}
-    </>
+    </Box>
   )
 }
 
