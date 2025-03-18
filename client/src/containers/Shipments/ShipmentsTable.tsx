@@ -82,7 +82,6 @@ const ShipmentsTable = ({
     if (pagingData.searchTerm) {
       queryParams.append("searchTerm", pagingData.searchTerm)
     }
-
     navigate(`?${queryParams.toString()}`)
   }
 
@@ -240,7 +239,10 @@ const ShipmentsTable = ({
   return (
     <>
       <Pagination
-        fetchData={fetchShipments}
+        fetchData={(args) => {
+          fetchShipments(args)
+          clearSelected()
+        }}
         paging={paging}
         withSubscriptionFilter
         onDataChange={onPaginationDataFetch}
