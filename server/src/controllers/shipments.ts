@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Shipment } from "../entity/Shipment";
 import { Subscription } from "../entity/Subscription";
-import { In } from "typeorm";
+import { ILike, In } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { authenticateToken } from "./util/authenticateToken";
 import { parseCycleCSVToNumbersArray } from "./util/parseStringToNumbersArray";
@@ -29,7 +29,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     ...(month ? { month: parseInt(month as string) } : {}),
     ...(year ? { year: parseInt(year as string) } : {}),
     ...(cycle ? { cycle: parseInt(cycle as string) } : {}),
-    ...(searchTerm ? { groupLabel: searchTerm } : {}),
+    ...(searchTerm ? { groupLabel: ILike(`%${searchTerm}%`) } : {}),
   };
 
   const [shipments, total] = await Shipment.findAndCount({

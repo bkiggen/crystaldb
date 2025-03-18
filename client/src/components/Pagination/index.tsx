@@ -66,22 +66,6 @@ const Pagination = ({
     setAnchorEl(null)
   }
 
-  useEffect(() => {
-    const newData = {
-      page: 1,
-      searchTerm: rawSearch,
-      sortBy,
-      sortDirection,
-      ...(selectedMonth ? { month: selectedMonth } : {}),
-      ...(selectedYear ? { year: selectedYear } : {}),
-      ...(selectedCycle ? { cycle: selectedCycle } : {}),
-      ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
-    }
-
-    onDataChange(newData)
-    fetchData(newData)
-  }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear, debouncedCycle])
-
   const renderDigit = (num) => {
     if (typeof num !== "number") {
       return num
@@ -99,17 +83,29 @@ const Pagination = ({
   const adjustedCurrent = paging.currentPage
   const endItem = Math.min(adjustedCurrent * paging.pageSize, paging.totalCount)
 
-  const handleNavClick = (newPage) => {
-    fetchData({
+  const handleUpdate = (newPage = 1, searchTermArg = rawSearch) => {
+    const newData = {
       page: newPage,
-      searchTerm,
+      searchTerm: searchTermArg,
       sortBy,
       sortDirection,
       ...(selectedMonth ? { month: selectedMonth } : {}),
       ...(selectedYear ? { year: selectedYear } : {}),
+      ...(selectedCycle ? { cycle: selectedCycle } : {}),
       ...(selectedSubscriptionId !== "All" ? { subscriptionId: selectedSubscriptionId } : {}),
-    })
+    }
+    // do we need both of these?
+    onDataChange(newData)
+    fetchData(newData)
   }
+
+  const handleNavClick = (newPage) => {
+    handleUpdate(newPage, searchTerm)
+  }
+
+  useEffect(() => {
+    handleUpdate()
+  }, [searchTerm, selectedSubscriptionId, selectedMonth, selectedYear, debouncedCycle])
 
   const pagesToRender = () => {
     const pages = []
