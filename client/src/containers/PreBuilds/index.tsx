@@ -7,18 +7,17 @@ import type { PreBuildT } from "../../types/PreBuild"
 import type { CrystalT } from "../../types/Crystal"
 import UpdatePreBuildModal from "./UpdatePreBuildModal"
 import Pagination from "../../components/Pagination"
-import NewPreBuild from "./NewPreBuild"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { useShipmentStore } from "../../store/shipmentStore"
 import dayjs from "dayjs"
 import BuildPrebuildModal from "./BuildPrebuildModal"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
+import NewShipment from "../Shipments/NewShipment"
 
 const PreBuilds = () => {
   const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
-
   const [selectAll, setSelectAll] = useState(false)
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
   const [highlightedPrebuilds, setHighlightedPrebuilds] = useState<PreBuildT[]>([])
@@ -177,7 +176,7 @@ const PreBuilds = () => {
         margin: "0 auto",
       }}
     >
-      <NewPreBuild />
+      <NewShipment />
       {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
           preBuild={selectedPrebuilds[0]}

@@ -28,7 +28,7 @@ type PreBuildStoreT = {
     month: number
     year: number
     crystalIds: number[]
-    cycle: number
+    cycle: string
     subscriptionId: number
   }) => Promise<void>
   smartCheckSelectedPrebuilds: (smartCheckData: {
@@ -101,7 +101,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     month: number
     year: number
     crystalIds: number[]
-    cycle: number
+    cycle: string
     subscriptionId: number
   }) => {
     try {
