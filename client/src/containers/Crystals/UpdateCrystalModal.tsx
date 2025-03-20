@@ -34,6 +34,7 @@ import ConfirmDialogue from "../../components/ConfirmDialogue"
 import NewColorModal from "./NewColorModal"
 import NewLocationModal from "./NewLocationModal"
 import NewCategoryModal from "./NewCategoryModal"
+import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
 type UpdateCrystalModalT = {
   listCrystal: CrystalT
@@ -80,6 +81,7 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
   const [categoryToEdit, setCategoryToEdit] = useState<CategoryT[]>(null)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
+  const [shipmentToEdit, setShipmentToEdit] = useState(null)
 
   const initialValues = {
     name: crystal.name,
@@ -342,7 +344,9 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
                       padding: "12px",
                       borderRadius: "6px",
                       marginBottom: "4px",
+                      cursor: "pointer",
                     }}
+                    onClick={() => setShipmentToEdit(shipment)}
                   >
                     <Typography sx={{ color: "white" }}>
                       {shipment.subscription?.shortName} {shipment.cycle}:{" "}
@@ -380,6 +384,12 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
             setCategoryModalOpen(false)
             setCategoryToEdit(null)
           }}
+        />
+      )}
+      {shipmentToEdit && (
+        <UpdateShipmentModal
+          selectedShipment={shipmentToEdit}
+          setSelectedShipment={setShipmentToEdit}
         />
       )}
       <ConfirmDialogue

@@ -59,7 +59,7 @@ export const smartCheckPreBuildRequest = async (smartCheckData: {
   month: number
   year: number
   crystalIds: number[]
-  cycle: number
+  cycle: string
   subscriptionId: number
 }): Promise<{
   barredCrystalIds: number[]

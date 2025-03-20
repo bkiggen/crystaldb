@@ -63,7 +63,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }
 
   const initialValues: {
-    cycle: number
+    cycle: string
     crystalIds: number[]
     subscriptionId: number
   } = {

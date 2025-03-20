@@ -3,7 +3,7 @@ import type { SubscriptionT } from "./Subscription"
 
 export type PreBuildT = {
   id: number
-  cycle: number
+  cycle: string
   crystalIds: number[]
   crystals?: CrystalT[]
   createdAt?: string
