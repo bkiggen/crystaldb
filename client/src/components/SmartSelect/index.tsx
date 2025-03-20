@@ -1,13 +1,9 @@
 import { useState } from "react"
-
 import { useFormik } from "formik"
-
 import { Box, Typography } from "@mui/material"
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight"
-
 import { useCrystalStore } from "../../store/crystalStore"
-
 import CrystalChip from "./CrystalChip"
 import FilterMenu from "./FilterMenu"
 import { excludeFilters } from "./excludeFilters"
@@ -15,9 +11,11 @@ import { isEmpty } from "lodash"
 
 type SmartSelectT = {
   formik: ReturnType<typeof useFormik>
+  month?: string
+  year?: string
 }
 
-const SmartSelect = ({ formik }: SmartSelectT) => {
+const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
   const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -52,9 +50,9 @@ const SmartSelect = ({ formik }: SmartSelectT) => {
         excludedCrystalIds,
         selectedCrystalIds: formik.values.crystalIds,
         selectedSubscriptionType: formik.values.subscriptionId,
-        selectedMonth: formik.values.month,
-        selectedYear: formik.values.year,
-        selectedCyclesString: formik.values.cycleString,
+        selectedMonth: formik.values.month || month,
+        selectedYear: formik.values.year || year,
+        selectedCyclesString: formik.values.cycleString || formik.values.cycle,
         filters,
       })
     }

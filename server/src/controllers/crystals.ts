@@ -164,7 +164,6 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   if (isNaN(id)) {
     return res.status(400).send("Invalid crystal ID");
   }
-  console.log("fuck you");
 
   try {
     const crystal = await Crystal.createQueryBuilder("crystal")

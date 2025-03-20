@@ -22,7 +22,7 @@ const PreBuilds = () => {
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
   const [highlightedPrebuilds, setHighlightedPrebuilds] = useState<PreBuildT[]>([])
   const [buildModalVisible, setBuildModalVisible] = useState(false)
-  const [month, setMonth] = useState(dayjs().month())
+  const [month, setMonth] = useState(dayjs().month() + 1)
   const [year, setYear] = useState(dayjs().year())
 
   useEffect(() => {
@@ -176,7 +176,7 @@ const PreBuilds = () => {
         margin: "0 auto",
       }}
     >
-      <NewShipment />
+      <NewShipment month={month} year={year} setMonth={setMonth} setYear={setYear} />
       {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
           preBuild={selectedPrebuilds[0]}

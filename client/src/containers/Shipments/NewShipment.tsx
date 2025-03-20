@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@mui/material"
 import * as Yup from "yup"
+import { monthOptions } from "../../lib/constants"
 import colors from "../../styles/colors"
 import { textFieldStyles } from "../../styles/vars"
 import { usePreBuildStore } from "../../store/preBuildStore"
@@ -24,7 +25,7 @@ import SmartSelect from "../../components/SmartSelect"
 import PreBuildAutocomplete from "./PreBuildAutocomplete"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 
-const NewShipment = () => {
+const NewShipment = ({ month, year, setMonth, setYear }) => {
   const { preBuilds, createPreBuild } = usePreBuildStore()
   const { subscriptions } = useSubscriptionStore()
 
@@ -77,112 +78,142 @@ const NewShipment = () => {
   })
 
   return (
-    <form onSubmit={handleConfirmSubmit}>
-      <Box
-        sx={{
-          background: colors.slateA4,
-          border: `1px solid ${colors.slateGrey}`,
-          padding: "24px",
-          paddingTop: "48px",
-          margin: "0 auto",
-          marginBottom: "48px",
-          borderRadius: "4px",
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <FormControl fullWidth variant="outlined">
+    <Box>
+      <form onSubmit={handleConfirmSubmit}>
+        <Box
+          sx={{
+            background: colors.slateA4,
+            border: `1px solid ${colors.slateGrey}`,
+            padding: "24px",
+            paddingTop: "48px",
+            margin: "0 auto",
+            marginBottom: "48px",
+            borderRadius: "4px",
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <FormControl fullWidth variant="outlined">
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    marginBottom: "4px",
+                    color: "white",
+                  }}
+                >
+                  Subscription Type
+                </Typography>
+                <TextField
+                  select
+                  id="subscriptionId"
+                  {...formik.getFieldProps("subscriptionId")}
+                  sx={textFieldStyles}
+                >
+                  {subscriptions.map((subscription) => (
+                    <MenuItem key={subscription.id} value={subscription.id}>
+                      {subscription.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} sx={{ position: "relative" }}>
               <Typography
                 sx={{
                   fontSize: "14px",
-                  marginBottom: "4px",
                   color: "white",
+                  marginBottom: "4px",
                 }}
               >
-                Subscription Type
+                Cycle (ex: 1, 4-5, 23, 56-76)
               </Typography>
               <TextField
-                select
-                id="subscriptionId"
-                {...formik.getFieldProps("subscriptionId")}
+                id="cycle"
+                variant="outlined"
+                fullWidth
+                {...formik.getFieldProps("cycle")}
+                inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}
-              >
-                {subscriptions.map((subscription) => (
-                  <MenuItem key={subscription.id} value={subscription.id}>
-                    {subscription.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={6} sx={{ position: "relative" }}>
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "white",
-                marginBottom: "4px",
-              }}
+          <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
+          <Grid container>
+            <Grid item xs={6}>
+              <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <SmartSelect formik={formik} month={month} year={year} />
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Box
+            sx={{ width: "100%", height: "1px", background: "white", margin: "12px 0 48px 0" }}
+          />
+          <FormControl fullWidth variant="outlined">
+            <CrystalSelect formik={formik} />
+          </FormControl>
+          <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModal}
+              disabled={formik.values.crystalIds.length === 0}
             >
-              Cycle (ex: 1, 4-5, 23, 56-76)
-            </Typography>
-            <TextField
-              id="cycle"
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("cycle")}
-              inputProps={{ style: { color: "white" } }}
-              sx={textFieldStyles}
-            />
-          </Grid>
-        </Grid>
-        <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
-        <Grid container>
-          <Grid item xs={6}>
-            <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <FormControl fullWidth variant="outlined">
-              <SmartSelect formik={formik} />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Box sx={{ width: "100%", height: "1px", background: "white", margin: "12px 0 48px 0" }} />
-        <FormControl fullWidth variant="outlined">
-          <CrystalSelect formik={formik} />
-        </FormControl>
-        <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", marginTop: "48px" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenModal}
-            disabled={formik.values.crystalIds.length === 0}
-          >
-            Create Shipment
-          </Button>
+              Create Shipment
+            </Button>
+          </Box>
         </Box>
+        <Dialog open={openModal} onClose={handleCloseModal}>
+          <DialogTitle>Confirm Submission</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to create this shipment?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseModal}
+              color="primary"
+              variant="outlined"
+              sx={{ marginRight: "12px" }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmSubmit} color="primary" autoFocus variant="contained">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </form>
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", marginBottom: "24px", gap: "16px" }}
+      >
+        <TextField
+          label="Month"
+          select
+          value={month}
+          onChange={(e) => setMonth(parseInt(e.target.value))}
+          fullWidth
+          sx={{ ...textFieldStyles, marginBottom: "16px" }}
+        >
+          {Object.keys(monthOptions).map((key) => (
+            <MenuItem key={key} value={key}>
+              {monthOptions[key].long}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          label="Year"
+          type="number"
+          value={year}
+          onChange={(e) => setYear(parseInt(e.target.value))}
+          fullWidth
+          sx={{ ...textFieldStyles, marginBottom: "48px" }}
+        />
       </Box>
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle>Confirm Submission</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Are you sure you want to create this shipment?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseModal}
-            color="primary"
-            variant="outlined"
-            sx={{ marginRight: "12px" }}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmSubmit} color="primary" autoFocus variant="contained">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </form>
+    </Box>
   )
 }
 
