@@ -13,6 +13,7 @@ import dayjs from "dayjs"
 import BuildPrebuildModal from "./BuildPrebuildModal"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
 import NewStage from "./NewStage"
+import colors from "../../styles/colors"
 
 const Staging = () => {
   const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
@@ -186,7 +187,7 @@ const Staging = () => {
       <Pagination fetchData={fetchPreBuilds} paging={paging} withSubscriptionFilter hideMonthYear />
       <DataGrid
         sx={{
-          background: "rgba(70, 90, 126, 0.4)",
+          background: colors.slateA4,
           color: "white",
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",

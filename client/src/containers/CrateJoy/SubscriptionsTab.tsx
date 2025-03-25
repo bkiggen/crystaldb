@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { callCratejoyApi } from "../../api/cratejoy"
 import Pagination from "../../components/Pagination"
 import { Box } from "@mui/material"
+import colors from "../../styles/colors"
 
 const SubscriptionsTab = () => {
   const [rows, setRows] = useState([])
@@ -71,7 +72,7 @@ const SubscriptionsTab = () => {
         disableColumnFilter
         hideFooter
         hideFooterPagination
-        sx={{ background: "rgba(70, 90, 126, 0.4)", color: "white" }}
+        sx={{ background: colors.slateA4, color: "white" }}
         autoHeight
       />
       <Pagination

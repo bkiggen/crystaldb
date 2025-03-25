@@ -10,6 +10,7 @@ import * as Yup from "yup"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 import { useColorStore } from "../../store/colorStore"
+import colors from "../../styles/colors"
 
 const ColorCreationModal = ({ onClose, colorToEdit }) => {
   const { createColor, updateColor, deleteColor } = useColorStore()
@@ -54,13 +55,14 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 400,
-          bgcolor: "white",
+          bgcolor: colors.slateGrey,
+          border: `1px solid ${colors.slateGrey}`,
           p: 3,
           borderRadius: 4,
           textAlign: "center",
         }}
       >
-        <Typography variant="h5" sx={{ color: "black", fontWeight: 600, marginBottom: "12px" }}>
+        <Typography variant="h5" sx={{ color: "white", fontWeight: 600, marginBottom: "12px" }}>
           {colorToEdit ? "Update" : "Create"} Color
         </Typography>
         <form onSubmit={formik.handleSubmit}>
@@ -75,13 +77,13 @@ const ColorCreationModal = ({ onClose, colorToEdit }) => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "black", // Default black outline
+                  borderColor: "white",
                 },
                 "&:hover fieldset": {
-                  borderColor: "black", // Black outline on hover
+                  borderColor: colors.slate,
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "black", // Black outline when focused
+                  borderColor: colors.slate,
                 },
               },
             }}

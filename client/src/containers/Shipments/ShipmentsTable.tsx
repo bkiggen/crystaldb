@@ -16,6 +16,7 @@ import { useShipmentStore } from "../../store/shipmentStore"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
 import UpdateOrDeleteModal from "./UpdateOrDeletePopover"
 import UpdateSelectedShipmentModal from "./UpdateSelectedShipmentModal"
+import colors from "../../styles/colors"
 
 const ShipmentsTable = ({
   shipments,
@@ -249,7 +250,7 @@ const ShipmentsTable = ({
       />
       <DataGrid
         sx={{
-          background: "rgba(70, 90, 126, 0.4)",
+          background: colors.slateA4,
           color: "white",
           cursor: "pointer",
 

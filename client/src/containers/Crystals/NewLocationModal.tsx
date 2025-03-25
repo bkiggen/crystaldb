@@ -4,6 +4,7 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import { useLocationStore } from "../../store/locationStore"
+import colors from "../../styles/colors"
 
 const NewLocationModal = ({ onClose, locationToEdit }) => {
   const { createLocation, updateLocation, deleteLocation } = useLocationStore()
@@ -44,14 +45,15 @@ const NewLocationModal = ({ onClose, locationToEdit }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          bgcolor: colors.slateGrey,
+          border: `1px solid ${colors.slateGrey}`,
           width: 400,
-          bgcolor: "white",
           p: 3,
           borderRadius: 4,
           textAlign: "center",
         }}
       >
-        <Typography variant="h5" sx={{ color: "black", fontWeight: 600, marginBottom: "12px" }}>
+        <Typography variant="h5" sx={{ color: "white", fontWeight: 600, marginBottom: "12px" }}>
           {locationToEdit ? "Update" : "Create"} Location
         </Typography>
         <form onSubmit={formik.handleSubmit}>
@@ -67,18 +69,25 @@ const NewLocationModal = ({ onClose, locationToEdit }) => {
             sx={{
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "black", // Default black outline
+                  borderColor: "white",
                 },
                 "&:hover fieldset": {
-                  borderColor: "black", // Black outline on hover
+                  borderColor: colors.slate,
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "black", // Black outline when focused
+                  borderColor: colors.slate,
                 },
               },
             }}
           />
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              marginTop: "24px",
+            }}
+          >
             {locationToEdit ? (
               <Button
                 variant="contained"

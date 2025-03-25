@@ -14,6 +14,7 @@ import NewCrystal from "./NewCrystal"
 import UpdateCrystalModal from "./UpdateCrystalModal"
 import FilterMenu from "../../components/SmartSelect/FilterMenu"
 import { excludeFilters } from "../../components/SmartSelect/excludeFilters"
+import colors from "../../styles/colors"
 
 const Crystals = () => {
   const { fetchCrystals, crystals, paging } = useCrystalStore()
@@ -136,7 +137,7 @@ const Crystals = () => {
       />
       <DataGrid
         sx={{
-          background: "rgba(70, 90, 126, 0.4)",
+          background: colors.slateA4,
           color: "white",
           "& .MuiDataGrid-columnHeaderTitle": {
             fontWeight: 800,
