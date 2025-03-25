@@ -1,12 +1,18 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
 import { Box, Typography } from "@mui/material"
 import ColorIndicator from "../../components/ColorIndicator"
 import colors from "../../styles/colors"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
-const Shipment = ({ shipmentGroup, loadingShipstation }) => {
+const Shipment = ({
+  shipmentGroup,
+  // loadingShipstation
+}) => {
   const [selectedShipment, setSelectedShipment] = useState(null)
+
+  const groupLabel = shipmentGroup.groupLabel || ""
+  const subType = shipmentGroup.subscription.shortName
+  const shipmentNumber = groupLabel.match(/-\s([\d-]+)\s\(/)?.[1]
 
   return (
     <>
@@ -24,15 +30,19 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
           borderRadius: "8px",
           display: "flex",
           flexDirection: "column",
+          gap: "8px",
           width: "300px",
           maxHeight: "300px",
           overflowY: "auto",
           overflowX: "hidden",
           alignItems: "flex-start",
+          position: "relative",
         }}
       >
-        <Link
-          to={`/shipments?searchTerm=${shipmentGroup.groupLabel}`}
+        <a
+          href={`/shipments?searchTerm=${shipmentGroup.groupLabel}`}
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             textAlign: "center",
             textDecoration: "underline",
@@ -47,10 +57,10 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
               color: "white",
             }}
           >
-            {shipmentGroup.groupLabel || "No Group"}
+            {shipmentNumber || "No Group"}
           </Typography>
-        </Link>
-        <Box
+        </a>
+        {/* <Box
           sx={{
             marginBottom: "24px",
             display: "flex",
@@ -72,7 +82,7 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
               Count: {shipmentGroup.count}
             </Typography>
           )}
-        </Box>
+        </Box> */}
         <Box>
           {shipmentGroup.crystals
             .slice()
@@ -89,6 +99,9 @@ const Shipment = ({ shipmentGroup, loadingShipstation }) => {
                 <Box sx={{ marginLeft: "4px", color: "white" }}>{crystal.name}</Box>
               </Box>
             ))}
+        </Box>
+        <Box sx={{ bottom: "8px", right: "16px", position: "absolute", color: colors.slateGrey }}>
+          {subType}
         </Box>
       </Box>
     </>

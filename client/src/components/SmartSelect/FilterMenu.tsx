@@ -123,7 +123,7 @@ const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut, fetch
       </IconButton>
       <IconButton
         onClick={handleOpenFilters}
-        sx={{ color: anyFiltersSelected ? "#ffbf00" : "white" }}
+        sx={{ color: anyFiltersSelected ? colors.yellow : "white" }}
       >
         <FilterListIcon sx={{ fontSize: "32px" }} />
       </IconButton>

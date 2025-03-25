@@ -152,6 +152,8 @@ const Pagination = ({
     setChangePageSizeAnchor(currentTarget)
   }
 
+  const anyFilterSelected = selectedSubscriptionId || selectedMonth || selectedYear || selectedCycle
+
   return (
     <Box
       sx={{
@@ -223,7 +225,7 @@ const Pagination = ({
               aria-expanded={open ? "true" : undefined}
               onClick={handleMenuOpen}
             >
-              <FilterAltIcon sx={{ color: "white" }} />
+              <FilterAltIcon sx={{ color: anyFilterSelected ? colors.yellow : "white" }} />
             </IconButton>
             <Menu
               id="basic-menu"

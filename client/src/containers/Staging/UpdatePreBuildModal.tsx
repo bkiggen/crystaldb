@@ -77,7 +77,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [])
 
   const validationSchema = Yup.object({
-    cycle: Yup.number().nullable().integer().min(1).required("Cycle is required"),
+    cycle: Yup.string().required("Cycle is required"),
     subscriptionId: Yup.number().required("Subscription Type is required").integer(),
     crystalIds: Yup.array().of(Yup.number().integer()).required(),
   })
@@ -173,7 +173,6 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
                 id="month"
                 variant="outlined"
                 fullWidth
-                type="number"
                 {...formik.getFieldProps("cycle")}
                 inputProps={{ style: { color: "white" } }}
                 sx={textFieldStyles}

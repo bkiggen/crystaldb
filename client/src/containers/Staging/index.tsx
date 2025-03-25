@@ -12,9 +12,9 @@ import { useShipmentStore } from "../../store/shipmentStore"
 import dayjs from "dayjs"
 import BuildPrebuildModal from "./BuildPrebuildModal"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
-import NewShipment from "../Shipments/NewShipment"
+import NewStage from "./NewStage"
 
-const PreBuilds = () => {
+const Staging = () => {
   const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
@@ -57,7 +57,7 @@ const PreBuilds = () => {
 
       // Call createShipment with the collected data
       createShipment({
-        cycleString: prebuild.cycle.toString(),
+        cycleString: prebuild.cycle,
         subscriptionId,
         crystalIds,
         month,
@@ -176,7 +176,7 @@ const PreBuilds = () => {
         margin: "0 auto",
       }}
     >
-      <NewShipment month={month} year={year} setMonth={setMonth} setYear={setYear} />
+      <NewStage month={month} year={year} setMonth={setMonth} setYear={setYear} />
       {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
           preBuild={selectedPrebuilds[0]}
@@ -227,4 +227,4 @@ const PreBuilds = () => {
   )
 }
 
-export default PreBuilds
+export default Staging

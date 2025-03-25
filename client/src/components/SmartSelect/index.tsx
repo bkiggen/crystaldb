@@ -52,7 +52,7 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
         selectedSubscriptionType: formik.values.subscriptionId,
         selectedMonth: formik.values.month || month,
         selectedYear: formik.values.year || year,
-        selectedCyclesString: formik.values.cycleString || formik.values.cycle,
+        selectedCyclesString: formik.values.cycle,
         filters,
       })
     }
@@ -64,14 +64,13 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
   }
 
   return (
-    <Box sx={{ padding: "12px 0", marginBottom: "28px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           cursor: "pointer",
           justifyContent: "space-between",
-          marginBottom: "24px",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -106,18 +105,20 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
           fetchCrystals={fetchCrystalSuggestions}
         />
       </Box>
-      <Box>
-        {pagedCrystals.map((crystal) => {
-          return (
-            <CrystalChip
-              crystal={crystal}
-              formik={formik}
-              handleRemoveCrystal={handleRemoveCrystalFromSuggestions}
-              selectedCrystalIds={formik.values.crystalIds}
-            />
-          )
-        })}
-      </Box>
+      {pagedCrystals.length ? (
+        <Box>
+          {pagedCrystals.map((crystal) => {
+            return (
+              <CrystalChip
+                crystal={crystal}
+                formik={formik}
+                handleRemoveCrystal={handleRemoveCrystalFromSuggestions}
+                selectedCrystalIds={formik.values.crystalIds}
+              />
+            )
+          })}
+        </Box>
+      ) : null}
     </Box>
   )
 }

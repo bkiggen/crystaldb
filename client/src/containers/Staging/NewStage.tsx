@@ -22,11 +22,11 @@ import { textFieldStyles } from "../../styles/vars"
 import { usePreBuildStore } from "../../store/preBuildStore"
 import CrystalSelect from "../../components/CrystalSelect"
 import SmartSelect from "../../components/SmartSelect"
-import PreBuildAutocomplete from "./PreBuildAutocomplete"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
+// import PreBuildAutocomplete from "./PreBuildAutocomplete"
 
-const NewShipment = ({ month, year, setMonth, setYear }) => {
-  const { preBuilds, createPreBuild } = usePreBuildStore()
+const NewStage = ({ month, year, setMonth, setYear }) => {
+  const { createPreBuild } = usePreBuildStore()
   const { subscriptions } = useSubscriptionStore()
 
   const [openModal, setOpenModal] = useState(false)
@@ -62,12 +62,9 @@ const NewShipment = ({ month, year, setMonth, setYear }) => {
   })
 
   const handleSubmit = async (formData: typeof initialValues) => {
-    console.log("🚀 ~ handleSubmit ~ formData:", formData)
     if (formData.crystalIds.length > 0) {
-      //   createShipment({ ...formData, userCount: 0, userCountIsNew: false })
-      // createPreBuild(formData)
+      createPreBuild(formData)
       await formik.resetForm()
-      //   resetSubType()
     }
   }
 
@@ -78,7 +75,7 @@ const NewShipment = ({ month, year, setMonth, setYear }) => {
   })
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <form onSubmit={handleConfirmSubmit}>
         <Box
           sx={{
@@ -138,21 +135,47 @@ const NewShipment = ({ month, year, setMonth, setYear }) => {
             </Grid>
           </Grid>
           <Box sx={{ width: "100%", height: "1px", background: "lightgrey", margin: "48px 0" }} />
-          <Grid container>
+          {/* <Grid container>
             <Grid item xs={6}>
               <PreBuildAutocomplete preBuilds={preBuilds} formik={formik} />
             </Grid>
-          </Grid>
-          <Grid container>
-            <Grid item xs={12}>
-              <FormControl fullWidth variant="outlined">
-                <SmartSelect formik={formik} month={month} year={year} />
-              </FormControl>
-            </Grid>
-          </Grid>
+          </Grid> */}
           <Box
-            sx={{ width: "100%", height: "1px", background: "white", margin: "12px 0 48px 0" }}
-          />
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "16px",
+              marginBottom: "36px",
+            }}
+          >
+            <TextField
+              label="Month"
+              select
+              value={month}
+              onChange={(e) => setMonth(parseInt(e.target.value))}
+              fullWidth
+              sx={textFieldStyles}
+            >
+              {Object.keys(monthOptions).map((key) => (
+                <MenuItem key={key} value={key}>
+                  {monthOptions[key].long}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Year"
+              type="number"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value))}
+              fullWidth
+              sx={textFieldStyles}
+            />
+          </Box>
+          <FormControl fullWidth variant="outlined">
+            <SmartSelect formik={formik} month={month} year={year} />
+          </FormControl>
+
+          <Box sx={{ width: "100%", height: "1px", background: "white", margin: "48px 0" }} />
           <FormControl fullWidth variant="outlined">
             <CrystalSelect formik={formik} />
           </FormControl>
@@ -163,14 +186,14 @@ const NewShipment = ({ month, year, setMonth, setYear }) => {
               onClick={handleOpenModal}
               disabled={formik.values.crystalIds.length === 0}
             >
-              Create Shipment
+              Stage Shipment
             </Button>
           </Box>
         </Box>
         <Dialog open={openModal} onClose={handleCloseModal}>
           <DialogTitle>Confirm Submission</DialogTitle>
           <DialogContent>
-            <DialogContentText>Are you sure you want to create this shipment?</DialogContentText>
+            <DialogContentText>Are you sure you want to stage this shipment?</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button
@@ -187,34 +210,8 @@ const NewShipment = ({ month, year, setMonth, setYear }) => {
           </DialogActions>
         </Dialog>
       </form>
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", marginBottom: "24px", gap: "16px" }}
-      >
-        <TextField
-          label="Month"
-          select
-          value={month}
-          onChange={(e) => setMonth(parseInt(e.target.value))}
-          fullWidth
-          sx={{ ...textFieldStyles, marginBottom: "16px" }}
-        >
-          {Object.keys(monthOptions).map((key) => (
-            <MenuItem key={key} value={key}>
-              {monthOptions[key].long}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          label="Year"
-          type="number"
-          value={year}
-          onChange={(e) => setYear(parseInt(e.target.value))}
-          fullWidth
-          sx={{ ...textFieldStyles, marginBottom: "48px" }}
-        />
-      </Box>
     </Box>
   )
 }
 
-export default NewShipment
+export default NewStage
