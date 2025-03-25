@@ -18,7 +18,6 @@ const Shipments = () => {
   const { createShipment, fetchShipments, shipments, loading, paging } = useShipmentStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const [selectedShipment, setSelectedShipment] = useState<ShipmentT>(null)
-  // const [autoLabel, setAutoLabel] = useState("")
 
   useEffect(() => {
     fetchSubscriptions()
@@ -85,31 +84,8 @@ const Shipments = () => {
     onSubmit: handleSubmit,
   })
 
-  // const resetDefaultGroupLabel = () => {
-  //   const subscriptionName = subscriptions.find((sub) => sub.id === formik.values.subscriptionId)
-  //     ?.shortName
-
-  //   if (subscriptionName) {
-  //     const autoLabel = `${subscriptionName} - ${formik.values.cycleString} (${
-  //       formik.values.month + 1
-  //     }/${formik.values.year})`
-  //     setAutoLabel(autoLabel)
-  //   }
-  // }
-
-  // // Set the default value for groupLabel based on cycle string
-  // useEffect(() => {
-  //   resetDefaultGroupLabel()
-  // }, [subscriptions])
-
   return (
     <Container sx={{ paddingBottom: "240px", width: "90%", margin: "0 auto" }}>
-      {/* <NewShipment
-        allSubscriptions={subscriptions}
-        formik={formik}
-        labelPlaceholder={autoLabel}
-        resetDefaultGroupLabel={resetDefaultGroupLabel}
-      /> */}
       {selectedShipment ? (
         <UpdateShipmentModal
           selectedShipment={selectedShipment}
