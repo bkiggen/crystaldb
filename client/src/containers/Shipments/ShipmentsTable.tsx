@@ -134,12 +134,12 @@ const ShipmentsTable = ({
     {
       field: "groupLabel",
       headerName: "Group Label",
-      width: 100,
+      width: 150,
       align: "center",
       sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.groupLabel}</div>
+        return <Box sx={{ textAlign: "center" }}>{params.row.groupLabel}</Box>
       },
     },
     {

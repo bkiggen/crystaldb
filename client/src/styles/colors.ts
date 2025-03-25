@@ -10,7 +10,7 @@ const colors = {
   slate: "rgba(70, 90, 126, 1)",
   slateGrey: "slateGrey",
   red: red[500],
-  yellow: "yellow",
+  yellow: "#ffbd29",
   green: "green",
   black: "black",
   lightGreen: lightGreen[500],

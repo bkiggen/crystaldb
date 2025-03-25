@@ -6,7 +6,7 @@ import AppHeader from "./components/AppHeader"
 
 import Crystals from "./containers/Crystals/index"
 import Shipments from "./containers/Shipments/index"
-import PreBuilds from "./containers/PreBuilds/index"
+import PreBuilds from "./containers/Staging/index"
 import ShipDay from "./containers/ShipDay/index"
 import CrateJoy from "./containers/CrateJoy/index"
 import ShipStation from "./containers/ShipStation/index"
@@ -68,7 +68,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/pre-builds"
+                path="/staging"
                 element={
                   <ProtectedRoute>
                     <PreBuilds />

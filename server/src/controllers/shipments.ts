@@ -67,17 +67,21 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Helper function to create and save a shipment
-const createAndSaveShipment = async (
-  cycle: number,
+const createAndSaveShipment = async ({
+  cycle,
+  cyclesArray,
   shipmentData,
   crystals,
-  subscription
-) => {
-  const groupLabel =
-    shipmentData.groupLabel ||
-    `${subscription.shortName} - ${cycle} (${shipmentData.month + 1}/${
-      shipmentData.year
-    })`;
+  subscription,
+}) => {
+  const cycleString =
+    cyclesArray.length === 1
+      ? cycle
+      : `${cyclesArray[0]}-${cyclesArray[cyclesArray.length - 1]}`;
+
+  const groupLabel = `${subscription.shortName} - ${cycleString} (${
+    shipmentData.month + 1
+  }/${shipmentData.year})`;
 
   const shipment = Shipment.create({
     ...shipmentData,
@@ -108,12 +112,13 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 
     if (cyclesArray.length > 0) {
       for (const cycle of cyclesArray) {
-        const shipment = await createAndSaveShipment(
+        const shipment = await createAndSaveShipment({
           cycle,
+          cyclesArray,
           shipmentData,
           crystals,
-          subscription
-        );
+          subscription,
+        });
         newShipments.push(shipment);
       }
     } else {

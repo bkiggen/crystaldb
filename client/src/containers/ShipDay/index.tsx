@@ -93,7 +93,7 @@ const ShipDay = () => {
                 <Shipment
                   key={shipmentGroup.groupLabel}
                   shipmentGroup={shipmentGroup}
-                  loadingShipstation={loading}
+                  // loadingShipstation={loading}
                 />
               )
             })}

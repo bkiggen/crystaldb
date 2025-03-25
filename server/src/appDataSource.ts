@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-console.log("CDB_DB_USERNAME", process.env.CDB_DB_USERNAME);
+
 export const appDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
