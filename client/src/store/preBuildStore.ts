@@ -20,6 +20,7 @@ type PreBuildStoreT = {
   fetchPreBuilds: (params: {
     searchTerm?: string
     page?: number
+    cycle?: string
     pageSize?: number
     subscriptionId?: string
   }) => Promise<void>

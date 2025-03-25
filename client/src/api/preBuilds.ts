@@ -17,11 +17,13 @@ export const createPreBuildRequest = async (
 export const getAllPreBuildsRequest = async ({
   searchTerm = "",
   page = 1,
+  cycle,
   pageSize = 100,
   subscriptionId,
 }: {
   searchTerm?: string
   page?: number
+  cycle?: string
   pageSize?: number
   noPaging?: boolean
   subscriptionId?: string
@@ -29,6 +31,7 @@ export const getAllPreBuildsRequest = async ({
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     ...(subscriptionId ? { subscriptionId } : {}),
+    ...(cycle ? { cycle } : {}),
     page: page.toString(),
     pageSize: pageSize.toString(),
   }).toString()

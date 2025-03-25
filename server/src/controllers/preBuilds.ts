@@ -18,7 +18,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
 
   whereCondition = {
     ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
-    ...(searchTerm ? { name: ILike(`%${searchTerm}%`) } : {}),
+    ...(searchTerm ? { cycle: ILike(`%${searchTerm}%`) } : {}),
   };
 
   const [result, total] = await PreBuild.findAndCount({

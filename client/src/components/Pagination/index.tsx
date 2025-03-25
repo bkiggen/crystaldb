@@ -38,6 +38,7 @@ type PaginationT = {
   filterContent?: React.ReactNode
   onDataChange?: (arg: Record<string, unknown>) => void
   withSubscriptionFilter?: boolean
+  hideMonthYear?: boolean
   showBackToTop?: boolean
 }
 
@@ -48,6 +49,7 @@ const Pagination = ({
   filterContent,
   onDataChange = () => null,
   withSubscriptionFilter,
+  hideMonthYear,
   showBackToTop,
 }: PaginationT) => {
   const theme = useTheme()
@@ -241,9 +243,19 @@ const Pagination = ({
                   selectedSubscriptionId={selectedSubscriptionId}
                   setSelectedSubscriptionId={setSelectedSubscriptionId}
                 />
-                <MonthFilter selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
-                <YearFilter selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
-                <CycleFilter selectedCycle={selectedCycle} setSelectedCycle={setSelectedCycle} />
+                {!hideMonthYear && (
+                  <>
+                    <MonthFilter
+                      selectedMonth={selectedMonth}
+                      setSelectedMonth={setSelectedMonth}
+                    />
+                    <YearFilter selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+                    <CycleFilter
+                      selectedCycle={selectedCycle}
+                      setSelectedCycle={setSelectedCycle}
+                    />
+                  </>
+                )}
                 <IconButton
                   onClick={() => {
                     setSelectedMonth(null)

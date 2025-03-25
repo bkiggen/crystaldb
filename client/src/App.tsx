@@ -68,7 +68,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/pre-builds"
+                path="/staging"
                 element={
                   <ProtectedRoute>
                     <PreBuilds />

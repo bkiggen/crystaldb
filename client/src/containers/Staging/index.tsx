@@ -183,7 +183,7 @@ const Staging = () => {
           setSelectedPreBuild={setSelectedPreBuilds}
         />
       )}
-      <Pagination fetchData={fetchPreBuilds} paging={paging} withSubscriptionFilter withoutSearch />
+      <Pagination fetchData={fetchPreBuilds} paging={paging} withSubscriptionFilter hideMonthYear />
       <DataGrid
         sx={{
           background: "rgba(70, 90, 126, 0.4)",
