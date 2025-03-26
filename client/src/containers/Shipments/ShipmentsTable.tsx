@@ -36,15 +36,41 @@ const ShipmentsTable = ({
 
   const settingsButtonRef = React.useRef(null)
 
-  const handleClick = (e, params: GridCellParams) => {
+  const [previouslyClickedRowId, setPreviouslyClickedRowId] = useState<number | null>(null)
+  // const gridApiRef = React.useRef<any>(null) // optional for future use
+
+  const handleClick = (e: React.ChangeEvent<HTMLInputElement>, params: GridCellParams) => {
     e.stopPropagation()
-    setSelectedShipmentIds((prev) => {
-      if (prev.includes(params.row.id)) {
-        return prev.filter((id) => id !== params.row.id)
-      } else {
-        return [...prev, params.row.id]
+    const clickedId = params.row.id
+    const shiftPressed =
+      e.nativeEvent instanceof MouseEvent ? (e.nativeEvent as MouseEvent).shiftKey : false
+
+    if (shiftPressed && previouslyClickedRowId !== null) {
+      const visibleRowIds = shipments.map((s) => s.id) // Use visible order from props
+
+      const startIndex = visibleRowIds.indexOf(previouslyClickedRowId)
+      const endIndex = visibleRowIds.indexOf(clickedId)
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const [start, end] = [startIndex, endIndex].sort((a, b) => a - b)
+        const rangeIds = visibleRowIds.slice(start, end + 1)
+
+        const allSelected = rangeIds.every((id) => selectedShipmentIds.includes(id))
+
+        if (allSelected) {
+          setSelectedShipmentIds((prev) => prev.filter((id) => !rangeIds.includes(id)))
+        } else {
+          const newSelection = rangeIds.filter((id) => !selectedShipmentIds.includes(id))
+          setSelectedShipmentIds((prev) => [...prev, ...newSelection])
+        }
       }
-    })
+    } else {
+      setSelectedShipmentIds((prev) =>
+        prev.includes(clickedId) ? prev.filter((id) => id !== clickedId) : [...prev, clickedId],
+      )
+    }
+
+    setPreviouslyClickedRowId(clickedId)
   }
 
   const handleSelectAllClick = (e) => {

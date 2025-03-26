@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Box, Container, Checkbox } from "@mui/material"
-import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
+import { DataGrid, GridCellParams, GridColDef, useGridApiRef } from "@mui/x-data-grid"
 import { usePreBuildStore } from "../../store/preBuildStore"
 import BuildIcon from "@mui/icons-material/Build"
 import type { PreBuildT } from "../../types/PreBuild"
@@ -22,6 +22,7 @@ const Staging = () => {
   const [selectAll, setSelectAll] = useState(false)
   const [selectedPrebuilds, setSelectedPreBuilds] = useState<PreBuildT[]>([])
   const [highlightedPrebuilds, setHighlightedPrebuilds] = useState<PreBuildT[]>([])
+  const [previouslyClickedRowId, setPreviouslyClickedRowId] = useState<number>(null)
   const [buildModalVisible, setBuildModalVisible] = useState(false)
   const [month, setMonth] = useState(dayjs().month() + 1)
   const [year, setYear] = useState(dayjs().year())
@@ -40,15 +41,50 @@ const Staging = () => {
     }
   }
 
+  const apiRef = useGridApiRef()
   const handleCheckboxClick = (e, params) => {
     e.stopPropagation()
-    const selectedId = params.row.id
-    // add or remove from selectedPrebuilds
-    setHighlightedPrebuilds((prevSelected) =>
-      prevSelected.some((prebuild) => prebuild.id === selectedId)
-        ? prevSelected.filter((prebuild) => prebuild.id !== selectedId)
-        : [...prevSelected, preBuilds.find((prebuild) => prebuild.id === selectedId)],
-    )
+    const clickedId = params.row.id
+    const shiftPressed =
+      e.nativeEvent instanceof MouseEvent ? (e.nativeEvent as MouseEvent).shiftKey : false
+
+    if (shiftPressed && previouslyClickedRowId !== null) {
+      const visibleRowIds = apiRef.current.getSortedRowIds() // Gives current visual order
+
+      const startIndex = visibleRowIds.indexOf(previouslyClickedRowId)
+      const endIndex = visibleRowIds.indexOf(clickedId)
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const [start, end] = [startIndex, endIndex].sort((a, b) => a - b)
+        const rangeIds = visibleRowIds.slice(start, end + 1)
+        const rangePrebuilds = preBuilds.filter((p) => rangeIds.includes(p.id))
+
+        const allSelected = rangePrebuilds.every((p) =>
+          highlightedPrebuilds.some((hp) => hp.id === p.id),
+        )
+
+        if (allSelected) {
+          // Deselect the whole range
+          setHighlightedPrebuilds((prev) => prev.filter((p) => !rangeIds.includes(p.id)))
+        } else {
+          // Add any not already selected
+          setHighlightedPrebuilds((prev) => {
+            const newOnes = rangePrebuilds.filter((p) => !prev.some((hp) => hp.id === p.id))
+            return [...prev, ...newOnes]
+          })
+        }
+      }
+    } else {
+      const isSelected = highlightedPrebuilds.some((p) => p.id === clickedId)
+      if (isSelected) {
+        setHighlightedPrebuilds((prev) => prev.filter((p) => p.id !== clickedId))
+      } else {
+        const selectedRow = preBuilds.find((p) => p.id === clickedId)
+        if (selectedRow) setHighlightedPrebuilds((prev) => [...prev, selectedRow])
+      }
+    }
+
+    setPreviouslyClickedRowId(clickedId)
   }
 
   const confirmBuildPrebuilds = () => {
@@ -197,6 +233,7 @@ const Staging = () => {
             border: "1px solid red", // Red outline
           },
         }}
+        apiRef={apiRef}
         rows={preBuilds || []}
         getRowHeight={() => "auto"}
         getRowClassName={(params) => {
