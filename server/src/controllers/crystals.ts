@@ -12,65 +12,69 @@ import { parseCycleCSVToNumbersArray } from "./util/parseStringToNumbersArray";
 const router = Router();
 
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
-  const {
-    page = 1,
-    pageSize = 1000,
-    searchTerm,
-    inventory,
-    category,
-    location,
-    colorId,
-  } = req.query;
+  try {
+    const {
+      page = 1,
+      pageSize = 1000,
+      searchTerm,
+      inventory,
+      category,
+      location,
+      colorId,
+    } = req.query;
 
-  const pageNumber = parseInt(page as string);
-  const pageSizeNumber = parseInt(pageSize as string);
+    const pageNumber = parseInt(page as string);
+    const pageSizeNumber = parseInt(pageSize as string);
 
-  const sortBy = (req.query.sortBy || "name") as string;
-  const sortDirection = (
-    (req.query.sortDirection as string) || "asc"
-  ).toUpperCase() as "ASC" | "DESC";
+    const sortBy = (req.query.sortBy || "name") as string;
+    const sortDirection = (
+      (req.query.sortDirection as string) || "asc"
+    ).toUpperCase() as "ASC" | "DESC";
 
-  const sanitizedSearchTerm = searchTerm
-    ? escapeSpecialCharacters(searchTerm as string)
-    : "";
+    const sanitizedSearchTerm = searchTerm
+      ? escapeSpecialCharacters(searchTerm as string)
+      : "";
 
-  let query = Crystal.createQueryBuilder("crystal");
+    let query = Crystal.createQueryBuilder("crystal");
 
-  if (sanitizedSearchTerm) {
-    query = query.where("crystal.name ILIKE :searchTerm", {
-      searchTerm: `%${sanitizedSearchTerm}%`,
-    });
+    if (sanitizedSearchTerm) {
+      query = query.where("crystal.name ILIKE :searchTerm", {
+        searchTerm: `%${sanitizedSearchTerm}%`,
+      });
+    }
+
+    const allFilters = {
+      ...(inventory && { inventory }),
+      ...(category && { category }),
+      ...(location && { location }),
+      ...(colorId && { colorId }),
+    };
+
+    query = addFilters(query, allFilters);
+
+    const [result, total] = await query
+      .skip((pageNumber - 1) * pageSizeNumber)
+      .take(pageSizeNumber)
+      .orderBy(`crystal.${sortBy}`, sortDirection)
+      .leftJoinAndSelect("crystal.color", "color")
+      .leftJoinAndSelect("crystal.category", "category")
+      .leftJoinAndSelect("crystal.location", "location")
+      .getManyAndCount();
+
+    const paging = {
+      totalCount: total,
+      totalPages: Math.ceil(total / pageSizeNumber),
+      currentPage: pageNumber,
+      pageSize: pageSizeNumber,
+    };
+
+    res.json({ data: result, paging });
+  } catch (error) {
+    console.error("Error in GET /crystals:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
-
-  const allFilters = {
-    // ...(findAge && { findAge }),
-    // ...(size && { size }),
-    ...(inventory && { inventory }),
-    ...(category && { category }),
-    ...(location && { location }),
-    ...(colorId && { colorId }),
-    // ...(rarity && { rarity }),
-  };
-
-  query = addFilters(query, allFilters);
-
-  const [result, total] = await query
-    .skip((pageNumber - 1) * pageSizeNumber)
-    .take(pageSizeNumber)
-    .orderBy(`crystal.${sortBy}`, sortDirection)
-    .leftJoinAndSelect("crystal.color", "color")
-    .leftJoinAndSelect("crystal.category", "category")
-    .leftJoinAndSelect("crystal.location", "location")
-    .getManyAndCount();
-
-  const paging = {
-    totalCount: total,
-    totalPages: Math.ceil(total / pageSizeNumber),
-    currentPage: pageNumber,
-    pageSize: pageSizeNumber,
-  };
-
-  res.json({ data: result, paging });
 });
 
 router.get(

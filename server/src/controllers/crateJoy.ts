@@ -16,7 +16,6 @@ router.use(async (req, res) => {
   const baseUrl = "https://api.cratejoy.com/v1";
   const url = `${baseUrl}${endpoint}`;
 
-  console.log("🚀 ~ router.use ~ url:", url);
   const headers = {
     Authorization: `Basic ${credentials}`,
     "Content-Type": "application/json",
@@ -31,7 +30,6 @@ router.use(async (req, res) => {
           ? JSON.stringify(requestBody)
           : undefined,
     });
-    console.log("🚀 ~ Response status:", response);
 
     const contentType = response.headers.get("content-type");
     let data =

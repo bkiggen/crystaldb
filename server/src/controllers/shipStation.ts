@@ -11,12 +11,10 @@ const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
 );
 
 router.use(async (req: Request, res: Response) => {
-  console.log("🚀 ~ router.BODY ~ req:", req.body);
   const endpoint = req.body.path;
   const method = req.body.method;
   const baseUrl = "https://ssapi.shipstation.com";
   const url = `${baseUrl}${endpoint}`;
-  console.log("🚀 ~ router.use ~ url:", url);
 
   const headers = {
     Authorization: `Basic ${credentials}`,

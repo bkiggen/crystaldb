@@ -9,61 +9,69 @@ import { parseCycleCSVToNumbersArray } from "./util/parseStringToNumbersArray";
 const router = Router();
 
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
-  const {
-    page = 1,
-    pageSize = 50,
-    searchTerm,
-    subscriptionId,
-    month,
-    year,
-    cycle,
-  } = req.query;
+  try {
+    const {
+      page = 1,
+      pageSize = 50,
+      searchTerm,
+      subscriptionId,
+      month,
+      year,
+      cycle,
+    } = req.query;
 
-  const pageNumber = parseInt(page as string);
-  const pageSizeNumber = parseInt(pageSize as string);
+    const pageNumber = parseInt(page as string);
+    const pageSizeNumber = parseInt(pageSize as string);
 
-  let whereCondition: any = {};
+    let whereCondition: any = {};
 
-  whereCondition = {
-    ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
-    ...(month ? { month: parseInt(month as string) } : {}),
-    ...(year ? { year: parseInt(year as string) } : {}),
-    ...(cycle ? { cycle: parseInt(cycle as string) } : {}),
-    ...(searchTerm ? { groupLabel: ILike(`%${searchTerm}%`) } : {}),
-  };
+    whereCondition = {
+      ...(subscriptionId ? { subscription: { id: subscriptionId } } : {}),
+      ...(month ? { month: parseInt(month as string) } : {}),
+      ...(year ? { year: parseInt(year as string) } : {}),
+      ...(cycle ? { cycle: parseInt(cycle as string) } : {}),
+      ...(searchTerm ? { groupLabel: ILike(`%${searchTerm}%`) } : {}),
+    };
 
-  const [shipments, total] = await Shipment.findAndCount({
-    where: whereCondition,
-    skip: (pageNumber - 1) * pageSizeNumber,
-    take: pageSizeNumber,
-    order: {
-      subscription: { id: "ASC" }, // Correctly order by subscriptionId
-      year: "DESC", // Then by year in descending order
-      month: "DESC", // Then by month in descending order
-      cycle: "ASC", // Then by cycle in ascending order
-    },
-    relations: ["crystals", "subscription"],
-  });
+    const [shipments, total] = await Shipment.findAndCount({
+      where: whereCondition,
+      skip: (pageNumber - 1) * pageSizeNumber,
+      take: pageSizeNumber,
+      order: {
+        subscription: { id: "ASC" }, // Correctly order by subscriptionId
+        year: "DESC", // Then by year in descending order
+        month: "DESC", // Then by month in descending order
+        cycle: "ASC", // Then by cycle in ascending order
+      },
+      relations: ["crystals", "subscription"],
+    });
 
-  const paging = {
-    totalCount: total,
-    totalPages: Math.ceil(total / pageSizeNumber),
-    currentPage: pageNumber,
-    pageSize: pageSizeNumber,
-  };
+    const paging = {
+      totalCount: total,
+      totalPages: Math.ceil(total / pageSizeNumber),
+      currentPage: pageNumber,
+      pageSize: pageSizeNumber,
+    };
 
-  res.json({ data: shipments, paging });
+    res.json({ data: shipments, paging });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
-  const shipment = await Shipment.findOne({
-    where: { id: parseInt(req.params.id) },
-    relations: { crystals: true },
-  });
-  if (!shipment) {
-    return res.status(404).send("Shipment not found");
+  try {
+    const shipment = await Shipment.findOne({
+      where: { id: parseInt(req.params.id) },
+      relations: { crystals: true },
+    });
+    if (!shipment) {
+      return res.status(404).send("Shipment not found");
+    }
+    res.json(shipment);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
-  res.json(shipment);
 });
 
 // Helper function to create and save a shipment

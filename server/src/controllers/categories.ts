@@ -5,17 +5,25 @@ import { authenticateToken } from "./util/authenticateToken";
 const router = Router();
 
 router.get("/", authenticateToken, async (_req: Request, res: Response) => {
-  const categories = await Category.find();
-  categories.sort((a, b) => a.name.localeCompare(b.name));
-  res.json(categories);
+  try {
+    const categories = await Category.find();
+    categories.sort((a, b) => a.name.localeCompare(b.name));
+    res.json(categories);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
-  const category = await Category.findOneBy({ id: parseInt(req.params.id) });
-  if (!category) {
-    return res.status(404).send("Category not found");
+  try {
+    const category = await Category.findOneBy({ id: parseInt(req.params.id) });
+    if (!category) {
+      return res.status(404).send("Category not found");
+    }
+    res.json(category);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
-  res.json(category);
 });
 
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
@@ -29,27 +37,37 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 });
 
 router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
-  const category = await Category.findOneBy({ id: parseInt(req.params.id) });
-  if (!category) {
-    return res.status(404).send("Category not found");
+  try {
+    const category = await Category.findOneBy({ id: parseInt(req.params.id) });
+    if (!category) {
+      return res.status(404).send("Category not found");
+    }
+    Category.merge(category, req.body);
+    await Category.save(category);
+    res.json(category);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
-  Category.merge(category, req.body);
-  await Category.save(category);
-  res.json(category);
 });
 
 router.delete(
   "/:id",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const category = await Category.findOneBy({ id: parseInt(req.params.id) });
-    if (!category) {
-      return res.status(404).send("Category not found");
+    try {
+      const category = await Category.findOneBy({
+        id: parseInt(req.params.id),
+      });
+      if (!category) {
+        return res.status(404).send("Category not found");
+      }
+
+      await Category.remove(category);
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).send(error.message);
     }
-
-    await Category.remove(category);
-
-    res.status(204).send();
   }
 );
 

@@ -5,17 +5,25 @@ import { authenticateToken } from "./util/authenticateToken";
 const router = Router();
 
 router.get("/", authenticateToken, async (_req: Request, res: Response) => {
-  const locations = await Location.find();
-  locations.sort((a, b) => a.name.localeCompare(b.name));
-  res.json(locations);
+  try {
+    const locations = await Location.find();
+    locations.sort((a, b) => a.name.localeCompare(b.name));
+    res.json(locations);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
-  const location = await Location.findOneBy({ id: parseInt(req.params.id) });
-  if (!location) {
-    return res.status(404).send("Location not found");
+  try {
+    const location = await Location.findOneBy({ id: parseInt(req.params.id) });
+    if (!location) {
+      return res.status(404).send("Location not found");
+    }
+    res.json(location);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
-  res.json(location);
 });
 
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
@@ -29,27 +37,37 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
 });
 
 router.put("/:id", authenticateToken, async (req: Request, res: Response) => {
-  const location = await Location.findOneBy({ id: parseInt(req.params.id) });
-  if (!location) {
-    return res.status(404).send("Location not found");
+  try {
+    const location = await Location.findOneBy({ id: parseInt(req.params.id) });
+    if (!location) {
+      return res.status(404).send("Location not found");
+    }
+    Location.merge(location, req.body);
+    await Location.save(location);
+    res.json(location);
+  } catch (error) {
+    res.status(500).send(error.message);
   }
-  Location.merge(location, req.body);
-  await Location.save(location);
-  res.json(location);
 });
 
 router.delete(
   "/:id",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const location = await Location.findOneBy({ id: parseInt(req.params.id) });
-    if (!location) {
-      return res.status(404).send("Location not found");
+    try {
+      const location = await Location.findOneBy({
+        id: parseInt(req.params.id),
+      });
+      if (!location) {
+        return res.status(404).send("Location not found");
+      }
+
+      await Location.remove(location);
+
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).send(error.message);
     }
-
-    await Location.remove(location);
-
-    res.status(204).send();
   }
 );
 
