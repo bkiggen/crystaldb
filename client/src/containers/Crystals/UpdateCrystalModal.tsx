@@ -37,12 +37,34 @@ import NewCategoryModal from "./NewCategoryModal"
 import UpdateShipmentModal from "../Shipments/UpdateShipmentModal"
 
 type UpdateCrystalModalT = {
-  listCrystal: CrystalT
+  selectedCrystals: CrystalT[]
   onClose: () => void
 }
 
-const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
-  const [crystal, setCrystal] = useState(listCrystal)
+const getCommonCrystalValues = (crystals: CrystalT[]) => {
+  if (crystals.length === 1) return crystals[0]
+
+  const keys = Object.keys(crystals[0]) as (keyof CrystalT)[]
+  const commonValues: Partial<CrystalT> = {}
+
+  for (const key of keys) {
+    const firstValue = crystals[0][key]
+    const allMatch = crystals.every((c) => JSON.stringify(c[key]) === JSON.stringify(firstValue))
+    if (allMatch) {
+      // @ts-expect-error - This is a valid key
+      commonValues[key] = firstValue
+    }
+  }
+
+  return commonValues
+}
+
+const UpdateCrystalModal = ({ selectedCrystals, onClose }: UpdateCrystalModalT) => {
+  const listCrystal = selectedCrystals[0]
+  const isSingleCrystal = selectedCrystals.length === 1
+  const commonCrystalValues = getCommonCrystalValues(selectedCrystals)
+
+  const [crystal, setCrystal] = useState(isSingleCrystal ? listCrystal : commonCrystalValues)
   const { updateCrystal, deleteCrystal, fetchCrystalById, setSelectedCrystal, selectedCrystal } =
     useCrystalStore()
   const { colors, fetchColors } = useColorStore()
@@ -92,7 +114,7 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
   }
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
+    name: Yup.string(),
     colorId: Yup.number().integer().nullable(),
     categoryId: Yup.number().nullable(),
     size: Yup.mixed().oneOf(sizeOptions).nullable(),
@@ -104,7 +126,7 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      updateCrystal(crystal.id, values)
+      selectedCrystals.forEach((c) => updateCrystal(c.id, values))
       onClose()
     },
   })
@@ -324,39 +346,41 @@ const UpdateCrystalModal = ({ listCrystal, onClose }: UpdateCrystalModalT) => {
               Update Crystal
             </Button>
           </Box>
-          <Box>
-            <Typography
-              variant="h4"
-              sx={{ color: "white", marginBottom: "12px", marginTop: "48px" }}
-            >
-              Shipments:
-            </Typography>
-            {crystal.shipments === undefined ? (
-              <CircularProgress sx={{ color: "white" }} />
-            ) : (
-              crystal.shipments?.map((shipment) => {
-                return (
-                  <Box
-                    key={shipment.id}
-                    sx={{
-                      display: "flex",
-                      border: "1px solid white",
-                      padding: "12px",
-                      borderRadius: "6px",
-                      marginBottom: "4px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setShipmentToEdit(shipment)}
-                  >
-                    <Typography sx={{ color: "white" }}>
-                      {shipment.subscription?.shortName} {shipment.cycle}:{" "}
-                      {monthOptions[shipment.month]?.long} {shipment.year}
-                    </Typography>
-                  </Box>
-                )
-              })
-            )}
-          </Box>
+          {isSingleCrystal && (
+            <Box>
+              <Typography
+                variant="h4"
+                sx={{ color: "white", marginBottom: "12px", marginTop: "48px" }}
+              >
+                Shipments:
+              </Typography>
+              {!crystal ? (
+                <CircularProgress sx={{ color: "white" }} />
+              ) : (
+                crystal.shipments?.map((shipment) => {
+                  return (
+                    <Box
+                      key={shipment.id}
+                      sx={{
+                        display: "flex",
+                        border: "1px solid white",
+                        padding: "12px",
+                        borderRadius: "6px",
+                        marginBottom: "4px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setShipmentToEdit(shipment)}
+                    >
+                      <Typography sx={{ color: "white" }}>
+                        {shipment.subscription?.shortName} {shipment.cycle}:{" "}
+                        {monthOptions[shipment.month]?.long} {shipment.year}
+                      </Typography>
+                    </Box>
+                  )
+                })
+              )}
+            </Box>
+          )}
         </Box>
       </form>
       {colorModalOpen && (

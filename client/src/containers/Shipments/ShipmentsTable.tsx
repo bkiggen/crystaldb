@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { Box, Button, Checkbox } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
@@ -34,12 +34,11 @@ const ShipmentsTable = ({
   const [updateModalVisible, setUpdateModalVisible] = useState(false)
   const [selectAll, setSelectAll] = useState(false)
 
-  const settingsButtonRef = React.useRef(null)
+  const settingsButtonRef = useRef(null)
 
   const [previouslyClickedRowId, setPreviouslyClickedRowId] = useState<number | null>(null)
-  // const gridApiRef = React.useRef<any>(null) // optional for future use
 
-  const handleClick = (e: React.ChangeEvent<HTMLInputElement>, params: GridCellParams) => {
+  const handleCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>, params: GridCellParams) => {
     e.stopPropagation()
     const clickedId = params.row.id
     const shiftPressed =
@@ -152,7 +151,7 @@ const ShipmentsTable = ({
       renderCell: (params: GridCellParams) => {
         return (
           <Checkbox
-            onChange={(e) => handleClick(e, params)}
+            onChange={(e) => handleCheckboxClick(e, params)}
             checked={selectedShipmentIds.includes(params.row.id)}
           />
         )

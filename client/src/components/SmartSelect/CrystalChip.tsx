@@ -104,7 +104,7 @@ const CrystalChip = ({
       </Tooltip>
       {crystalToUpdate && (
         <UpdateCrystalModal
-          listCrystal={crystalToUpdate}
+          selectedCrystals={[crystalToUpdate]}
           onClose={() => setCrystalToUpdate(null)}
         />
       )}

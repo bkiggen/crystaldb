@@ -115,7 +115,7 @@ const InventoryReport = ({ type }: InventoryReportT) => {
         })}
         {crystalToUpdate ? (
           <UpdateCrystalModal
-            listCrystal={crystalToUpdate}
+            selectedCrystals={[crystalToUpdate]}
             onClose={() => setCrystalToUpdate(null)}
           />
         ) : null}

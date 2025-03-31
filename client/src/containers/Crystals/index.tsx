@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react"
-// import { useNavigate, useLocation } from "react-router-dom"
-
-import { Box, Container, Tooltip } from "@mui/material"
+import { useState, useEffect, useRef } from "react"
+import { Box, Checkbox, Container, Tooltip } from "@mui/material"
 import { DataGrid, GridCellParams, GridColDef } from "@mui/x-data-grid"
-
 import { useCrystalStore } from "../../store/crystalStore"
-import type { CrystalT } from "../../types/Crystal"
-
 import Pagination from "../../components/Pagination"
+import SettingsIcon from "@mui/icons-material/Settings"
 import ColorIndicator from "../../components/ColorIndicator"
 import InventoryIndicator from "../../components/InventoryIndicator"
 import NewCrystal from "./NewCrystal"
@@ -15,13 +11,21 @@ import UpdateCrystalModal from "./UpdateCrystalModal"
 import FilterMenu from "../../components/SmartSelect/FilterMenu"
 import { excludeFilters } from "../../components/SmartSelect/excludeFilters"
 import colors from "../../styles/colors"
+import UpdateOrDeleteModal from "../Shipments/UpdateOrDeletePopover"
+import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 const Crystals = () => {
-  const { fetchCrystals, crystals, paging } = useCrystalStore()
+  const { fetchCrystals, deleteCrystal, crystals, paging } = useCrystalStore()
 
   const [activeFilters, setActiveFilters] = useState({})
+  const [selectAll, setSelectAll] = useState(false)
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [updateModalVisible, setUpdateModalVisible] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [selectedCrystalIds, setSelectedCrystalIds] = useState<number[]>([])
+  const [previouslyClickedRowId, setPreviouslyClickedRowId] = useState<number | null>(null)
 
-  const [crystalToUpdate, setCrystalToUpdate] = useState<CrystalT>(null)
+  const settingsButtonRef = useRef(null)
 
   const getCrystals = async ({
     searchTerm = "",
@@ -35,11 +39,123 @@ const Crystals = () => {
     fetchCrystals({ searchTerm, page, pageSize, sortBy, sortDirection, filters: excludedFilters })
   }
 
+  const handleSelectAllClick = (e) => {
+    setSelectAll(e.target.checked)
+    if (e.target.checked) {
+      setSelectedCrystalIds(crystals.map((crystal) => crystal.id)) // Select all crystal IDs
+    } else {
+      setSelectedCrystalIds([]) // Deselect all
+    }
+  }
+
+  const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
+    if (params.field === "action") {
+      event.stopPropagation()
+    } else {
+      setSelectedCrystalIds([params.row.id])
+      setUpdateModalVisible(true)
+    }
+  }
+
+  const clearSelected = () => {
+    setDeleteModalVisible(false)
+    setSelectedCrystalIds([])
+    setUpdateModalVisible(false)
+    setSelectAll(false)
+  }
+
+  const handleDelete = async () => {
+    await selectedCrystalIds.forEach((id) => {
+      deleteCrystal(id)
+    })
+
+    clearSelected()
+  }
+
+  const handleCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>, params: GridCellParams) => {
+    e.stopPropagation()
+    const clickedId = params.row.id
+    const shiftPressed =
+      e.nativeEvent instanceof MouseEvent ? (e.nativeEvent as MouseEvent).shiftKey : false
+
+    if (shiftPressed && previouslyClickedRowId !== null) {
+      const visibleRowIds = crystals.map((s) => s.id) // Use visible order from props
+
+      const startIndex = visibleRowIds.indexOf(previouslyClickedRowId)
+      const endIndex = visibleRowIds.indexOf(clickedId)
+
+      if (startIndex !== -1 && endIndex !== -1) {
+        const [start, end] = [startIndex, endIndex].sort((a, b) => a - b)
+        const rangeIds = visibleRowIds.slice(start, end + 1)
+
+        const allSelected = rangeIds.every((id) => selectedCrystalIds.includes(id))
+
+        if (allSelected) {
+          setSelectedCrystalIds((prev) => prev.filter((id) => !rangeIds.includes(id)))
+        } else {
+          const newSelection = rangeIds.filter((id) => !selectedCrystalIds.includes(id))
+          setSelectedCrystalIds((prev) => [...prev, ...newSelection])
+        }
+      }
+    } else {
+      setSelectedCrystalIds((prev) =>
+        prev.includes(clickedId) ? prev.filter((id) => id !== clickedId) : [...prev, clickedId],
+      )
+    }
+
+    setPreviouslyClickedRowId(clickedId)
+  }
+
   useEffect(() => {
     getCrystals({})
   }, [])
 
   const columns: GridColDef[] = [
+    {
+      field: "action",
+      headerName: "",
+      width: 100,
+      align: "center",
+      sortable: false,
+      renderHeader: () => (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Checkbox
+            checked={selectAll}
+            indeterminate={
+              selectedCrystalIds.length > 0 && selectedCrystalIds.length < crystals.length
+            }
+            onChange={handleSelectAllClick}
+          />
+          {selectedCrystalIds.length > 0 && (
+            <>
+              <SettingsIcon
+                sx={{ cursor: "pointer", marginRight: "8px" }}
+                onClick={() => setConfirmOpen(true)}
+                ref={settingsButtonRef}
+              />
+              <UpdateOrDeleteModal
+                open={confirmOpen}
+                onClose={() => {
+                  setConfirmOpen(null)
+                }}
+                setConfirmDelete={() => setDeleteModalVisible(true)}
+                setConfirmUpdate={() => setUpdateModalVisible(true)}
+                buttonRef={settingsButtonRef}
+              />
+            </>
+          )}
+        </Box>
+      ),
+      headerAlign: "center",
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Checkbox
+            onChange={(e) => handleCheckboxClick(e, params)}
+            checked={selectedCrystalIds.includes(params.row.id)}
+          />
+        )
+      },
+    },
     {
       field: "name",
       headerName: "Name",
@@ -117,12 +233,6 @@ const Crystals = () => {
       }}
     >
       <NewCrystal />
-      {crystalToUpdate ? (
-        <UpdateCrystalModal
-          listCrystal={crystalToUpdate}
-          onClose={() => setCrystalToUpdate(null)}
-        />
-      ) : null}
       <Pagination
         fetchData={getCrystals}
         paging={paging}
@@ -162,7 +272,7 @@ const Crystals = () => {
         //     )
         //   }
         // }}
-        onRowClick={(item) => setCrystalToUpdate(item.row)}
+        onCellClick={handleCellClick}
         rows={crystals || []}
         columns={columns}
         disableColumnMenu
@@ -174,6 +284,19 @@ const Crystals = () => {
         autoHeight
       />
       <Pagination fetchData={getCrystals} paging={paging} withoutSearch showBackToTop />
+      <ConfirmDialogue
+        open={deleteModalVisible}
+        onClose={() => setDeleteModalVisible(false)}
+        onConfirm={handleDelete}
+      />
+      {updateModalVisible ? (
+        <UpdateCrystalModal
+          selectedCrystals={crystals?.filter((crystal) => selectedCrystalIds.includes(crystal.id))}
+          onClose={() => {
+            setUpdateModalVisible(false)
+          }}
+        />
+      ) : null}
     </Container>
   )
 }
