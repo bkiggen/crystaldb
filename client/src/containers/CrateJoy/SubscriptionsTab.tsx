@@ -67,7 +67,7 @@ const SubscriptionsTab = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        loading={loading}
+        loading={!!loading}
         disableColumnMenu
         disableColumnFilter
         hideFooter

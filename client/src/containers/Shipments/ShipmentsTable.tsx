@@ -264,7 +264,7 @@ const ShipmentsTable = ({
   ]
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px", position: "relative" }}>
       <Pagination
         fetchData={(args) => {
           fetchShipments(args)
@@ -279,16 +279,15 @@ const ShipmentsTable = ({
           background: colors.slateA4,
           color: "white",
           cursor: "pointer",
-
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",
           },
         }}
+        loading={!!loading}
         getRowHeight={() => "auto"}
         rows={shipments || []}
         onCellClick={handleCellClick}
         columns={columns}
-        loading={loading}
         disableColumnMenu
         disableColumnFilter
         hideFooter

@@ -93,7 +93,7 @@ const Shipments = () => {
         />
       ) : null}
       <ShipmentsTable
-        loading={loading}
+        loading={!!loading}
         shipments={shipments}
         paging={paging}
         fetchShipments={fetchShipments}

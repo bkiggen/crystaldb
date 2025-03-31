@@ -94,7 +94,7 @@ const UsersTab = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        loading={loading}
+        loading={!!loading}
         onRowClick={(data) => {
           setSelectedUser(data.row)
           setUpdateUserModalOpen(true)

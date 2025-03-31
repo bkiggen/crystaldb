@@ -126,7 +126,7 @@ const OrdersTab = () => {
       <DataGrid
         rows={rows}
         columns={columns}
-        loading={loading}
+        loading={!!loading}
         disableColumnMenu
         disableColumnFilter
         hideFooter
