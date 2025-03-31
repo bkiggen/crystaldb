@@ -46,7 +46,7 @@ const LoginPage = () => {
           border: "1px solid white",
         }}
       >
-        <Typography component="h1" variant="h5" sx={{ margin: "12px" }}>
+        <Typography component="h1" variant="h4" sx={{ margin: "12px", color: "white" }}>
           Sign {signUpMode ? "Up" : "In"}
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
