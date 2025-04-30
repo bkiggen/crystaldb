@@ -37,6 +37,7 @@ const Shipment = ({
           overflowX: "hidden",
           alignItems: "flex-start",
           position: "relative",
+          textTransform: "capitalize",
         }}
       >
         <a

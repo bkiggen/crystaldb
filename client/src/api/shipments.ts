@@ -39,7 +39,7 @@ export const getAllShipments = async ({
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
     ...(subscriptionId ? { subscriptionId } : {}),
-    ...(month ? { month: month.toString() } : {}),
+    ...(month === undefined ? {} : { month: month.toString() }),
     ...(year ? { year: year.toString() } : {}),
     ...(cycle ? { cycle } : {}),
     page: page.toString(),

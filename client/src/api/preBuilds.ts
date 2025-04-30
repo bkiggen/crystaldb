@@ -10,7 +10,7 @@ export const createPreBuildRequest = async (
     endpoint,
     method: "POST",
     body: JSON.stringify(newPreBuild),
-    successMessage: "PreBuild Created!",
+    successMessage: "Shipment staged!",
   })
 }
 

@@ -35,7 +35,7 @@ const BuildPrebuildModal = ({
     >
       <Typography variant="h5" sx={{ marginBottom: "32px", color: "white" }}>
         Are you sure you want to build
-        {" " + highlightedPrebuilds.length} selected prebuild
+        {" " + highlightedPrebuilds.length} selected shipment
         {highlightedPrebuilds.length > 1 ? "s" : ""}?
       </Typography>
       <TextField
