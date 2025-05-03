@@ -209,7 +209,7 @@ router.post(
         const cyclesArray = parseCycles(preBuild.cycle);
         console.log("🚀 ~ cyclesArray:", cyclesArray);
 
-        if (!cyclesArray.length) {
+        if (cyclesArray.length) {
           // Perform the smart check
           const [barredCrystalIds, outInventoryCrystalIds] =
             await smartCheckCrystalList({
