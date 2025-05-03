@@ -40,6 +40,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     updatePreBuild,
     deletePreBuild,
     smartCheckPrebuild,
+    smartCheckLoading,
     smartCheck: { badCrystalIds, outInventoryCrystals },
     setPreBuildStore,
   } = usePreBuildStore()
@@ -106,9 +107,9 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
     setSmartChecked(false)
   }, [formik.values])
 
-  const handleSmartCheck = (dateData) => {
+  const handleSmartCheck = async (dateData) => {
+    await smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values })
     setSmartChecked(true)
-    smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values })
   }
 
   const styleOptions = (isBadCrystal, isOutInventory) => {
@@ -306,7 +307,11 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
         />
       </form>
       <hr />
-      <SmartCheck handleSubmit={handleSmartCheck} onClear={() => setSmartChecked(false)} />
+      <SmartCheck
+        handleSubmit={handleSmartCheck}
+        onClear={() => setSmartChecked(false)}
+        smartCheckLoading={smartCheckLoading}
+      />
     </ModalContainer>
   )
 }

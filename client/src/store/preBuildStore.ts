@@ -17,6 +17,7 @@ type PreBuildStoreT = {
     badCrystalIds: number[]
     outInventoryCrystals: number[]
   }
+  smartCheckLoading: boolean
   fetchPreBuilds: (params: {
     searchTerm?: string
     page?: number
@@ -51,6 +52,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     badCrystalIds: [],
     outInventoryCrystals: [],
   },
+  smartCheckLoading: false,
   badPrebuildIds: [],
 
   fetchPreBuilds: async (params) => {
@@ -106,6 +108,9 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     subscriptionId: number
   }) => {
     try {
+      set(() => ({
+        smartCheckLoading: true,
+      }))
       const result = await smartCheckPreBuildRequest(smartCheckData)
 
       set(() => ({
@@ -116,6 +121,10 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
       }))
     } catch (error) {
       console.error("Failed to delete pre-build", error)
+    } finally {
+      set(() => ({
+        smartCheckLoading: false,
+      }))
     }
   },
 
@@ -124,6 +133,9 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     month: number
     year: number
   }) => {
+    set(() => ({
+      smartCheckLoading: true,
+    }))
     try {
       const result = await smartCheckSelectedPrebuildsRequest(smartCheckData)
 
@@ -132,6 +144,10 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
       }))
     } catch (error) {
       console.error("Failed to delete pre-build", error)
+    } finally {
+      set(() => ({
+        smartCheckLoading: false,
+      }))
     }
   },
 

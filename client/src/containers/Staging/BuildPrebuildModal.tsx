@@ -14,7 +14,8 @@ const BuildPrebuildModal = ({
   year,
   confirmBuildPrebuilds,
 }) => {
-  const { smartCheckSelectedPrebuilds, badPrebuildIds, setPreBuildStore } = usePreBuildStore()
+  const { smartCheckSelectedPrebuilds, badPrebuildIds, setPreBuildStore, smartCheckLoading } =
+    usePreBuildStore()
 
   const badPrebuildIdCount = badPrebuildIds.length
 
@@ -75,7 +76,13 @@ const BuildPrebuildModal = ({
         <Button variant="outlined" color="primary" fullWidth onClick={handleClearCheck}>
           Clear Check
         </Button>
-        <Button variant="contained" color="primary" onClick={handleSmartCheck} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSmartCheck}
+          disabled={smartCheckLoading}
+          fullWidth
+        >
           Smart Check
         </Button>
       </Box>
