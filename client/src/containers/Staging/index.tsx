@@ -16,8 +16,7 @@ import NewStage from "./NewStage"
 import colors from "../../styles/colors"
 
 const Staging = () => {
-  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds, smartCheckLoading } =
-    usePreBuildStore()
+  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
   const [selectAll, setSelectAll] = useState(false)
