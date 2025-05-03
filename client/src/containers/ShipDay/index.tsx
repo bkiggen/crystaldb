@@ -33,7 +33,6 @@ const ShipDay = () => {
           return strippedShipmentCycle ? parseInt(strippedShipmentCycle[1], 10) : null
         } else {
           // TODO: figure this out, why happening?
-          console.log("🚀 ~ out ~ order.advancedOptions.customField1:", order.advancedOptions)
           return "whatever"
         }
       })

@@ -5,6 +5,7 @@ import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
 import { authenticateToken } from "./util/authenticateToken";
 import { smartCheckCrystalList } from "../services/crystalService";
+import { parseCycles } from "./util/parseStringToNumbersArray";
 
 const router = Router();
 
@@ -154,15 +155,18 @@ router.post(
       const crystalIds =
         req.body.crystalIds || preBuild.crystals.map((crystal) => crystal.id);
       const cycles = req.body.cycle || preBuild.cycle;
+
       const subscriptionId =
         req.body.subscriptionId || preBuild.subscription.id;
+
+      const cyclesArray = parseCycles(cycles);
 
       // Smart check logic here
       const [barredCrystalIds, outInventoryCrystalIds] =
         await smartCheckCrystalList({
           month: req.body.month,
           year: req.body.year,
-          cyclesArray: [cycles],
+          cyclesArray,
           subscriptionId,
           selectedCrystalIds: crystalIds,
         });
@@ -202,18 +206,23 @@ router.post(
           continue;
         }
 
-        // Perform the smart check
-        const [barredCrystalIds, outInventoryCrystalIds] =
-          await smartCheckCrystalList({
-            month: req.body.month,
-            year: req.body.year,
-            cyclesArray: [preBuild.cycle],
-            subscriptionId: preBuild.subscription.id,
-            selectedCrystalIds,
-          });
+        const cyclesArray = parseCycles(preBuild.cycle);
+        console.log("🚀 ~ cyclesArray:", cyclesArray);
 
-        if (barredCrystalIds.length || outInventoryCrystalIds.length) {
-          badPrebuildIds.push(preBuild.id);
+        if (!cyclesArray.length) {
+          // Perform the smart check
+          const [barredCrystalIds, outInventoryCrystalIds] =
+            await smartCheckCrystalList({
+              month: req.body.month,
+              year: req.body.year,
+              cyclesArray,
+              subscriptionId: preBuild.subscription.id,
+              selectedCrystalIds,
+            });
+
+          if (barredCrystalIds.length || outInventoryCrystalIds.length) {
+            badPrebuildIds.push(preBuild.id);
+          }
         }
       }
 

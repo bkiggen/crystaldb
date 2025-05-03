@@ -82,7 +82,7 @@ const BuildPrebuildModal = ({
       {badPrebuildIdCount ? (
         <Box sx={{ display: "flex", margin: "24px", justifyContent: "center" }}>
           <Typography sx={{ color: "red" }}>
-            Warning: {badPrebuildIdCount} of these prebuilds have errors
+            Warning: {badPrebuildIdCount} of these staged shipments have errors
           </Typography>
         </Box>
       ) : null}
