@@ -207,7 +207,6 @@ router.post(
         }
 
         const cyclesArray = parseCycles(preBuild.cycle);
-        console.log("🚀 ~ cyclesArray:", cyclesArray);
 
         if (cyclesArray.length) {
           // Perform the smart check
