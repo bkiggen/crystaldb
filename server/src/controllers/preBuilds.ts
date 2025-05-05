@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { PreBuild } from "../entity/PreBuild";
+import { sortStringRanges } from "./util/sortStringRanges";
 import { Subscription } from "../entity/Subscription";
 import { In, ILike } from "typeorm";
 import { Crystal } from "../entity/Crystal";
@@ -34,6 +35,8 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
       relations: ["crystals", "subscription"],
     });
 
+    const sortedResult = sortStringRanges(result);
+
     const paging = {
       totalCount: total,
       totalPages: Math.ceil(total / pageSizeNumber),
@@ -41,7 +44,7 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
       pageSize: pageSizeNumber,
     };
 
-    res.json({ data: result, paging });
+    res.json({ data: sortedResult, paging });
   } catch (error) {
     res.status(500).send(error.message);
   }
