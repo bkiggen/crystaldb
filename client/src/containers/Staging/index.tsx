@@ -10,6 +10,7 @@ import Pagination from "../../components/Pagination"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 import { useShipmentStore } from "../../store/shipmentStore"
 import dayjs from "dayjs"
+import { truncateCommaList } from "../../util/truncateCommaList"
 import BuildPrebuildModal from "./BuildPrebuildModal"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
 import NewStage from "./NewStage"
@@ -159,7 +160,7 @@ const Staging = () => {
       sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <div>{params.row.cycle}</div>
+        return <div>{truncateCommaList(params.row.cycle)}</div>
       },
     },
     {
