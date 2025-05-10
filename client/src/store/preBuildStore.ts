@@ -43,6 +43,8 @@ type PreBuildStoreT = {
   deletePreBuild: (id: number) => Promise<void>
   setPreBuildStore: (state: Partial<PreBuildStoreT>) => void
   badPrebuildIds: number[]
+  loading: boolean
+  setLoading: (loading: boolean) => void
 }
 
 export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
@@ -54,11 +56,17 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
   },
   smartCheckLoading: false,
   badPrebuildIds: [],
-
+  loading: false,
+  setLoading: (loading) => {
+    set({ loading })
+  },
   fetchPreBuilds: async (params) => {
     try {
+      set(() => ({
+        loading: true,
+      }))
       const { data, paging } = await getAllPreBuildsRequest(params)
-      set({ preBuilds: data, paging })
+      set({ preBuilds: data, paging, loading: false })
     } catch (error) {
       console.error("Failed to fetch pre-builds", error)
     }

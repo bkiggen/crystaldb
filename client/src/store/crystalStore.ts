@@ -49,6 +49,8 @@ type CrystalStoreT = {
   fetchUnusedCrystals: () => Promise<void>
   setSelectedCrystal: (selectedCrystal: CrystalT) => void
   fetchCrystalById: (crystalId: number) => Promise<void>
+  loading: boolean
+  setLoading: (loading: boolean) => void
 }
 
 export const useCrystalStore = create<CrystalStoreT>((set) => ({
@@ -60,6 +62,10 @@ export const useCrystalStore = create<CrystalStoreT>((set) => ({
   fetchCrystalMatches: async (params) => {
     const { data } = await fetchCrystalsRequest(params)
     set({ crystalMatches: data })
+  },
+  loading: false,
+  setLoading: (loading) => {
+    set({ loading })
   },
   paging: defaultPaging,
   setSuggestedCrystals: (newSuggestedCrystals) =>
@@ -82,8 +88,9 @@ export const useCrystalStore = create<CrystalStoreT>((set) => ({
     }))
   },
   fetchCrystals: async (params) => {
+    set({ loading: true })
     const { data, paging } = await fetchCrystalsRequest(params)
-    set({ crystals: data, paging })
+    set({ crystals: data, paging, loading: false })
   },
   fetchSuggestedCrystals: async (params) => {
     const { data } = await getSuggestedCrystalsRequest(params)

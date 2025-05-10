@@ -269,6 +269,7 @@ const ShipmentsTable = ({
           fetchShipments(args)
           clearSelected()
         }}
+        loading={loading}
         paging={paging}
         withSubscriptionFilter
         onDataChange={onPaginationDataFetch}
@@ -282,7 +283,6 @@ const ShipmentsTable = ({
             cursor: "pointer",
           },
         }}
-        loading={!!loading}
         getRowHeight={() => "auto"}
         rows={shipments || []}
         onCellClick={handleCellClick}
@@ -300,6 +300,7 @@ const ShipmentsTable = ({
           fetchShipments(args)
           clearSelected()
         }}
+        loading={loading}
         paging={paging}
         withoutSearch
         showBackToTop

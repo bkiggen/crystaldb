@@ -15,7 +15,7 @@ import UpdateOrDeleteModal from "../Shipments/UpdateOrDeletePopover"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 
 const Crystals = () => {
-  const { fetchCrystals, deleteCrystal, crystals, paging } = useCrystalStore()
+  const { fetchCrystals, deleteCrystal, crystals, paging, loading } = useCrystalStore()
 
   const [activeFilters, setActiveFilters] = useState({})
   const [selectAll, setSelectAll] = useState(false)
@@ -236,6 +236,7 @@ const Crystals = () => {
       <Pagination
         fetchData={getCrystals}
         paging={paging}
+        loading={loading}
         filterContent={
           <FilterMenu
             activeFilters={activeFilters}
@@ -283,7 +284,13 @@ const Crystals = () => {
         className="bg-white p-0"
         autoHeight
       />
-      <Pagination fetchData={getCrystals} paging={paging} withoutSearch showBackToTop />
+      <Pagination
+        fetchData={getCrystals}
+        paging={paging}
+        withoutSearch
+        showBackToTop
+        loading={loading}
+      />
       <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}

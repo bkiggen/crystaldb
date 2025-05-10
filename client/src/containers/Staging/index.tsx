@@ -17,7 +17,7 @@ import NewStage from "./NewStage"
 import colors from "../../styles/colors"
 
 const Staging = () => {
-  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds } = usePreBuildStore()
+  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds, loading } = usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
   const [selectAll, setSelectAll] = useState(false)
@@ -227,7 +227,13 @@ const Staging = () => {
           setSelectedPreBuild={setSelectedPreBuilds}
         />
       )}
-      <Pagination fetchData={fetchPreBuilds} paging={paging} withSubscriptionFilter hideMonthYear />
+      <Pagination
+        fetchData={fetchPreBuilds}
+        paging={paging}
+        withSubscriptionFilter
+        hideMonthYear
+        loading={loading}
+      />
       <DataGrid
         sx={{
           background: colors.slateA4,
@@ -267,7 +273,13 @@ const Staging = () => {
         year={year}
         confirmBuildPrebuilds={confirmBuildPrebuilds}
       />
-      <Pagination fetchData={fetchPreBuilds} paging={paging} withoutSearch showBackToTop />
+      <Pagination
+        fetchData={fetchPreBuilds}
+        paging={paging}
+        withoutSearch
+        showBackToTop
+        loading={loading}
+      />
     </Container>
   )
 }
