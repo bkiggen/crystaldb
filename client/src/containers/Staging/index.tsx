@@ -214,7 +214,13 @@ const Staging = () => {
         margin: "0 auto",
       }}
     >
-      <NewStage month={month} year={year} setMonth={setMonth} setYear={setYear} />
+      <NewStage
+        month={month}
+        year={year}
+        setMonth={setMonth}
+        setYear={setYear}
+        fetchPreBuilds={fetchPreBuilds}
+      />
       {selectedPrebuilds.length === 1 && (
         <UpdatePreBuildModal
           preBuild={selectedPrebuilds[0]}

@@ -23,9 +23,8 @@ import { usePreBuildStore } from "../../store/preBuildStore"
 import CrystalSelect from "../../components/CrystalSelect"
 import SmartSelect from "../../components/SmartSelect"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
-// import PreBuildAutocomplete from "./PreBuildAutocomplete"
 
-const NewStage = ({ month, year, setMonth, setYear }) => {
+const NewStage = ({ month, year, setMonth, setYear, fetchPreBuilds }) => {
   const { createPreBuild } = usePreBuildStore()
   const { subscriptions } = useSubscriptionStore()
 
@@ -63,8 +62,9 @@ const NewStage = ({ month, year, setMonth, setYear }) => {
 
   const handleSubmit = async (formData: typeof initialValues) => {
     if (formData.crystalIds.length > 0) {
-      createPreBuild(formData)
+      await createPreBuild(formData)
       await formik.resetForm()
+      fetchPreBuilds({})
     }
   }
 
