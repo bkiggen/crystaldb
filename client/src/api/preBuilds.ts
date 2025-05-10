@@ -84,11 +84,13 @@ export const smartCheckSelectedPrebuildsRequest = async (smartCheckData: {
   month: number
   year: number
 }): Promise<{
-  badPrebuildIds: number[]
+  badPrebuilds: any[]
+  conflictingCyclePrebuilds: { id: number; conflictingIds: number[] }[]
 }> => {
   const endpoint = `/preBuilds/smartCheckSelected`
   return makeRestRequest<{
-    badPrebuildIds: number[]
+    badPrebuilds: any[]
+    conflictingCyclePrebuilds: { id: number; conflictingIds: number[] }[]
   }>({
     endpoint,
     method: "POST",

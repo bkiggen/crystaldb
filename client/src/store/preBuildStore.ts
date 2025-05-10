@@ -42,7 +42,8 @@ type PreBuildStoreT = {
   updatePreBuild: (updatedPreBuild: PreBuildT) => Promise<void>
   deletePreBuild: (id: number) => Promise<void>
   setPreBuildStore: (state: Partial<PreBuildStoreT>) => void
-  badPrebuildIds: number[]
+  badPrebuilds: any[]
+  conflictingCyclePrebuilds: { id: number; conflictingIds: number[] }[]
   loading: boolean
   setLoading: (loading: boolean) => void
 }
@@ -55,7 +56,8 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     outInventoryCrystals: [],
   },
   smartCheckLoading: false,
-  badPrebuildIds: [],
+  badPrebuilds: [],
+  conflictingCyclePrebuilds: [],
   loading: false,
   setLoading: (loading) => {
     set({ loading })
@@ -148,7 +150,8 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
       const result = await smartCheckSelectedPrebuildsRequest(smartCheckData)
 
       set(() => ({
-        badPrebuildIds: result.badPrebuildIds,
+        badPrebuilds: result.badPrebuilds,
+        conflictingCyclePrebuilds: result.conflictingCyclePrebuilds,
       }))
     } catch (error) {
       console.error("Failed to delete pre-build", error)

@@ -17,7 +17,8 @@ import NewStage from "./NewStage"
 import colors from "../../styles/colors"
 
 const Staging = () => {
-  const { paging, preBuilds, fetchPreBuilds, badPrebuildIds, loading } = usePreBuildStore()
+  const { paging, preBuilds, fetchPreBuilds, badPrebuilds, loading, conflictingCyclePrebuilds } =
+    usePreBuildStore()
   const { fetchSubscriptions } = useSubscriptionStore()
   const { createShipment } = useShipmentStore()
   const [selectAll, setSelectAll] = useState(false)
@@ -124,6 +125,25 @@ const Staging = () => {
     )
   }
 
+  const styleOptions = (isBadCrystal, isOutInventory) => {
+    if (isBadCrystal) {
+      return {
+        borderColor: "red",
+        borderWidth: "2px",
+      }
+    } else if (isOutInventory) {
+      return {
+        borderColor: "orange",
+        borderWidth: "2px",
+      }
+    } else {
+      return {
+        borderColor: "white",
+        borderWidth: "1px",
+      }
+    }
+  }
+
   const columns: GridColDef[] = [
     {
       field: "action",
@@ -153,14 +173,48 @@ const Staging = () => {
       },
     },
     {
-      field: "cycle",
-      headerName: "Cycle",
-      width: 100,
+      field: "id",
+      headerName: "ID",
+      width: 40,
       align: "center",
       sortable: false,
       headerAlign: "center",
       renderCell: (params: GridCellParams) => {
-        return <div>{truncateCommaList(params.row.cycle)}</div>
+        return <div>{params.row.id}</div>
+      },
+    },
+    {
+      field: "cycle",
+      headerName: "Cycle",
+      width: 100,
+      flex: 1,
+      align: "center",
+      sortable: false,
+      headerAlign: "center",
+      renderCell: (params: GridCellParams) => {
+        const conflicts = conflictingCyclePrebuilds.find((ccp) => ccp.id === params.row.id)
+        const badCrystalObject = badPrebuilds.find((bp) => bp.id === params.row.id)
+        const barredCrystals = badCrystalObject?.barredCrystalIds
+        const outCrystals = badCrystalObject?.outInventoryCrystalIds
+
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column", textAlign: "center" }}>
+            {truncateCommaList(params.row.cycle)}
+            {(badCrystalObject || conflicts) && (
+              <ul style={{ textAlign: "left" }}>
+                {conflicts && (
+                  <li style={{ color: "red", fontSize: "12px" }}>
+                    Conflicts with {conflicts.conflictingIds.join(", ")}
+                  </li>
+                )}
+                {barredCrystals && (
+                  <li style={{ color: "red", fontSize: "12px" }}>Previously Used</li>
+                )}
+                {outCrystals && <li style={{ color: "red", fontSize: "12px" }}>Out Inventory</li>}
+              </ul>
+            )}
+          </Box>
+        )
       },
     },
     {
@@ -180,6 +234,12 @@ const Staging = () => {
       sortable: false,
       flex: 3,
       renderCell: (params: GridCellParams) => {
+        const badCrystalObject = badPrebuilds.find((bp) => bp.id === params.row.id)
+        const barredCrystals = badCrystalObject?.barredCrystalIds || []
+        const outCrystals = badCrystalObject?.outInventoryCrystalIds || []
+        const somethingWrong = barredCrystals.length > 0 || outCrystals.length > 0
+        const styles = styleOptions(barredCrystals.length, outCrystals.length)
+
         return (
           <Box
             sx={{ minHeight: "100px", display: "flex", alignItems: "center", padding: "12px 0" }}
@@ -194,7 +254,22 @@ const Staging = () => {
               }}
             >
               {params.row.crystals?.map((crystal: CrystalT, idx) => (
-                <CrystalChip key={idx} crystal={crystal} withoutDelete fontSize="12px" />
+                <CrystalChip
+                  key={idx}
+                  crystal={crystal}
+                  withoutDelete
+                  fontSize="12px"
+                  chipStyles={
+                    somethingWrong
+                      ? {
+                          color: "white",
+                          borderColor: styles.borderColor,
+                          borderWidth: styles.borderWidth,
+                          textTransform: "capitalize",
+                        }
+                      : {}
+                  }
+                />
               ))}
             </Box>
           </Box>
@@ -251,7 +326,10 @@ const Staging = () => {
         getRowHeight={() => "auto"}
         getRowClassName={(params) => {
           const rowId = typeof params.id === "string" ? parseInt(params.id, 10) : params.id
-          return badPrebuildIds.includes(rowId) ? "bad-row" : ""
+          return badPrebuilds.some((bp) => bp.id === params.row.id) ||
+            conflictingCyclePrebuilds.some((ccp) => rowId === ccp.id)
+            ? "bad-row"
+            : ""
         }}
         onRowClick={handleRowClick}
         columns={columns}

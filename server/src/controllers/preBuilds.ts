@@ -7,6 +7,7 @@ import { Crystal } from "../entity/Crystal";
 import { authenticateToken } from "./util/authenticateToken";
 import { smartCheckCrystalList } from "../services/crystalService";
 import { parseCycles } from "./util/parseStringToNumbersArray";
+import { findConflictingPrebuilds } from "./util/prebuildUtils";
 
 const router = Router();
 
@@ -197,7 +198,7 @@ router.post(
         return res.status(404).json({ message: "PreBuilds not found" });
       }
 
-      const badPrebuildIds: number[] = [];
+      const badPrebuilds = [];
 
       for (const preBuild of preBuilds) {
         const selectedCrystalIds = preBuild.crystals.map(
@@ -222,13 +223,28 @@ router.post(
               selectedCrystalIds,
             });
 
-          if (barredCrystalIds.length || outInventoryCrystalIds.length) {
-            badPrebuildIds.push(preBuild.id);
+          const allCrystalIds = [
+            ...barredCrystalIds,
+            ...outInventoryCrystalIds,
+          ];
+
+          if (allCrystalIds.length > 0) {
+            badPrebuilds.push({
+              id: preBuild.id,
+              barredCrystalIds,
+              outInventoryCrystalIds,
+            });
           }
         }
       }
 
-      res.json({ badPrebuildIds });
+      // Check for conflicting cycles
+      const conflictingCyclePrebuilds = findConflictingPrebuilds(
+        preBuilds,
+        req.body.prebuildIds
+      );
+
+      res.json({ badPrebuilds, conflictingCyclePrebuilds });
     } catch (error) {
       console.error("Error in smartCheckSelected:", error);
       res.status(500).json({ message: "An internal server error occurred" });

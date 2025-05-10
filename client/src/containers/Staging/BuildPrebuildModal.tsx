@@ -1,4 +1,4 @@
-import { Typography, TextField, Button, MenuItem, Box } from "@mui/material"
+import { Typography, TextField, Button, MenuItem, Box, LinearProgress } from "@mui/material"
 import { monthOptions } from "../../lib/constants"
 import ModalContainer from "../../components/Modals/ModalContainer"
 import { textFieldStyles } from "../../styles/vars"
@@ -14,10 +14,17 @@ const BuildPrebuildModal = ({
   year,
   confirmBuildPrebuilds,
 }) => {
-  const { smartCheckSelectedPrebuilds, badPrebuildIds, setPreBuildStore, smartCheckLoading } =
-    usePreBuildStore()
+  const {
+    smartCheckSelectedPrebuilds,
+    badPrebuilds,
+    setPreBuildStore,
+    smartCheckLoading,
+    conflictingCyclePrebuilds,
+  } = usePreBuildStore()
 
-  const badPrebuildIdCount = badPrebuildIds.length
+  const conflictIds = conflictingCyclePrebuilds.map((ccp) => ccp.id)
+  const allIds = [...badPrebuilds.map((bpb) => bpb.id), ...conflictIds]
+  const uniqueCount = new Set(allIds).size
 
   const handleSmartCheck = () => {
     const prebuildIds = highlightedPrebuilds.map((prebuild) => prebuild.id)
@@ -25,7 +32,7 @@ const BuildPrebuildModal = ({
   }
 
   const handleClearCheck = () => {
-    setPreBuildStore({ badPrebuildIds: [] })
+    setPreBuildStore({ badPrebuilds: [] })
   }
 
   return (
@@ -71,7 +78,7 @@ const BuildPrebuildModal = ({
       >
         Confirm
       </Button>
-      <hr />
+      {smartCheckLoading ? <LinearProgress /> : <hr />}
       <Box sx={{ display: "flex", gap: "12px", margin: "24px 0" }}>
         <Button variant="outlined" color="primary" fullWidth onClick={handleClearCheck}>
           Clear Check
@@ -86,10 +93,10 @@ const BuildPrebuildModal = ({
           Smart Check
         </Button>
       </Box>
-      {badPrebuildIdCount ? (
+      {uniqueCount > 0 ? (
         <Box sx={{ display: "flex", margin: "24px", justifyContent: "center" }}>
           <Typography sx={{ color: "red" }}>
-            Warning: {badPrebuildIdCount} of these staged shipments have errors
+            Warning: {uniqueCount} of these staged shipments have errors
           </Typography>
         </Box>
       ) : null}
