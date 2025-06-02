@@ -173,17 +173,6 @@ const Staging = () => {
       },
     },
     {
-      field: "id",
-      headerName: "ID",
-      width: 40,
-      align: "center",
-      sortable: false,
-      headerAlign: "center",
-      renderCell: (params: GridCellParams) => {
-        return <div>{params.row.id}</div>
-      },
-    },
-    {
       field: "cycle",
       headerName: "Cycle",
       width: 100,
@@ -203,8 +192,8 @@ const Staging = () => {
             {(badCrystalObject || conflicts) && (
               <ul style={{ textAlign: "left" }}>
                 {conflicts && (
-                  <li style={{ color: "red", fontSize: "12px" }}>
-                    Conflicts with {conflicts.conflictingIds.join(", ")}
+                  <li style={{ color: "blueviolet", fontSize: "12px" }}>
+                    Cycle overlaps with other row(s)
                   </li>
                 )}
                 {barredCrystals && (
@@ -316,9 +305,13 @@ const Staging = () => {
           "& .MuiDataGrid-row:hover": {
             cursor: "pointer",
           },
-          "& .bad-row": {
+          "& .red": {
             backgroundColor: "rgba(255, 0, 0, 0.1)", // Light red background for bad rows
             border: "1px solid red", // Red outline
+          },
+          "& .purple": {
+            backgroundColor: "rgba(128, 0, 128, 0.1)", // Light purple background for conflicting cycle rows
+            border: "1px solid purple", // Purple outline
           },
         }}
         apiRef={apiRef}
@@ -326,10 +319,16 @@ const Staging = () => {
         getRowHeight={() => "auto"}
         getRowClassName={(params) => {
           const rowId = typeof params.id === "string" ? parseInt(params.id, 10) : params.id
-          return badPrebuilds.some((bp) => bp.id === params.row.id) ||
-            conflictingCyclePrebuilds.some((ccp) => rowId === ccp.id)
-            ? "bad-row"
-            : ""
+
+          if (conflictingCyclePrebuilds.some((ccp) => rowId === ccp.id)) {
+            return "purple"
+          }
+
+          if (badPrebuilds.some((bp) => bp.id === params.row.id)) {
+            return "red"
+          }
+
+          return ""
         }}
         onRowClick={handleRowClick}
         columns={columns}
