@@ -3,6 +3,8 @@ import { Shipment } from "../entity/Shipment";
 // import { PreBuild } from "../entity/PreBuild";
 import { In, Not, SelectQueryBuilder } from "typeorm";
 
+const CRYSTAL_LOOKBACK_LIMIT_CYCLES = 12;
+
 const getPreviousShipmentCrystalIds = async (
   month: number,
   year: number,
@@ -16,7 +18,9 @@ const getPreviousShipmentCrystalIds = async (
     let currentMonth = month;
     let currentYear = year;
 
-    while (currentCycle > 1) {
+    const minCycle = Math.max(1, currentCycle - CRYSTAL_LOOKBACK_LIMIT_CYCLES);
+
+    while (currentCycle > minCycle) {
       currentCycle--;
 
       // Adjust month and year as needed
