@@ -1,12 +1,28 @@
 import { useMemo, useState, useEffect } from "react"
-import { Box, Typography, Menu, MenuItem, IconButton, Checkbox } from "@mui/material"
+import { Box, Typography, Menu, MenuItem, IconButton, Checkbox, TextField } from "@mui/material"
 import FilterListIcon from "@mui/icons-material/FilterList"
 import { isEmpty, isEqual } from "lodash"
 import colors from "../../styles/colors"
 import useCrystalFilterOptions from "../../hooks/useCrystalFilterOptions"
 import { CloseOutlined, PlayCircle } from "@mui/icons-material"
 
-const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut, fetchCrystals }) => {
+type FilterMenuProps = {
+  activeFilters: any
+  setActiveFilters: any
+  defaultFilteredOut: any
+  fetchCrystals: any
+  lookbackLimit?: any
+  setLookbacklimit?: any
+}
+
+const FilterMenu = ({
+  activeFilters,
+  setActiveFilters,
+  defaultFilteredOut,
+  fetchCrystals,
+  lookbackLimit,
+  setLookbacklimit,
+}: FilterMenuProps) => {
   const { crystalFilterOptions } = useCrystalFilterOptions({ defaultFilteredOut })
 
   const [loaded, setLoaded] = useState(false)
@@ -138,12 +154,60 @@ const FilterMenu = ({ activeFilters, setActiveFilters, defaultFilteredOut, fetch
         <Box
           sx={{
             display: "flex",
+            flexDirection: "column",
             background: colors.darkBlue,
             margin: "-8px 0",
-            padding: "0 24px",
+            padding: "24px",
           }}
         >
-          {optionElems}
+          <Box
+            sx={{
+              display: "flex",
+            }}
+          >
+            {optionElems}
+          </Box>
+          {setLookbacklimit && (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: "18px",
+                  color: "white",
+                  marginBottom: "12px",
+                }}
+              >
+                Lookback Limit (Cycles)
+              </Typography>
+              <TextField
+                type="number"
+                defaultValue={lookbackLimit}
+                onBlur={(e) => setLookbacklimit(e.target.value)}
+                inputProps={{
+                  min: 1,
+                  step: 1,
+                }}
+                sx={{
+                  width: "100px",
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                    fontSize: "14px",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "white",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: colors.yellow,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: colors.yellow,
+                    },
+                  },
+                }}
+              />
+            </Box>
+          )}
         </Box>
       </Menu>
     </Box>

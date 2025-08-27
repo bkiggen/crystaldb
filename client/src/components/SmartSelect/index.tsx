@@ -18,6 +18,7 @@ type SmartSelectT = {
 const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
   const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
+  const [lookbackLimit, setLookbacklimit] = useState(50)
 
   const [activeFilters, setActiveFilters] = useState({})
 
@@ -53,7 +54,7 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
         selectedMonth: formik.values.month || month,
         selectedYear: formik.values.year || year,
         selectedCyclesString: formik.values.cycle,
-        filters,
+        filters: { ...filters, lookbackLimit },
       })
     }
   }
@@ -103,6 +104,8 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
           setActiveFilters={setActiveFilters}
           defaultFilteredOut={{ inventory: ["OUT"] }}
           fetchCrystals={fetchCrystalSuggestions}
+          lookbackLimit={lookbackLimit}
+          setLookbacklimit={setLookbacklimit}
         />
       </Box>
       {pagedCrystals.length ? (
@@ -110,6 +113,7 @@ const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
           {pagedCrystals.map((crystal) => {
             return (
               <CrystalChip
+                key={crystal.id}
                 crystal={crystal}
                 formik={formik}
                 handleRemoveCrystal={handleRemoveCrystalFromSuggestions}

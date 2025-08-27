@@ -50,7 +50,7 @@ const NewStage = ({ month, year, setMonth, setYear, fetchPreBuilds }) => {
   } = {
     cycle: "1",
     crystalIds: [],
-    subscriptionId: subscriptions[0]?.id || 0,
+    subscriptionId: subscriptions.length > 0 ? subscriptions[0].id : 0,
   }
 
   const validationSchema = Yup.object({
@@ -72,6 +72,7 @@ const NewStage = ({ month, year, setMonth, setYear, fetchPreBuilds }) => {
     initialValues,
     validationSchema,
     onSubmit: handleSubmit,
+    enableReinitialize: true,
   })
 
   return (

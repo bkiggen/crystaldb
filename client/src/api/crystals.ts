@@ -47,7 +47,7 @@ export const fetchCrystalsRequest = async ({
   sortBy?: string
   sortDirection?: string
   inventory?: string
-  filters?: Record<string, string>
+  filters?: Record<string, string | number>
 }): Promise<{ data: CrystalT[]; paging: PagingT }> => {
   const query = new URLSearchParams({
     ...(searchTerm ? { searchTerm } : {}),
@@ -91,7 +91,7 @@ export const getSuggestedCrystalsRequest = async ({
   selectedMonth?: number
   selectedYear?: number
   selectedCyclesString?: number
-  filters?: Record<string, string>
+  filters?: Record<string, string | number>
 }) => {
   const selectedCrystalIdsParam = selectedCrystalIds.length > 0 ? selectedCrystalIds.join(",") : ""
   const excludedCrystalIdsParam = excludedCrystalIds.length > 0 ? excludedCrystalIds.join(",") : ""

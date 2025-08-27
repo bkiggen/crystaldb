@@ -32,7 +32,7 @@ type CrystalStoreT = {
     sortBy?: string
     sortDirection?: string
     inventory?: string
-    filters?: Record<string, string>
+    filters?: Record<string, string | number>
   }) => Promise<void>
   fetchSuggestedCrystals: (params: {
     searchTerm?: string
@@ -44,7 +44,7 @@ type CrystalStoreT = {
     selectedMonth?: number
     selectedYear?: number
     selectedCyclesString?: number
-    filters?: Record<string, string>
+    filters?: Record<string, string | number>
   }) => Promise<void>
   fetchUnusedCrystals: () => Promise<void>
   setSelectedCrystal: (selectedCrystal: CrystalT) => void

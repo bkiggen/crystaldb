@@ -3,13 +3,12 @@ import { Shipment } from "../entity/Shipment";
 // import { PreBuild } from "../entity/PreBuild";
 import { In, Not, SelectQueryBuilder } from "typeorm";
 
-const CRYSTAL_LOOKBACK_LIMIT_CYCLES = 12;
-
 const getPreviousShipmentCrystalIds = async (
   month: number,
   year: number,
   cyclesArray: number[],
-  subscriptionId: number
+  subscriptionId: number,
+  lookbackLimit = 0
 ) => {
   const previouslySentCrystals = [];
 
@@ -18,7 +17,7 @@ const getPreviousShipmentCrystalIds = async (
     let currentMonth = month;
     let currentYear = year;
 
-    const minCycle = Math.max(1, currentCycle - CRYSTAL_LOOKBACK_LIMIT_CYCLES);
+    const minCycle = Math.max(1, currentCycle - lookbackLimit);
 
     while (currentCycle > minCycle) {
       currentCycle--;
@@ -130,12 +129,14 @@ export const suggestCrystals = async ({
   category,
   location,
   colorId,
+  lookbackLimit,
 }) => {
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
     month,
     year,
     cyclesArray,
-    subscriptionId
+    subscriptionId,
+    lookbackLimit
   );
   // const upcomingPrebuildCrystalIds = await getUpcomingPrebuildCrystalIds(
   //   cyclesArray,
@@ -190,12 +191,14 @@ export const smartCheckCrystalList = async ({
   cyclesArray,
   subscriptionId,
   selectedCrystalIds,
+  lookbackLimit,
 }) => {
   const previousShipmentCrystalIds = await getPreviousShipmentCrystalIds(
     month,
     year,
     cyclesArray,
-    subscriptionId
+    subscriptionId,
+    lookbackLimit
   );
 
   const shippedSelectedCrystals = selectedCrystalIds.filter((id) =>

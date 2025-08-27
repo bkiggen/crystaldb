@@ -119,6 +119,7 @@ router.get(
       category,
       location,
       colorId,
+      lookbackLimit,
     } = req.query as {
       [key: string]: string;
     };
@@ -146,6 +147,7 @@ router.get(
       category: category as string,
       location: location as string,
       colorId: colorId as string,
+      lookbackLimit,
     });
 
     const total = 100;

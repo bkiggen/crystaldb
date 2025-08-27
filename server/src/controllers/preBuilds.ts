@@ -173,6 +173,7 @@ router.post(
           cyclesArray,
           subscriptionId,
           selectedCrystalIds: crystalIds,
+          lookbackLimit: req.body.lookbackLimit,
         });
 
       // return list of crystal ids that do not pass smart check
@@ -221,6 +222,7 @@ router.post(
               cyclesArray,
               subscriptionId: preBuild.subscription.id,
               selectedCrystalIds,
+              lookbackLimit: req.body.lookbackLimit,
             });
 
           const allCrystalIds = [
