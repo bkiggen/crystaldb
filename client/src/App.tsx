@@ -19,6 +19,8 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 import "./App.css"
+import { initGA } from "./lib/analytics"
+import { useEffect } from "react"
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("userToken")
@@ -34,6 +36,12 @@ const App = () => {
   const isFullScreen = useStore((state) => {
     return state.isFullScreen
   })
+
+  useEffect(() => {
+    // Initialize Google Analytics on app load
+    initGA()
+  }, [])
+
   return (
     <>
       <ToastContainer />
