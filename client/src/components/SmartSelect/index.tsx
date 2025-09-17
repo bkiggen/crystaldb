@@ -18,7 +18,7 @@ type SmartSelectT = {
 const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
   const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
-  const [lookbackLimit, setLookbacklimit] = useState(50)
+  const [lookbackLimit, setLookbacklimit] = useState(24)
 
   const [activeFilters, setActiveFilters] = useState({})
 

@@ -46,7 +46,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const [smartChecked, setSmartChecked] = useState(false)
-  const [lookbackLimit, setLookbacklimit] = useState(50)
+  const [lookbackLimit, setLookbacklimit] = useState(24)
 
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 

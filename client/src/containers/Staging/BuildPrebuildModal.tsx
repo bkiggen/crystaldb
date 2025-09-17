@@ -24,7 +24,7 @@ const BuildPrebuildModal = ({
     conflictingCyclePrebuilds,
   } = usePreBuildStore()
 
-  const [lookbackLimit, setLookbacklimit] = useState(50)
+  const [lookbackLimit, setLookbacklimit] = useState(24)
 
   const conflictIds = conflictingCyclePrebuilds.map((ccp) => ccp.id)
   const allIds = [...badPrebuilds.map((bpb) => bpb.id), ...conflictIds]
