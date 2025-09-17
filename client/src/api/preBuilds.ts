@@ -83,6 +83,7 @@ export const smartCheckSelectedPrebuildsRequest = async (smartCheckData: {
   prebuildIds: number[]
   month: number
   year: number
+  lookbackLimit: number
 }): Promise<{
   badPrebuilds: any[]
   conflictingCyclePrebuilds: { id: number; conflictingIds: number[] }[]

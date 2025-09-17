@@ -9,7 +9,13 @@ import { textFieldStyles } from "../../styles/vars"
 import { monthOptions } from "../../lib/constants"
 import { usePreBuildStore } from "../../store/preBuildStore"
 
-const MonthYearForm = ({ handleSubmit, onClear, smartCheckLoading }) => {
+const SmartCheck = ({
+  handleSubmit,
+  onClear,
+  smartCheckLoading,
+  lookbackLimit,
+  setLookbacklimit,
+}) => {
   const currentYear = dayjs().year()
   const currentMonth = dayjs().month()
 
@@ -109,17 +115,64 @@ const MonthYearForm = ({ handleSubmit, onClear, smartCheckLoading }) => {
           </Grid>
         </Grid>
 
-        <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-          <Button type="button" variant="outlined" onClick={clearSmartCheck}>
-            Clear
-          </Button>
-          <Button type="submit" variant="contained" color="secondary" disabled={smartCheckLoading}>
-            Smart Check
-          </Button>
+        <Box mt={3} sx={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
+          {" "}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography
+              sx={{
+                fontWeight: 600,
+                fontSize: "18px",
+                color: "white",
+                marginBottom: "12px",
+              }}
+            >
+              Lookback Limit (Cycles)
+            </Typography>
+            <TextField
+              type="number"
+              defaultValue={lookbackLimit}
+              onBlur={(e) => setLookbacklimit(Number(e.target.value))}
+              inputProps={{
+                min: 1,
+                step: 1,
+              }}
+              sx={{
+                width: "100px",
+                "& .MuiInputBase-input": {
+                  color: "white",
+                  fontSize: "14px",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "white",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: colors.yellow,
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: colors.yellow,
+                  },
+                },
+              }}
+            />
+          </Box>
+          <Box mt={3} sx={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+            <Button type="button" variant="outlined" onClick={clearSmartCheck}>
+              Clear
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              disabled={smartCheckLoading}
+            >
+              Smart Check
+            </Button>
+          </Box>
         </Box>
       </form>
     </Box>
   )
 }
 
-export default MonthYearForm
+export default SmartCheck

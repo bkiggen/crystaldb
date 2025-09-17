@@ -2,7 +2,9 @@ import { Typography, TextField, Button, MenuItem, Box, LinearProgress } from "@m
 import { monthOptions } from "../../lib/constants"
 import ModalContainer from "../../components/Modals/ModalContainer"
 import { textFieldStyles } from "../../styles/vars"
+import colors from "../../styles/colors"
 import { usePreBuildStore } from "../../store/preBuildStore"
+import { useState } from "react"
 
 const BuildPrebuildModal = ({
   buildModalVisible,
@@ -22,13 +24,15 @@ const BuildPrebuildModal = ({
     conflictingCyclePrebuilds,
   } = usePreBuildStore()
 
+  const [lookbackLimit, setLookbacklimit] = useState(50)
+
   const conflictIds = conflictingCyclePrebuilds.map((ccp) => ccp.id)
   const allIds = [...badPrebuilds.map((bpb) => bpb.id), ...conflictIds]
   const uniqueCount = new Set(allIds).size
 
   const handleSmartCheck = () => {
     const prebuildIds = highlightedPrebuilds.map((prebuild) => prebuild.id)
-    smartCheckSelectedPrebuilds({ prebuildIds, month, year })
+    smartCheckSelectedPrebuilds({ prebuildIds, month, year, lookbackLimit })
   }
 
   const handleClearCheck = () => {
@@ -68,7 +72,6 @@ const BuildPrebuildModal = ({
         fullWidth
         sx={{ ...textFieldStyles, marginBottom: "48px" }}
       />
-
       <Button
         variant="contained"
         color="primary"
@@ -80,18 +83,59 @@ const BuildPrebuildModal = ({
       </Button>
       {smartCheckLoading ? <LinearProgress /> : <hr />}
       <Box sx={{ display: "flex", gap: "12px", margin: "24px 0" }}>
-        <Button variant="outlined" color="primary" fullWidth onClick={handleClearCheck}>
-          Clear Check
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSmartCheck}
-          disabled={smartCheckLoading}
-          fullWidth
-        >
-          Smart Check
-        </Button>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: "18px",
+              color: "white",
+              marginBottom: "12px",
+            }}
+          >
+            Lookback Limit (Cycles)
+          </Typography>
+          <TextField
+            type="number"
+            defaultValue={lookbackLimit}
+            onBlur={(e) => setLookbacklimit(Number(e.target.value))}
+            inputProps={{
+              min: 1,
+              step: 1,
+            }}
+            sx={{
+              width: "100px",
+              "& .MuiInputBase-input": {
+                color: "white",
+                fontSize: "14px",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "white",
+                },
+                "&:hover fieldset": {
+                  borderColor: colors.yellow,
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: colors.yellow,
+                },
+              },
+            }}
+          />
+        </Box>
+        <Box sx={{ display: "flex", gap: "12px", margin: "24px 0" }}>
+          <Button variant="outlined" color="primary" fullWidth onClick={handleClearCheck}>
+            Clear Check
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSmartCheck}
+            disabled={smartCheckLoading}
+            fullWidth
+          >
+            Smart Check
+          </Button>
+        </Box>
       </Box>
       {uniqueCount > 0 ? (
         <Box sx={{ display: "flex", margin: "24px", justifyContent: "center" }}>

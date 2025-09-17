@@ -37,6 +37,7 @@ type PreBuildStoreT = {
     prebuildIds: number[]
     month: number
     year: number
+    lookbackLimit: number
   }) => Promise<void>
   createPreBuild: (newPreBuild: Omit<PreBuildT, "id">) => Promise<void>
   updatePreBuild: (updatedPreBuild: PreBuildT) => Promise<void>
@@ -142,6 +143,7 @@ export const usePreBuildStore = create<PreBuildStoreT>((set) => ({
     prebuildIds: number[]
     month: number
     year: number
+    lookbackLimit: number
   }) => {
     set(() => ({
       smartCheckLoading: true,

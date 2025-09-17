@@ -46,6 +46,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const [smartChecked, setSmartChecked] = useState(false)
+  const [lookbackLimit, setLookbacklimit] = useState(50)
 
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 
@@ -108,7 +109,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   }, [formik.values])
 
   const handleSmartCheck = async (dateData) => {
-    await smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values })
+    await smartCheckPrebuild({ id: preBuild.id, ...dateData, ...formik.values, lookbackLimit })
     setSmartChecked(true)
   }
 
@@ -311,6 +312,8 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
         handleSubmit={handleSmartCheck}
         onClear={() => setSmartChecked(false)}
         smartCheckLoading={smartCheckLoading}
+        lookbackLimit={lookbackLimit}
+        setLookbacklimit={setLookbacklimit}
       />
     </ModalContainer>
   )
