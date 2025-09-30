@@ -295,7 +295,7 @@ const ShipmentsTable = ({
         className="bg-white p-0"
         autoHeight
       />
-      <Pagination
+      {/* <Pagination
         fetchData={(args) => {
           fetchShipments(args)
           clearSelected()
@@ -305,7 +305,7 @@ const ShipmentsTable = ({
         withoutSearch
         showBackToTop
         onDataChange={onPaginationDataFetch}
-      />
+      /> */}
       <ConfirmDialogue
         open={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
