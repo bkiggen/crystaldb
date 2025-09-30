@@ -24,7 +24,7 @@ import { usePreBuildStore } from "../../store/preBuildStore"
 import { useSubscriptionStore } from "../../store/subscriptionStore"
 
 import { PreBuildT } from "../../types/PreBuild"
-
+import { DEFAULT_LOOKBACK_LIMIT } from "../../lib/constants"
 import ConfirmDialogue from "../../components/ConfirmDialogue"
 import SmartCheck from "./SmartCheck"
 import CrystalChip from "../../components/SmartSelect/CrystalChip"
@@ -46,7 +46,7 @@ const UpdatePreBuildModal = ({ preBuild, setSelectedPreBuild }: UpdatePreBuildMo
   } = usePreBuildStore()
   const { subscriptions, fetchSubscriptions } = useSubscriptionStore()
   const [smartChecked, setSmartChecked] = useState(false)
-  const [lookbackLimit, setLookbacklimit] = useState(24)
+  const [lookbackLimit, setLookbacklimit] = useState(DEFAULT_LOOKBACK_LIMIT)
 
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
 

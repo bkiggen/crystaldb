@@ -3,6 +3,7 @@ import { monthOptions } from "../../lib/constants"
 import ModalContainer from "../../components/Modals/ModalContainer"
 import { textFieldStyles } from "../../styles/vars"
 import colors from "../../styles/colors"
+import { DEFAULT_LOOKBACK_LIMIT } from "../../lib/constants"
 import { usePreBuildStore } from "../../store/preBuildStore"
 import { useState } from "react"
 
@@ -24,7 +25,7 @@ const BuildPrebuildModal = ({
     conflictingCyclePrebuilds,
   } = usePreBuildStore()
 
-  const [lookbackLimit, setLookbacklimit] = useState(24)
+  const [lookbackLimit, setLookbacklimit] = useState(DEFAULT_LOOKBACK_LIMIT)
 
   const conflictIds = conflictingCyclePrebuilds.map((ccp) => ccp.id)
   const allIds = [...badPrebuilds.map((bpb) => bpb.id), ...conflictIds]

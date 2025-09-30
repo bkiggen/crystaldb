@@ -12,3 +12,5 @@ export const monthOptions: Record<string, { long: string; short: string }> = {
   "10": { long: "November", short: "Nov" },
   "11": { long: "December", short: "Dec" },
 }
+
+export const DEFAULT_LOOKBACK_LIMIT = 24

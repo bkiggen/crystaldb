@@ -3,6 +3,7 @@ import { useFormik } from "formik"
 import { Box, Typography } from "@mui/material"
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft"
 import ArrowRightIcon from "@mui/icons-material/ArrowRight"
+import { DEFAULT_LOOKBACK_LIMIT } from "../../lib/constants"
 import { useCrystalStore } from "../../store/crystalStore"
 import CrystalChip from "./CrystalChip"
 import FilterMenu from "./FilterMenu"
@@ -18,7 +19,7 @@ type SmartSelectT = {
 const SmartSelect = ({ formik, month, year }: SmartSelectT) => {
   const { suggestedCrystals, fetchSuggestedCrystals } = useCrystalStore()
   const [currentPage, setCurrentPage] = useState(1)
-  const [lookbackLimit, setLookbacklimit] = useState(24)
+  const [lookbackLimit, setLookbacklimit] = useState(DEFAULT_LOOKBACK_LIMIT)
 
   const [activeFilters, setActiveFilters] = useState({})
 

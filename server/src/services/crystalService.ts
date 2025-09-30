@@ -16,8 +16,9 @@ const getPreviousShipmentCrystalIds = async (
     let currentCycle = cycle;
     let currentMonth = month;
     let currentYear = year;
+    const adjustedLookback = lookbackLimit - 1;
 
-    const minCycle = Math.max(1, currentCycle - lookbackLimit);
+    const minCycle = Math.max(1, currentCycle - adjustedLookback);
 
     while (currentCycle > minCycle) {
       currentCycle--;
